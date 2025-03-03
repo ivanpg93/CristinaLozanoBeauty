@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/homeFragment">
+
+    <!--Home-->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:label="@string/nav_bar_home"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.home.HomeFragment"
+        tools:layout="@layout/home_fragment">
+
+        <!--Nav to client list-->
+        <action
+            android:id="@+id/action_homeFragment_to_clientListFragment"
+            app:destination="@id/clientListFragment" />
+
+        <!--Nav to message-->
+        <action
+            android:id="@+id/action_homeFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+    </fragment>
+
+    <!--Client list-->
+    <fragment
+        android:id="@+id/clientListFragment"
+        android:label="@string/nav_bar_client"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.list.ClientListFragment"
+        tools:layout="@layout/client_list_fragment">
+
+        <!--Nav to client detail-->
+        <action
+            android:id="@+id/action_clientListFragment_to_clientDetailFragment"
+            app:destination="@id/clientDetailFragment" />
+    </fragment>
+
+    <!--Client detail-->
+    <fragment
+        android:id="@+id/clientDetailFragment"
+        android:label="@string/client_detail_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragment"
+        tools:layout="@layout/client_detail_fragment">
+
+        <!--Args client id-->
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+
+    <!--Message-->
+    <fragment
+        android:id="@+id/messageFragment"
+        android:label="@string/nav_bar_message"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageFragment"
+        tools:layout="@layout/message_fragment">
+    </fragment>
+
+</navigation>
