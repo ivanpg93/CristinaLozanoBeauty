@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
     id 'androidx.navigation.safeargs.kotlin'
     id 'com.google.dagger.hilt.android'
 }
@@ -58,13 +61,13 @@ dependencies {
     implementation "androidx.webkit:webkit:1.12.1"
     implementation "androidx.work:work-runtime-ktx:2.9.0"
 
-    // Retrofit para hacer solicitudes HTTP
+    // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
-    // Convertidor de Gson para Retrofit
+    // Gson
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-    // Si usas coroutines (para operaciones asincrónicas)
+    // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Hilt
@@ -74,7 +77,11 @@ dependencies {
     // RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    // Google
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:33.4.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
     /*implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.25.0'
     implementation 'com.google.api-client:google-api-client-android:1.35.0'

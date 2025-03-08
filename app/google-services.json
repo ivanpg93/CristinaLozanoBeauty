@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "217437853819",
+    "project_id": "cristinalozanobeauty",
+    "storage_bucket": "cristinalozanobeauty.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217437853819:android:c3693a9f0baf8ea1d2eade",
+        "android_client_info": {
+          "package_name": "ivan.pacheco.cristinalozanobeauty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm3zmZvinCR0nMAPi8p1dnqIVO5axqwlg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,15 @@
 buildscript {
 
     dependencies {
-        classpath 'com.google.gms:google-services:4.3.15'
+
+        // Firebase
+        classpath 'com.google.gms:google-services:4.4.2'
+
+        // Crashlytics Gradle plugin
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
+
+        // Performance Monitoring Gradle plugin
+        classpath 'com.google.firebase:perf-plugin:1.4.2'
 
         // Navigation safe args
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.8.2"
