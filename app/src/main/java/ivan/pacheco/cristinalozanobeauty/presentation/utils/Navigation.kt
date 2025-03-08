@@ -8,6 +8,7 @@ sealed class Destination {
     data object Home : Destination()
     data object ClientList : Destination()
     data class ClientDetail(val clientId: String) : Destination()
+    data object ClientForm : Destination()
     data object Message : Destination()
 }
 

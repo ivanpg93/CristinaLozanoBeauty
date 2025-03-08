@@ -3,12 +3,15 @@ package ivan.pacheco.cristinalozanobeauty.presentation.client.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import java.util.Date
+import javax.inject.Inject
 
-class ClientListViewModel : ViewModel() {
+@HiltViewModel
+class ClientListViewModel @Inject constructor(): ViewModel() {
 
     private val clientsLD = MutableLiveData<List<Client>>()
 

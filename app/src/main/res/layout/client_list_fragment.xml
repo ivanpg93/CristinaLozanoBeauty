@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:padding="@dimen/padding">
 
     <LinearLayout
         android:id="@+id/layout"
@@ -14,10 +14,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btn_add_client"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/Button"
             android:text="@string/client_list_add_client"
             app:backgroundTint="@color/light_gold" />
 
@@ -25,7 +24,7 @@
             android:id="@+id/rv_clients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="24dp"
+            android:layout_marginVertical="@dimen/padding"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_client" />
 

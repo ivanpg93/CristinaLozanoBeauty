@@ -49,6 +49,14 @@
             app:argType="string" />
     </fragment>
 
+    <!--Add client-->
+    <fragment
+        android:id="@+id/clientFormFragment"
+        android:label="@string/client_form_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment"
+        tools:layout="@layout/client_form_fragment">
+    </fragment>
+
     <!--Message-->
     <fragment
         android:id="@+id/messageFragment"

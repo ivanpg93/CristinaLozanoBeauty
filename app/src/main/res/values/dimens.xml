@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--ConstraintLayout-->
+    <dimen name="padding">24dp</dimen>
+    <dimen name="margin">24dp</dimen>
+
+    <!--Button-->
+    <dimen name="buttonMargin">24dp</dimen>
+    <dimen name="buttonPadding">16dp</dimen>
+    <dimen name="buttonTextSize">20sp</dimen>
+
+    <!--Text-->
+    <dimen name="toolbarTextSize">28sp</dimen>
+    <dimen name="textSize">20sp</dimen>
+
+</resources>

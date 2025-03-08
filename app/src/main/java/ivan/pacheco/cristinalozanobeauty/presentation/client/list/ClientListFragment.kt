@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ClientListFragmentBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 
+@AndroidEntryPoint
 class ClientListFragment: Fragment() {
 
     private var _binding: ClientListFragmentBinding? = null
@@ -36,6 +39,9 @@ class ClientListFragment: Fragment() {
 
         // Load clients
         vm.getClientsLD().observe(viewLifecycleOwner) { clients -> adapter.reload(clients) }
+
+        // Action add client
+        binding.btnAddClient.setOnClickListener { navigate(Destination.ClientForm) }
     }
 
     override fun onDestroyView() {
@@ -52,9 +58,8 @@ class ClientListFragment: Fragment() {
                     )
                 )
             }
-            else -> {
-                // Do nothing
-            }
+            is Destination.ClientForm -> { findNavController().navigate(R.id.clientFormFragment) }
+            else -> {} // Do nothing
         }
     }
 
