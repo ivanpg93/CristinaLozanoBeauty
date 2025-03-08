@@ -3,6 +3,7 @@ package ivan.pacheco.cristinalozanobeauty
 import android.app.Application
 import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
+import ivan.pacheco.cristinalozanobeauty.utils.FirebaseManager
 
 @HiltAndroidApp
 class MainApplication: Application() {
@@ -10,7 +11,8 @@ class MainApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        WorkManager.getInstance(applicationContext)
+        FirebaseManager.init(this)
+        WorkManager.getInstance(this)
     }
 
 }
