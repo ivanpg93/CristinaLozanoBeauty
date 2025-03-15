@@ -38,6 +38,13 @@ class ClientDetailViewModel(
             "Lozano Palà",
             "651951937",
             "cristinalozano.07@gmail.com",
+            Date(),
+            "",
+            "",
+            listOf(),
+            listOf(),
+            "",
+            "",
             listOf(
                 Appointment(
                     "id cita",

@@ -23,95 +23,162 @@
             <!--Name-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/ClientForm"
                 android:hint="@string/client_form_name"
-                android:textColorHint="@color/gray"
                 app:boxStrokeColor="@color/gold"
-                app:errorEnabled="true"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="true"
-                    android:inputType="textCapWords"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/textSize" />
+                    style="@style/ClientFormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Last name-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_last_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/ClientForm"
                 android:hint="@string/client_form_last_name"
-                android:textColorHint="@color/gray"
                 app:boxStrokeColor="@color/gold"
-                app:errorEnabled="true"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_last_name_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="true"
-                    android:inputType="textCapWords"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/textSize" />
+                    style="@style/ClientFormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Phone-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_phone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/ClientForm"
                 android:hint="@string/client_form_phone"
-                android:textColorHint="@color/gray"
                 app:boxStrokeColor="@color/gold"
-                app:errorEnabled="true"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_phone_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="true"
-                    android:digits="0123456789"
-                    android:inputType="number"
-                    android:maxLength="12"
-                    android:text="@string/client_form_prefix_phone"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/textSize" />
+                    style="@style/ClientFormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Email-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_email"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/ClientForm"
                 android:hint="@string/client_form_email"
-                android:textColorHint="@color/gray"
                 app:boxStrokeColor="@color/gold"
-                app:errorEnabled="true"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_email_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="true"
-                    android:inputType="textEmailAddress"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/textSize" />
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Birthday-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_birthday"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_birthday"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_birthday_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Profession-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_profession"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_profession"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_profession_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Town-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_town"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_town"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_town_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Nail disorder-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_nail_disorder"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_nail_disorder"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_nail_disorder_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Skin disorder-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_skin_disorder"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_skin_disorder"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_skinDisorder_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Treatment-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_treatment"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_treatment"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_treatment_text"
+                    style="@style/ClientFormText"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Allergy-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_allergy"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_allergy"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_allergy_text"
+                    style="@style/ClientFormText"
+                    android:inputType="textMultiLine" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
+import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
 
 class ClientListAdapter(
-    private val onItemSelected: (Client) -> Unit
+    private val onItemSelected: (ClientListDTO) -> Unit
 ) : RecyclerView.Adapter<ClientListViewHolder>() {
 
-    private var clientList: List<Client> = emptyList()
+    private var clientList: List<ClientListDTO> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClientListViewHolder {
         return ClientListViewHolder(
@@ -27,7 +27,7 @@ class ClientListAdapter(
     override fun getItemCount(): Int = clientList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun reload(clientList: List<Client>) {
+    fun reload(clientList: List<ClientListDTO>) {
         this.clientList = clientList
         notifyDataSetChanged()
     }

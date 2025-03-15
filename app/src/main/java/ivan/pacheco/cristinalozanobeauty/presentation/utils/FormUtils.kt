@@ -11,7 +11,7 @@ object FormUtils {
     fun EditText.getTrimmedText(): String = this.text.toString().trim()
 
     fun EditText.isCorrectMobilePhone(): Boolean {
-        val phoneRegex = Regex("^6\\d{8}$|^7[1-9]\\d{7}$")
+        val phoneRegex = Regex("^(\\+34)?[67]\\d{8}$")
         return getTrimmedText().matches(phoneRegex)
     }
 

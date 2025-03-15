@@ -3,6 +3,8 @@
     <string name="nav_bar_home">Inicio</string>
     <string name="nav_bar_client">Clientas</string>
     <string name="nav_bar_message">Mensajes</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
 
     <!--Message-->
     <string name="message_label_name">Nombre:</string>
@@ -24,5 +26,14 @@
     <string name="client_form_phone">Teléfono</string>
     <string name="client_form_prefix_phone">+34</string>
     <string name="client_form_email">Email</string>
+    <string name="client_form_birthday">Fecha de nacimiento</string>
+    <string name="client_form_profession">Profesión</string>
+    <string name="client_form_town">Población</string>
+    <string name="client_form_nail_disorder">Alteraciones de las uñas</string>
+    <string name="client_form_skin_disorder">Alteraciones de la piel</string>
+    <string name="client_form_treatment">Tratamiento que se realiza</string>
+    <string name="client_form_allergy">Alergias</string>
     <string name="client_form_action_save">Guardar</string>
+    <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
+    <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
 </resources>

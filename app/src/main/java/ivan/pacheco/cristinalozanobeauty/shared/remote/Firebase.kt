@@ -1,4 +1,4 @@
-package ivan.pacheco.cristinalozanobeauty.utils
+package ivan.pacheco.cristinalozanobeauty.shared.remote
 
 import android.content.Context
 import com.google.firebase.FirebaseApp

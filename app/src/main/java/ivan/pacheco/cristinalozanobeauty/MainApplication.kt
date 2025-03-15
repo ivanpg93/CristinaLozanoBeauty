@@ -3,7 +3,7 @@ package ivan.pacheco.cristinalozanobeauty
 import android.app.Application
 import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
-import ivan.pacheco.cristinalozanobeauty.utils.FirebaseManager
+import ivan.pacheco.cristinalozanobeauty.shared.remote.FirebaseManager
 
 @HiltAndroidApp
 class MainApplication: Application() {
