@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDataRepository
 import javax.inject.Singleton
@@ -18,7 +19,8 @@ object RepositoryModule {
     @Provides
     fun providesClientRepository(
         listWS: ListClientWebService,
-        createWS: CreateClientWebService
-    ): ClientRepository = ClientDataRepository(listWS, createWS)
+        createWS: CreateClientWebService,
+        deleteWS: DeleteClientWebService
+    ): ClientRepository = ClientDataRepository(listWS, createWS, deleteWS)
 
 }

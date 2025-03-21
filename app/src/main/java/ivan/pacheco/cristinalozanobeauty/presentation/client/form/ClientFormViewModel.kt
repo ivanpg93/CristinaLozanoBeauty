@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.schedulers.Schedulers
+import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.CreateClientUC
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
@@ -20,16 +21,22 @@ class ClientFormViewModel @Inject constructor(
     private val uc: CreateClientUC
 ): ViewModel(), Navigation {
 
+    // LiveData
+
     override val navigationLD = MutableLiveData<Destination>()
-    private val errorLD = MutableLiveData<String>()
-    fun getErrorLD(): LiveData<String> = errorLD
+    private val isLoadingLD = MutableLiveData<Boolean>()
+    private val errorLD = MutableLiveData<Int>()
+
+    // Getters
+    fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
+    fun getErrorLD(): LiveData<Int> = errorLD
 
     fun actionSave(
         firstName: String,
         lastName: String,
         phone: String,
         email: String,
-        birthdate: Date,
+        birthdate: Date?,
         profession: String,
         town: String,
         nailDisorderList: List<NailDisorder>,
@@ -52,9 +59,11 @@ class ClientFormViewModel @Inject constructor(
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { isLoadingLD.value = true }
+            .doFinally { isLoadingLD.value = false }
             .subscribe(object: DisposableCompletableObserver() {
                 override fun onComplete() { navigationLD.value = Destination.Back }
-                override fun onError(e: Throwable) { errorLD.value = "No se ha podido registrar la clienta" }
+                override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
             })
     }
 

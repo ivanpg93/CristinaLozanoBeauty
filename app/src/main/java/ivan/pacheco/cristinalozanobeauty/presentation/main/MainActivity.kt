@@ -1,6 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.main
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
@@ -37,6 +38,16 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun showLoading() {
+        binding.progressOverlay.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        binding.progressOverlay.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun loadToolbar() {

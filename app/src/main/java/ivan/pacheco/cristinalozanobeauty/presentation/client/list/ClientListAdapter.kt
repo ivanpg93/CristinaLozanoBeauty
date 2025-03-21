@@ -8,7 +8,8 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
 
 class ClientListAdapter(
-    private val onItemSelected: (ClientListDTO) -> Unit
+    private val onItemSelected: (ClientListDTO) -> Unit,
+    private val onItemDeleted: (ClientListDTO) -> Unit
 ) : RecyclerView.Adapter<ClientListViewHolder>() {
 
     private var clientList: List<ClientListDTO> = emptyList()
@@ -21,7 +22,7 @@ class ClientListAdapter(
     }
 
     override fun onBindViewHolder(holder: ClientListViewHolder, position: Int) {
-        holder.bind(clientList[position], onItemSelected)
+        holder.bind(clientList[position], onItemSelected, onItemDeleted)
     }
 
     override fun getItemCount(): Int = clientList.size

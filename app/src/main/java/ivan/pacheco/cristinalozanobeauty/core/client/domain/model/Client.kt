@@ -49,14 +49,14 @@ data class Client(
     val appointmentList: List<Appointment> = listOf()
 ) {
 
-    fun toMap(): Map<String, Any> {
+    fun toMap(): Map<String, Any?> {
         return mapOf(
             "id" to id,
             "firstName" to firstName,
             "lastName" to lastName,
             "phone" to phone,
             "email" to email,
-            "birthday" to (birthday?.let { Timestamp(it) } ?: FieldValue.serverTimestamp()),
+            "birthday" to birthday?.let { Timestamp(it) },
             "profession" to profession,
             "town" to town,
             "nailDisorderList" to nailDisorderList.map { it.name },

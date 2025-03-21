@@ -5,6 +5,9 @@
     <string name="nav_bar_message">Mensajes</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="error">Error</string>
+    <string name="alert">Alerta</string>
+    <string name="information">Información</string>
 
     <!--Message-->
     <string name="message_label_name">Nombre:</string>
@@ -19,6 +22,14 @@
     <string name="client_list_add_client">Añadir clienta</string>
     <string name="client_detail_title">Clienta</string>
     <string name="client_form_title">Nueva clienta</string>
+
+    <!--Client list-->
+    <string name="client_list_error_list">No se han podido cargar las clientas</string>
+    <string name="client_list_error_delete">No se ha podido eliminar la clienta</string>
+
+    <!--Client list dialog-->
+    <string name="dialog_delete_client_title">Eliminar clienta</string>
+    <string name="dialog_delete_client_message">¿Quieres eliminar la clienta?</string>
 
     <!--Form-->
     <string name="client_form_name">Nombre</string>
@@ -36,4 +47,5 @@
     <string name="client_form_action_save">Guardar</string>
     <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
     <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
+    <string name="client_form_error_create">No se ha podido registrar la clienta</string>
 </resources>

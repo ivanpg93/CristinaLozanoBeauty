@@ -22,6 +22,8 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
 
@@ -52,6 +54,12 @@ class ClientFormFragment: Fragment() {
 
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
+
+        // Loading
+        vm.isLoadingLD().observe(viewLifecycleOwner) { isLoading -> showLoading(isLoading) }
+
+        // Error
+        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction() }
@@ -115,7 +123,7 @@ class ClientFormFragment: Fragment() {
             binding.etLastNameText.getTrimmedText(),
             binding.etPhoneText.getTrimmedText(),
             binding.etEmailText.getTrimmedText(),
-            DateUtils.parseDate(binding.etBirthdayText.getTrimmedText())!!,
+            DateUtils.parseDate(binding.etBirthdayText.getTrimmedText()),
             binding.etProfessionText.getTrimmedText(),
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),

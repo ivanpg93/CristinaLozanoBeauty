@@ -69,4 +69,25 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!--Background loading-->
+    <View
+        android:id="@+id/progress_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <!--Loading-->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_bar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:indicatorSize="50dp"
+        app:trackColor="@color/gold"
+        app:trackThickness="4dp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,4 +10,5 @@
     <color name="red">#E33E20</color>
     <color name="green">#0BAB95</color>
     <color name="transparent">#00000000</color>
+    <color name="overlay_background">#80000000</color>
 </resources>

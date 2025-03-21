@@ -9,9 +9,14 @@ class ClientListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = ItemClientBinding.bind(view)
 
-    fun bind(client: ClientListDTO, onItemSelected: (ClientListDTO) -> Unit) {
+    fun bind(
+        client: ClientListDTO,
+        onItemSelected: (ClientListDTO) -> Unit,
+        onItemDeleted: (ClientListDTO) -> Unit
+    ) {
         binding.txtName.text = "${client.firstName} ${client.lastName}"
         binding.txtPhone.text = client.phone.removePrefix("+34")
+        binding.btnDelete.setOnClickListener { onItemDeleted(client) }
         binding.root.setOnClickListener { onItemSelected(client) }
     }
 

@@ -6,12 +6,14 @@ import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientL
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import javax.inject.Inject
 
 class ClientDataRepository @Inject constructor(
     private val listWS: ListClientWebService,
-    private val createWS: CreateClientWebService
+    private val createWS: CreateClientWebService,
+    private val deleteWS: DeleteClientWebService
 ): ClientRepository {
 
     override fun list(): Single<List<ClientListDTO>> {
@@ -34,8 +36,6 @@ class ClientDataRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun delete(client: Client): Completable {
-        TODO("Not yet implemented")
-    }
+    override fun delete(client: ClientListDTO): Completable = deleteWS.deleteClient(client)
 
 }

@@ -9,5 +9,5 @@ interface ClientRepository {
     fun list(): Single<List<ClientListDTO>>
     fun create(client: Client): Completable
     fun update(client: Client): Completable
-    fun delete(client: Client): Completable
+    fun delete(client: ClientListDTO): Completable
 }

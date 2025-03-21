@@ -11,6 +11,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ClientListFragmentBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 
 @AndroidEntryPoint
 class ClientListFragment: Fragment() {
@@ -32,16 +35,36 @@ class ClientListFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = ClientListAdapter(onItemSelected = { client ->
-            navigate(Destination.ClientDetail(client.id))
-        })
+        val adapter = ClientListAdapter(
+            onItemSelected = { client -> navigate(Destination.ClientDetail(client.id)) },
+            onItemDeleted = { client ->
+                DialogUtils.createDialog(
+                    requireContext(),
+                    getString(R.string.dialog_delete_client_title),
+                    getString(R.string.dialog_delete_client_message)
+                ) { vm.actionDeleteClient(client) }
+            }
+        )
         binding.rvClients.adapter = adapter
 
         // Load clients
         vm.getClientsLD().observe(viewLifecycleOwner) { clients -> adapter.reload(clients) }
 
+        // Loading
+        vm.isLoadingLD().observe(viewLifecycleOwner) { isLoading -> showLoading(isLoading) }
+
+        // Error
+        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
+
         // Action add client
         binding.btnAddClient.setOnClickListener { navigate(Destination.ClientForm) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Load clients when arrive this screen
+        vm.loadData()
     }
 
     override fun onDestroyView() {

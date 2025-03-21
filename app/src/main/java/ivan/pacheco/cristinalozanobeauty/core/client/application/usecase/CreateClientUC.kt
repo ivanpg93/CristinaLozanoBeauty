@@ -15,7 +15,7 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
         lastName: String,
         phone: String,
         email: String,
-        birthdate: Date,
+        birthdate: Date?,
         profession: String,
         town: String,
         nailDisorderList: List<NailDisorder>,
