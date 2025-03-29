@@ -170,7 +170,8 @@ class ClientFormFragment: Fragment() {
         selectedOptions: Set<T>,
         onSelected: (List<T>) -> Unit
     ) {
-        val items = enumValues.map { it.name.replace("_", " ").lowercase().replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
+        val items = enumValues.map { it.name.replace("_", " ").lowercase()
+            .replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
         val checkedItems = enumValues.map { it in selectedOptions }.toBooleanArray()
         val selectedList = selectedOptions.toMutableSet()
 
@@ -191,7 +192,6 @@ class ClientFormFragment: Fragment() {
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
-
 
     private fun navigate(destination: Destination) {
         when(destination) {

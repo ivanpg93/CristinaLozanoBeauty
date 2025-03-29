@@ -7,35 +7,36 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import javax.inject.Inject
 
 class ClientDataRepository @Inject constructor(
     private val listWS: ListClientWebService,
+    private val findWS: FindClientWebService,
     private val createWS: CreateClientWebService,
+    private val updateWS: UpdateClientWebService,
     private val deleteWS: DeleteClientWebService
 ): ClientRepository {
 
     override fun list(): Single<List<ClientListDTO>> {
-        return listWS.listClient()
+        return listWS.fetch()
             .map { clientList ->
                 clientList.map { client ->
                     ClientListDTO(
-                        id = client.id,
-                        firstName = client.firstName,
-                        lastName = client.lastName,
-                        phone = client.phone
+                        client.id,
+                        client.firstName,
+                        client.lastName,
+                        client.phone
                     )
                 }
             }
     }
 
-    override fun create(client: Client): Completable = createWS.createClient(client)
-
-    override fun update(client: Client): Completable {
-        TODO("Not yet implemented")
-    }
-
+    override fun find(id: String): Single<Client> = findWS.fetch(id)
+    override fun create(client: Client): Completable = createWS.fetch(client)
+    override fun update(client: Client): Completable = updateWS.fetch(client)
     override fun delete(client: ClientListDTO): Completable = deleteWS.deleteClient(client)
 
 }

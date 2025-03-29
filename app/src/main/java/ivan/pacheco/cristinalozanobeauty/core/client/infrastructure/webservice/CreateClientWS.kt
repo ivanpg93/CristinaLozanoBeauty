@@ -7,16 +7,24 @@ import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
 class CreateClientWS: CreateClientWebService {
 
-    override fun createClient(client: Client): Completable {
-        val clientId = Firestore.db.collection("clients").document().id // Genera un ID único
-        val clientData = client.copy(id = clientId) // Actualiza el ID en el objeto `Client`
+    private companion object {
+        const val CLIENTS = "clients"
+    }
+
+    override fun fetch(client: Client): Completable {
+
+        // Create id for client document
+        val clientId = Firestore.db.collection(CLIENTS).document().id
+
+        // Update id client
+        val clientData = client.copy(id = clientId)
 
         return Completable.create { emitter ->
-            Firestore.db.collection("clients")
+            Firestore.db.collection(CLIENTS)
                 .document(clientId)
-                .set(clientData.toMap()) // Convierte el objeto a Map
+                .set(clientData.toMap())
                 .addOnSuccessListener { emitter.onComplete() }
-                .addOnFailureListener { e -> emitter.onError(e) }
+                .addOnFailureListener { error -> emitter.onError(error) }
         }
     }
 

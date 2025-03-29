@@ -1,20 +1,20 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice
 
 import io.reactivex.Completable
-import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
-class DeleteClientWS: DeleteClientWebService {
+class UpdateClientWS: UpdateClientWebService {
 
     private companion object {
         const val CLIENTS = "clients"
     }
 
-    override fun deleteClient(client: ClientListDTO): Completable = Completable.create { emitter ->
+    override fun fetch(client: Client): Completable = Completable.create { emitter ->
         Firestore.db.collection(CLIENTS)
             .document(client.id)
-            .delete()
+            .set(client.toMap())
             .addOnSuccessListener { emitter.onComplete() }
             .addOnFailureListener { error -> emitter.onError(error) }
     }

@@ -14,6 +14,11 @@ object DateUtils {
         return sdf.format(Date(timestamp))
     }
 
+    fun formatDate(date: Date, pattern: String = DATE_FORMAT): String {
+        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        return sdf.format(date)
+    }
+
     fun parseDate(dateString: String, pattern: String = DATE_FORMAT): Date? {
         return try {
             val sdf = SimpleDateFormat(pattern, Locale.getDefault())

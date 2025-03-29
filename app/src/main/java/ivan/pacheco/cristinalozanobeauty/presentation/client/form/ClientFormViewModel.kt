@@ -22,7 +22,6 @@ class ClientFormViewModel @Inject constructor(
 ): ViewModel(), Navigation {
 
     // LiveData
-
     override val navigationLD = MutableLiveData<Destination>()
     private val isLoadingLD = MutableLiveData<Boolean>()
     private val errorLD = MutableLiveData<Int>()
@@ -31,6 +30,7 @@ class ClientFormViewModel @Inject constructor(
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
 
+    // Actions
     fun actionSave(
         firstName: String,
         lastName: String,

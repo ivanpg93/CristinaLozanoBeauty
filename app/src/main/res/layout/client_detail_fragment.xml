@@ -1,6 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/padding">
+
+    <!--Scrollview-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--Form-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--Name-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_name"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_name"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_name_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Last name-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_last_name"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_last_name"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_last_name_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Phone-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_phone"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_phone"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_phone_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Email-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_email"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_email"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_email_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Birthday-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_birthday"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_birthday"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_birthday_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Profession-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_profession"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_profession"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_profession_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Town-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_town"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_town"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_town_text"
+                    style="@style/ClientFormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Nail disorder-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_nail_disorder"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_nail_disorder"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_nail_disorder_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Skin disorder-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_skin_disorder"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_skin_disorder"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_skinDisorder_text"
+                    style="@style/ClientFormText"
+                    android:focusable="false"
+                    android:inputType="none"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Treatment-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_treatment"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_treatment"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_treatment_text"
+                    style="@style/ClientFormText"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Allergy-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_allergy"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_allergy"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_allergy_text"
+                    style="@style/ClientFormText"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Button save-->
+            <Button
+                android:id="@+id/btn_save"
+                style="@style/Button"
+                android:layout_marginVertical="@dimen/margin"
+                android:text="@string/client_form_action_save"
+                app:backgroundTint="@color/light_gold" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

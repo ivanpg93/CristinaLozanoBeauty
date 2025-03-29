@@ -48,4 +48,5 @@
     <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
     <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
     <string name="client_form_error_create">No se ha podido registrar la clienta</string>
+    <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
 </resources>

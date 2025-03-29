@@ -7,6 +7,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 
 interface ClientRepository {
     fun list(): Single<List<ClientListDTO>>
+    fun find(id: String): Single<Client>
     fun create(client: Client): Completable
     fun update(client: Client): Completable
     fun delete(client: ClientListDTO): Completable
