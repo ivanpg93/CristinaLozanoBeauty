@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity() {
 
         // Load toolbar
         loadToolbar()
+
+        // Navigate back or close app if are on any of home screens
+        onBackPressedDispatcher.addCallback(this) {
+            if (!navController.popBackStack()) onBackPressedDispatcher.onBackPressed()
+        }
 
         // Load bottom navigation
         loadBottomNavBar()

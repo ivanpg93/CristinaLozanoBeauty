@@ -18,7 +18,7 @@
             android:id="@+id/btn_add_client"
             style="@style/Button"
             android:text="@string/client_list_add_client"
-            app:backgroundTint="@color/light_gold" />
+            app:backgroundTint="@color/gold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_clients"

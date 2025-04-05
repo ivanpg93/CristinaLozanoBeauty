@@ -14,4 +14,10 @@
     <dimen name="toolbarTextSize">28sp</dimen>
     <dimen name="textSize">20sp</dimen>
 
+    <!--RadioButton-->
+    <dimen name="rbMargin">16dp</dimen>
+
+    <!--Separator-->
+    <dimen name="separatorMargin">8dp</dimen>
+
 </resources>

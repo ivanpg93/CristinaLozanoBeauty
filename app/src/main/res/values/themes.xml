@@ -35,6 +35,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:layout_marginVertical">4dp</item>
+        <item name="colorOutline">@color/black</item>
     </style>
 
     <!--Client form text-->
@@ -58,6 +59,21 @@
 
     <style name="CalendarHeaderLayout" parent="@style/Widget.Material3.MaterialCalendar.HeaderLayout">
         <item name="android:visibility">gone</item>
+    </style>
+
+    <!--Client form radio group-->
+    <style name="ClientFormRadioGroup">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <!--Client form radio button-->
+    <style name="ClientFormRadioButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/textSize</item>
     </style>
 
     <!--Checkbox-->

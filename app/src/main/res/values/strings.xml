@@ -8,6 +8,8 @@
     <string name="error">Error</string>
     <string name="alert">Alerta</string>
     <string name="information">Información</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
 
     <!--Message-->
     <string name="message_label_name">Nombre:</string>
@@ -47,6 +49,12 @@
     <string name="client_form_action_save">Guardar</string>
     <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
     <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
+    <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
+    <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
+
+    <!--Form error-->
+    <string name="client_form_error_phone">Introduce un teléfono correcto</string>
+    <string name="client_form_error_mandatory_fields">Rellena todos los campos obligatorios antes de continuar</string>
     <string name="client_form_error_create">No se ha podido registrar la clienta</string>
     <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
 </resources>

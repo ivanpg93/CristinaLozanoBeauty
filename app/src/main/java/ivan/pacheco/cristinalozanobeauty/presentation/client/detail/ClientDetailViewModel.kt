@@ -62,7 +62,9 @@ class ClientDetailViewModel @Inject constructor(
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
         treatment: String,
-        allergy: String
+        allergy: String,
+        diabetes: Boolean,
+        poorCoagulation: Boolean
     ) {
         uc.execute(
             id,
@@ -76,7 +78,9 @@ class ClientDetailViewModel @Inject constructor(
             nailDisorderList,
             skinDisorderList,
             treatment,
-            allergy
+            allergy,
+            diabetes,
+            poorCoagulation
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

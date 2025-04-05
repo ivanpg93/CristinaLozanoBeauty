@@ -73,4 +73,25 @@ object DialogUtils {
         return dialog
     }
 
+    fun showAlert(
+        context: Context,
+        message: String,
+        color: Int = ContextCompat.getColor(context, R.color.gold)
+    ): AlertDialog {
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.alert)
+            .setMessage(message)
+            .setPositiveButton(R.string.accept, null)
+            .create()
+
+        // Set color of buttons
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(color)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(color)
+        }
+
+        dialog.show()
+        return dialog
+    }
+
 }

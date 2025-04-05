@@ -22,7 +22,9 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
         treatment: String,
-        allergy: String
+        allergy: String,
+        diabetes: Boolean,
+        poorCoagulation: Boolean
     ): Completable {
         val client = Client(
             id,
@@ -36,7 +38,9 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
             nailDisorderList,
             skinDisorderList,
             treatment,
-            allergy
+            allergy,
+            diabetes,
+            poorCoagulation
         )
 
         return repository.update(client)

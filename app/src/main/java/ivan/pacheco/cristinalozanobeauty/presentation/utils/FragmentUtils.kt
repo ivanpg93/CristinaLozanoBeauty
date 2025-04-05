@@ -11,5 +11,6 @@ object FragmentUtils {
     }
 
     fun Fragment.showError(error: Int) { DialogUtils.showError(requireContext(), getString(error)) }
+    fun Fragment.showAlert(message: Int) { DialogUtils.showAlert(requireContext(), getString(message)) }
 
 }

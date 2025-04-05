@@ -58,7 +58,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_phone_text"
-                    style="@style/ClientFormText" />
+                    style="@style/ClientFormText"
+                    android:inputType="phone"
+                    android:maxLength="12" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,7 +74,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_email_text"
-                    style="@style/ClientFormText" />
+                    style="@style/ClientFormText"
+                    android:inputType="textEmailAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -132,7 +135,7 @@
                     android:id="@+id/et_nail_disorder_text"
                     style="@style/ClientFormText"
                     android:focusable="false"
-                    android:inputType="none"/>
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -148,7 +151,7 @@
                     android:id="@+id/et_skinDisorder_text"
                     style="@style/ClientFormText"
                     android:focusable="false"
-                    android:inputType="none"/>
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -182,13 +185,79 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!--Diabetes-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/client_form_has_diabetes"
+                    android:textSize="@dimen/textSize" />
+
+                <RadioGroup
+                    android:id="@+id/rg_has_diabetes"
+                    style="@style/ClientFormRadioGroup">
+
+                    <RadioButton
+                        android:id="@+id/rb_diabetes_yes"
+                        style="@style/ClientFormRadioButton"
+                        android:text="@string/yes"
+                        app:buttonTint="@color/gold" />
+
+                    <RadioButton
+                        android:id="@+id/rb_diabetes_no"
+                        style="@style/ClientFormRadioButton"
+                        android:layout_marginStart="@dimen/rbMargin"
+                        android:text="@string/no"
+                        app:buttonTint="@color/gold" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!--Poor coagulation-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/client_form_has_poor_coagulation"
+                    android:textSize="@dimen/textSize" />
+
+                <RadioGroup
+                    android:id="@+id/rg_has_poor_coagulation"
+                    style="@style/ClientFormRadioGroup">
+
+                    <RadioButton
+                        android:id="@+id/rb_poor_coagulation_yes"
+                        style="@style/ClientFormRadioButton"
+                        android:text="@string/yes"
+                        app:buttonTint="@color/gold" />
+
+                    <RadioButton
+                        android:id="@+id/rb_poor_coagulation_no"
+                        style="@style/ClientFormRadioButton"
+                        android:layout_marginStart="@dimen/rbMargin"
+                        android:text="@string/no"
+                        app:buttonTint="@color/gold" />
+                </RadioGroup>
+
+            </LinearLayout>
+
             <!--Button save-->
             <Button
                 android:id="@+id/btn_save"
                 style="@style/Button"
                 android:layout_marginVertical="@dimen/margin"
                 android:text="@string/client_form_action_save"
-                app:backgroundTint="@color/light_gold" />
+                app:backgroundTint="@color/gold" />
 
         </LinearLayout>
     </ScrollView>

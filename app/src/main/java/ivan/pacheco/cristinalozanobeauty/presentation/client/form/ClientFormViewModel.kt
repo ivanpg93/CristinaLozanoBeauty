@@ -42,7 +42,9 @@ class ClientFormViewModel @Inject constructor(
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
         treatment: String,
-        allergy: String
+        allergy: String,
+        diabetes: Boolean,
+        poorCoagulation: Boolean
     ) {
         uc.execute(
             firstName,
@@ -55,7 +57,9 @@ class ClientFormViewModel @Inject constructor(
             nailDisorderList,
             skinDisorderList,
             treatment,
-            allergy
+            allergy,
+            diabetes,
+            poorCoagulation
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

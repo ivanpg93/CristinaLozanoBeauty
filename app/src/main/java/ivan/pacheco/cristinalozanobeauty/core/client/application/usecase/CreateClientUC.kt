@@ -21,8 +21,12 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
         treatment: String,
-        allergy: String
+        allergy: String,
+        hasDiabetes: Boolean,
+        hasPoorCoagulation: Boolean
     ): Completable {
+
+        // Create client. Id will set from Firebase
         val client = Client(
             "",
             firstName,
@@ -35,7 +39,9 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
             nailDisorderList,
             skinDisorderList,
             treatment,
-            allergy
+            allergy,
+            hasDiabetes,
+            hasPoorCoagulation
         )
 
         return repository.create(client)

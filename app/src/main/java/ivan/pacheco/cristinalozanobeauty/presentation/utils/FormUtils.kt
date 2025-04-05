@@ -15,7 +15,6 @@ object FormUtils {
         return getTrimmedText().matches(phoneRegex)
     }
 
-
     /**
      * Enable form button when required fields are filled
      * @param requiredFields: List of required input fields
@@ -28,7 +27,7 @@ object FormUtils {
 
         // Update button UI according to state
         fun updateButtonUI() {
-            val colorRes = if (button.isEnabled) R.color.light_gold else R.color.gray
+            val colorRes = if (button.isEnabled) R.color.gold else R.color.gray
             button.setBackgroundColor(ContextCompat.getColor(button.context, colorRes))
         }
 
@@ -54,6 +53,5 @@ object FormUtils {
         // Listen required fields on text change
         requiredFields.forEach { field -> field.editText?.addTextChangedListener(textWatcher) }
     }
-
 
 }

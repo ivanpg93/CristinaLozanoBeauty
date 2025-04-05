@@ -24,6 +24,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
@@ -74,10 +75,13 @@ class ClientDetailFragment: Fragment() {
 
         // Input phone
         val prefix = getString(R.string.client_form_prefix_phone)
-        binding.etPhoneText.addTextChangedListener { phoneText ->
-            if (phoneText != null && !phoneText.startsWith(prefix)) {
-                binding.etPhoneText.setText(prefix)
-                binding.etPhoneText.setSelection(prefix.length)
+        binding.etPhoneText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val text = binding.etPhoneText.text?.toString()
+                if (text.isNullOrEmpty()) {
+                    binding.etPhoneText.setText(prefix)
+                    binding.etPhoneText.setSelection(prefix.length)
+                }
             }
         }
 
@@ -146,14 +150,43 @@ class ClientDetailFragment: Fragment() {
 
             etTreatmentText.setText(client.treatment)
             etAllergyText.setText(client.allergy)
+
+            rbDiabetesYes.isChecked = client.hasDiabetes
+            rbDiabetesNo.isChecked = !client.hasDiabetes
+
+            rbPoorCoagulationYes.isChecked = client.hasPoorCoagulation
+            rbPoorCoagulationNo.isChecked = !client.hasPoorCoagulation
         }
     }
 
     private fun saveAction() {
-        if (!validateForm()) return
 
         // Hide keyboard
         hide(binding.btnSave)
+
+        // Input diabetes selector
+        val hasDiabetes = when (binding.rgHasDiabetes.checkedRadioButtonId) {
+            R.id.rb_diabetes_yes -> true
+            R.id.rb_diabetes_no -> false
+            else -> null
+        }
+
+        // Input poor coagulation selector
+        val hasPoorCoagulation = when (binding.rgHasPoorCoagulation.checkedRadioButtonId) {
+            R.id.rb_poor_coagulation_yes -> true
+            R.id.rb_poor_coagulation_no -> false
+            else -> null
+        }
+
+        if (!validatePhone()) {
+            showAlert(R.string.client_form_error_phone)
+            return
+        }
+
+        if (hasDiabetes == null || hasPoorCoagulation == null) {
+            showAlert(R.string.client_form_error_mandatory_fields)
+            return
+        }
 
         vm.actionUpdateClient(
             clientId,
@@ -167,14 +200,16 @@ class ClientDetailFragment: Fragment() {
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
             binding.etTreatmentText.getTrimmedText(),
-            binding.etAllergyText.getTrimmedText()
+            binding.etAllergyText.getTrimmedText(),
+            binding.rbDiabetesYes.isChecked,
+            binding.rbDiabetesNo.isChecked
         )
     }
 
     /**
      * Check if phone is correct number only if exists
      */
-    private fun validateForm(): Boolean =
+    private fun validatePhone(): Boolean =
         binding.etPhoneText.text.toString().isEmpty() || binding.etPhoneText.isCorrectMobilePhone()
 
     private fun <T: Enum<T>> setupMultiChoiceInput(

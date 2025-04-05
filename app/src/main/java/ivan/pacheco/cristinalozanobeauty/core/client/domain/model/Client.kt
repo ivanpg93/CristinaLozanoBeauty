@@ -1,7 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.domain.model
 
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FieldValue
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import java.util.Date
 
@@ -46,6 +45,8 @@ data class Client(
     val skinDisorderList: List<SkinDisorder> = listOf(),
     val treatment: String = "",
     val allergy: String = "",
+    val hasDiabetes: Boolean = false,
+    val hasPoorCoagulation: Boolean = false,
     val appointmentList: List<Appointment> = listOf()
 ) {
 
@@ -62,7 +63,9 @@ data class Client(
             "nailDisorderList" to nailDisorderList.map { it.name },
             "skinDisorderList" to skinDisorderList.map { it.name },
             "treatment" to treatment,
-            "allergy" to allergy
+            "allergy" to allergy,
+            "hasDiabetes" to hasDiabetes,
+            "hasPoorCoagulation" to hasPoorCoagulation
         )
     }
 
