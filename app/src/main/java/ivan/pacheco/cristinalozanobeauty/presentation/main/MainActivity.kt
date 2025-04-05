@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         // Navigate back or close app if are on any of home screens
         onBackPressedDispatcher.addCallback(this) {
-            if (!navController.popBackStack()) onBackPressedDispatcher.onBackPressed()
+            if (!navController.popBackStack()) finish()
         }
 
         // Load bottom navigation
