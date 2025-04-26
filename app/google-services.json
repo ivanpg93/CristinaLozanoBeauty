@@ -12,7 +12,20 @@
           "package_name": "ivan.pacheco.cristinalozanobeauty"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "217437853819-ctpejp011qum1u22e2gvsspkqviifb04.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ivan.pacheco.cristinalozanobeauty",
+            "certificate_hash": "02ba6dc90e0d5fe4c2c2e30219b0737b62ca8d38"
+          }
+        },
+        {
+          "client_id": "217437853819-ohqt67v4ioejvkjvkha2dlmj6gh1sr36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCm3zmZvinCR0nMAPi8p1dnqIVO5axqwlg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "217437853819-ohqt67v4ioejvkjvkha2dlmj6gh1sr36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

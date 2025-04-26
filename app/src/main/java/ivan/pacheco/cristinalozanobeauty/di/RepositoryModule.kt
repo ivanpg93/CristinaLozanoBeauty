@@ -11,6 +11,9 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClien
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDataRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.home.CalendarDataRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.home.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.home.GoogleCalendarApi
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +29,11 @@ object RepositoryModule {
         updateWS: UpdateClientWebService,
         deleteWS: DeleteClientWebService
     ): ClientRepository = ClientDataRepository(listWS, findWS, createWS, updateWS, deleteWS)
+
+    @Singleton
+    @Provides
+    fun provideCalendarRepository(
+        googleCalendarApi: GoogleCalendarApi
+    ): CalendarRepository = CalendarDataRepository(googleCalendarApi)
 
 }
