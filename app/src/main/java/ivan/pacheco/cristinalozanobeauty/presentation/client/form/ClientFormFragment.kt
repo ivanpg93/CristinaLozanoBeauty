@@ -26,16 +26,9 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showEr
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
-import java.util.Calendar
-import java.util.TimeZone
 
 @AndroidEntryPoint
 class ClientFormFragment: Fragment() {
-
-    private companion object {
-        const val FORMAT_DATE_UTC = "UTC"
-        const val ADULT_YEAR = 18
-    }
 
     private var _binding: ClientFormFragmentBinding? = null
     private val binding get() = _binding!!
@@ -125,13 +118,8 @@ class ClientFormFragment: Fragment() {
      * If there is value, it is displayed.
      * If not, get date from 18 years ago is displayed
      */
-    private fun getInitialDate(dateStr: String): Long {
-        return dateStr.takeIf { it.isNotBlank() }?.let {
-            runCatching { DateUtils.parseDate(it)?.time }.getOrNull()
-        }
-            ?: Calendar.getInstance(TimeZone.getTimeZone(FORMAT_DATE_UTC)).apply {
-                add(Calendar.YEAR, -ADULT_YEAR)
-            }.timeInMillis
+    private fun getInitialDate(dateStr: String): Long? {
+        return dateStr.takeIf { it.isNotBlank() }?.let { DateUtils.parseDate(it)?.time }
     }
 
     private fun saveAction() {
