@@ -24,7 +24,8 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
         treatment: String,
         allergy: String,
         diabetes: Boolean,
-        poorCoagulation: Boolean
+        poorCoagulation: Boolean,
+        others: String
     ): Completable {
         val client = Client(
             id,
@@ -40,7 +41,8 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
             treatment,
             allergy,
             diabetes,
-            poorCoagulation
+            poorCoagulation,
+            others
         )
 
         return repository.update(client)

@@ -64,8 +64,16 @@ class ClientDetailViewModel @Inject constructor(
         treatment: String,
         allergy: String,
         diabetes: Boolean,
-        poorCoagulation: Boolean
+        poorCoagulation: Boolean,
+        others: String
     ) {
+        // Check mandatory fields before continue to create client
+        if (!checkMandatoryFields(listOf(firstName, lastName, phone))) {
+            errorLD.value = R.string.client_form_error_mandatory_fields
+            return
+        }
+
+        // Update client action
         uc.execute(
             id,
             firstName,
@@ -80,7 +88,8 @@ class ClientDetailViewModel @Inject constructor(
             treatment,
             allergy,
             diabetes,
-            poorCoagulation
+            poorCoagulation,
+            others
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -103,5 +112,10 @@ class ClientDetailViewModel @Inject constructor(
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_find }
             })
     }
+
+    /**
+     * Check if mandatory fields are empty
+     */
+    private fun checkMandatoryFields(mandatoryFields: List<String>) = !mandatoryFields.any { it.isBlank() }
 
 }

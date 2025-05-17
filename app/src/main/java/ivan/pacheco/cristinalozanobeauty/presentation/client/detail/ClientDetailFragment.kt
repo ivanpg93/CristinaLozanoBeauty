@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,9 +28,16 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showEr
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
+import java.util.Calendar
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class ClientDetailFragment: Fragment() {
+
+    private companion object {
+        const val FORMAT_DATE_UTC = "UTC"
+        const val ADULT_YEAR = 18
+    }
 
     private var _binding: ClientDetailFragmentBinding? = null
     private val binding get() = _binding!!
@@ -89,16 +95,15 @@ class ClientDetailFragment: Fragment() {
         binding.etBirthdayText.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTheme(R.style.ClientFormDatePicker)
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+                .setSelection(getInitialDate(binding.etBirthdayText.getTrimmedText()))
+                .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
 
             datePicker.show(childFragmentManager, "")
 
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
-                val dateString = DateUtils.formatDate(selectedDate)
-                binding.etBirthdayText.setText(dateString)
+                binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
             }
         }
 
@@ -148,7 +153,7 @@ class ClientDetailFragment: Fragment() {
             selectedSkinDisorders.addAll(client.skinDisorderList)
             etSkinDisorderText.setText(selectedSkinDisorders.formatSelection())
 
-            etTreatmentText.setText(client.treatment)
+            etMedicationText.setText(client.medication)
             etAllergyText.setText(client.allergy)
 
             rbDiabetesYes.isChecked = client.hasDiabetes
@@ -157,6 +162,19 @@ class ClientDetailFragment: Fragment() {
             rbPoorCoagulationYes.isChecked = client.hasPoorCoagulation
             rbPoorCoagulationNo.isChecked = !client.hasPoorCoagulation
         }
+    }
+
+    /**
+     * If there is value, it is displayed.
+     * If not, get date from 18 years ago is displayed
+     */
+    private fun getInitialDate(dateStr: String): Long {
+        return dateStr.takeIf { it.isNotBlank() }?.let {
+            runCatching { DateUtils.parseDate(it)?.time }.getOrNull()
+        }
+            ?: Calendar.getInstance(TimeZone.getTimeZone(FORMAT_DATE_UTC)).apply {
+                add(Calendar.YEAR, -ADULT_YEAR)
+            }.timeInMillis
     }
 
     private fun saveAction() {
@@ -178,16 +196,19 @@ class ClientDetailFragment: Fragment() {
             else -> null
         }
 
+        // Validate phone
         if (!validatePhone()) {
             showAlert(R.string.client_form_error_phone)
             return
         }
 
+        // Check mandatory fields
         if (hasDiabetes == null || hasPoorCoagulation == null) {
             showAlert(R.string.client_form_error_mandatory_fields)
             return
         }
 
+        // Update client action
         vm.actionUpdateClient(
             clientId,
             binding.etNameText.getTrimmedText(),
@@ -199,10 +220,11 @@ class ClientDetailFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            binding.etTreatmentText.getTrimmedText(),
+            binding.etMedicationText.getTrimmedText(),
             binding.etAllergyText.getTrimmedText(),
             binding.rbDiabetesYes.isChecked,
-            binding.rbDiabetesNo.isChecked
+            binding.rbDiabetesNo.isChecked,
+            binding.etOthersText.getTrimmedText()
         )
     }
 

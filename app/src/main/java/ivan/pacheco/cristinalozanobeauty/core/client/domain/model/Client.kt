@@ -43,30 +43,30 @@ data class Client(
     val town: String = "",
     val nailDisorderList: List<NailDisorder> = listOf(),
     val skinDisorderList: List<SkinDisorder> = listOf(),
-    val treatment: String = "",
+    val medication: String = "",
     val allergy: String = "",
     val hasDiabetes: Boolean = false,
     val hasPoorCoagulation: Boolean = false,
+    val others: String = "",
     val appointmentList: List<Appointment> = listOf()
 ) {
 
-    fun toMap(): Map<String, Any?> {
-        return mapOf(
-            "id" to id,
-            "firstName" to firstName,
-            "lastName" to lastName,
-            "phone" to phone,
-            "email" to email,
-            "birthday" to birthday?.let { Timestamp(it) },
-            "profession" to profession,
-            "town" to town,
-            "nailDisorderList" to nailDisorderList.map { it.name },
-            "skinDisorderList" to skinDisorderList.map { it.name },
-            "treatment" to treatment,
-            "allergy" to allergy,
-            "hasDiabetes" to hasDiabetes,
-            "hasPoorCoagulation" to hasPoorCoagulation
-        )
-    }
+    fun toMap() = mapOf(
+        "id" to id,
+        "firstName" to firstName,
+        "lastName" to lastName,
+        "phone" to phone,
+        "email" to email,
+        "birthday" to birthday?.let { Timestamp(it) },
+        "profession" to profession,
+        "town" to town,
+        "nailDisorderList" to nailDisorderList.map { it.name },
+        "skinDisorderList" to skinDisorderList.map { it.name },
+        "medication" to medication,
+        "allergy" to allergy,
+        "hasDiabetes" to hasDiabetes,
+        "hasPoorCoagulation" to hasPoorCoagulation,
+        "others" to others
+    )
 
 }

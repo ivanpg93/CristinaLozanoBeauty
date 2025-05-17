@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -27,9 +26,16 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showEr
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
+import java.util.Calendar
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class ClientFormFragment: Fragment() {
+
+    private companion object {
+        const val FORMAT_DATE_UTC = "UTC"
+        const val ADULT_YEAR = 18
+    }
 
     private var _binding: ClientFormFragmentBinding? = null
     private val binding get() = _binding!!
@@ -81,16 +87,15 @@ class ClientFormFragment: Fragment() {
         binding.etBirthdayText.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTheme(R.style.ClientFormDatePicker)
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+                .setSelection(getInitialDate(binding.etBirthdayText.getTrimmedText()))
+                .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
 
             datePicker.show(childFragmentManager, "")
 
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
-                val dateString = DateUtils.formatDate(selectedDate)
-                binding.etBirthdayText.setText(dateString)
+                binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
             }
         }
 
@@ -116,6 +121,19 @@ class ClientFormFragment: Fragment() {
         _binding = null
     }
 
+    /**
+     * If there is value, it is displayed.
+     * If not, get date from 18 years ago is displayed
+     */
+    private fun getInitialDate(dateStr: String): Long {
+        return dateStr.takeIf { it.isNotBlank() }?.let {
+            runCatching { DateUtils.parseDate(it)?.time }.getOrNull()
+        }
+            ?: Calendar.getInstance(TimeZone.getTimeZone(FORMAT_DATE_UTC)).apply {
+                add(Calendar.YEAR, -ADULT_YEAR)
+            }.timeInMillis
+    }
+
     private fun saveAction() {
 
         // Hide keyboard
@@ -135,16 +153,19 @@ class ClientFormFragment: Fragment() {
             else -> null
         }
 
+        // Validate phone
         if (!validatePhone()) {
             showAlert(R.string.client_form_error_phone)
             return
         }
 
+        // Check mandatory fields
         if (hasDiabetes == null || hasPoorCoagulation == null) {
             showAlert(R.string.client_form_error_mandatory_fields)
             return
         }
 
+        // Create client action
         vm.actionSave(
             binding.etNameText.getTrimmedText(),
             binding.etLastNameText.getTrimmedText(),
@@ -155,10 +176,11 @@ class ClientFormFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            binding.etTreatmentText.getTrimmedText(),
+            binding.etMedicationText.getTrimmedText(),
             binding.etAllergyText.getTrimmedText(),
             hasDiabetes,
-            hasPoorCoagulation
+            hasPoorCoagulation,
+            binding.etOthersText.getTrimmedText()
         )
     }
 
