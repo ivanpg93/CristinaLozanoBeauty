@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ClientListFragmentBinding
@@ -14,6 +15,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
+import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
 @AndroidEntryPoint
 class ClientListFragment: Fragment() {
@@ -28,6 +30,7 @@ class ClientListFragment: Fragment() {
     ): View {
         super.onCreate(savedInstanceState)
         _binding = ClientListFragmentBinding.inflate(layoutInflater)
+        // TODO: migrateFieldClients("treatment", "medication")
 
         return binding.root
     }
@@ -83,6 +86,23 @@ class ClientListFragment: Fragment() {
             }
             is Destination.ClientForm -> { findNavController().navigate(R.id.clientFormFragment) }
             else -> {} // Do nothing
+        }
+    }
+
+    private fun migrateFieldClients(oldField: String, newField: String) {
+        val clientsRef = Firestore.db.collection("clients")
+
+        clientsRef.get().addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot.documents) {
+                val value = document.get(oldField)
+                if (value != null) {
+                    val updates = mapOf(
+                        newField to value,
+                        oldField to FieldValue.delete()
+                    )
+                    document.reference.update(updates)
+                }
+            }
         }
     }
 
