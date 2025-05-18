@@ -214,23 +214,36 @@
                     android:text="@string/client_form_has_diabetes"
                     android:textSize="@dimen/textSize" />
 
-                <RadioGroup
-                    android:id="@+id/rg_has_diabetes"
-                    style="@style/ClientFormRadioGroup">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/rb_diabetes_yes"
-                        style="@style/ClientFormRadioButton"
-                        android:text="@string/yes"
-                        app:buttonTint="@color/gold" />
+                    <RadioGroup
+                        android:id="@+id/rg_has_diabetes"
+                        style="@style/ClientFormRadioGroup">
 
-                    <RadioButton
-                        android:id="@+id/rb_diabetes_no"
-                        style="@style/ClientFormRadioButton"
-                        android:layout_marginStart="@dimen/rbMargin"
-                        android:text="@string/no"
-                        app:buttonTint="@color/gold" />
-                </RadioGroup>
+                        <RadioButton
+                            android:id="@+id/rb_diabetes_yes"
+                            style="@style/ClientFormRadioButton"
+                            android:text="@string/yes"
+                            app:buttonTint="@color/gold" />
+
+                        <RadioButton
+                            android:id="@+id/rb_diabetes_no"
+                            style="@style/ClientFormRadioButton"
+                            android:layout_marginStart="@dimen/rbMargin"
+                            android:text="@string/no"
+                            app:buttonTint="@color/gold" />
+                    </RadioGroup>
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_palette_colors"
+                        app:tint="@color/gold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -246,6 +259,11 @@
                     android:layout_height="wrap_content"
                     android:text="@string/client_form_has_poor_coagulation"
                     android:textSize="@dimen/textSize" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                 <RadioGroup
                     android:id="@+id/rg_has_poor_coagulation"
@@ -264,6 +282,14 @@
                         android:text="@string/no"
                         app:buttonTint="@color/gold" />
                 </RadioGroup>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_events"
+                    app:tint="@color/gold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
