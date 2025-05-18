@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.databinding.ClientDetailFragmentBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
@@ -37,6 +38,7 @@ class ClientDetailFragment: Fragment() {
     private val vm: ClientDetailViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<NailDisorder>()
     private val selectedSkinDisorders = mutableSetOf<SkinDisorder>()
+    private val selectedServices = mutableSetOf<Service>()
     private lateinit var clientId: String
 
     override fun onCreateView(
@@ -115,6 +117,14 @@ class ClientDetailFragment: Fragment() {
             SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
         )
+
+        // Input service
+        setupMultiChoiceInput(
+            binding.etServiceText,
+            R.string.client_form_select_service,
+            Service.entries.toTypedArray(),
+            selectedServices
+        )
     }
 
     override fun onDestroyView() {
@@ -146,8 +156,13 @@ class ClientDetailFragment: Fragment() {
             selectedSkinDisorders.addAll(client.skinDisorderList)
             etSkinDisorderText.setText(selectedSkinDisorders.formatSelection())
 
-            etMedicationText.setText(client.medication)
+            // Update selectedServices list
+            selectedServices.clear()
+            selectedServices.addAll(client.serviceList)
+            etServiceText.setText(selectedServices.formatSelection())
+
             etAllergyText.setText(client.allergy)
+            etOthersText.setText(client.others)
 
             rbDiabetesYes.isChecked = client.hasDiabetes
             rbDiabetesNo.isChecked = !client.hasDiabetes
@@ -208,7 +223,7 @@ class ClientDetailFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            binding.etMedicationText.getTrimmedText(),
+            selectedServices.toList(),
             binding.etAllergyText.getTrimmedText(),
             binding.rbDiabetesYes.isChecked,
             binding.rbDiabetesNo.isChecked,

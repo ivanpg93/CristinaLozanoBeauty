@@ -155,18 +155,19 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!--Treatment-->
+            <!--Service-->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/et_medication"
+                android:id="@+id/et_service"
                 style="@style/ClientForm"
-                android:hint="@string/client_form_medication"
+                android:hint="@string/client_form_service"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_medication_text"
+                    android:id="@+id/et_service_text"
                     style="@style/ClientFormText"
-                    android:inputType="textMultiLine" />
+                    android:focusable="false"
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -180,6 +181,21 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_allergy_text"
+                    style="@style/ClientFormText"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Others-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_others"
+                style="@style/ClientForm"
+                android:hint="@string/client_form_others"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_others_text"
                     style="@style/ClientFormText"
                     android:inputType="textMultiLine" />
 
@@ -248,21 +264,6 @@
                         android:text="@string/no"
                         app:buttonTint="@color/gold" />
                 </RadioGroup>
-
-                <!--Others-->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/et_others"
-                    style="@style/ClientForm"
-                    android:hint="@string/client_form_others"
-                    app:boxStrokeColor="@color/gold"
-                    app:hintTextColor="@color/gold">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_others_text"
-                        style="@style/ClientFormText"
-                        android:inputType="textMultiLine" />
-
-                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 

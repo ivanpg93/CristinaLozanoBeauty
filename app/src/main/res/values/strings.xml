@@ -44,12 +44,13 @@
     <string name="client_form_town">Población</string>
     <string name="client_form_nail_disorder">Alteraciones de las uñas</string>
     <string name="client_form_skin_disorder">Alteraciones de la piel</string>
-    <string name="client_form_medication">Medicación</string>
+    <string name="client_form_service">Servicios</string>
     <string name="client_form_allergy">Alergias</string>
     <string name="client_form_others">Otros</string>
     <string name="client_form_action_save">Guardar</string>
     <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
     <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
+    <string name="client_form_select_service">Selecciona un servicio a realizar</string>
     <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
     <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
 

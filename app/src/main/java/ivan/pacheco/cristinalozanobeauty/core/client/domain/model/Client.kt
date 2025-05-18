@@ -32,6 +32,18 @@ enum class SkinDisorder {
     SABAÑONES
 }
 
+enum class Service {
+    SEMIPERMANENTE,
+    NIVELACION,
+    ACRILICO,
+    ACRYGEL,
+    MANICURA_COMBINADA,
+    RETIRADA_DE_MATERIAL,
+    ESMALTE_NORMAL,
+    PEDICURA_SEMI,
+    PEDICURA_COMPLETA
+}
+
 data class Client(
     val id: String = "",
     val firstName: String = "",
@@ -43,7 +55,7 @@ data class Client(
     val town: String = "",
     val nailDisorderList: List<NailDisorder> = listOf(),
     val skinDisorderList: List<SkinDisorder> = listOf(),
-    val medication: String = "",
+    val serviceList: List<Service> = listOf(),
     val allergy: String = "",
     val hasDiabetes: Boolean = false,
     val hasPoorCoagulation: Boolean = false,
@@ -62,7 +74,7 @@ data class Client(
         "town" to town,
         "nailDisorderList" to nailDisorderList.map { it.name },
         "skinDisorderList" to skinDisorderList.map { it.name },
-        "medication" to medication,
+        "serviceList" to serviceList.map { it.name },
         "allergy" to allergy,
         "hasDiabetes" to hasDiabetes,
         "hasPoorCoagulation" to hasPoorCoagulation,

@@ -13,6 +13,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.UpdateClientUC
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
@@ -61,7 +62,7 @@ class ClientDetailViewModel @Inject constructor(
         town: String,
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
-        treatment: String,
+        serviceList: List<Service>,
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,
@@ -85,7 +86,7 @@ class ClientDetailViewModel @Inject constructor(
             town,
             nailDisorderList,
             skinDisorderList,
-            treatment,
+            serviceList,
             allergy,
             diabetes,
             poorCoagulation,
