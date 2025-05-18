@@ -30,7 +30,7 @@ class ClientDataRepository @Inject constructor(
                         client.lastName,
                         client.phone
                     )
-                }
+                }.sortedBy { it.firstName }
             }
     }
 
