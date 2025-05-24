@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import ivan.pacheco.cristinalozanobeauty.databinding.HomeFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
 
 @AndroidEntryPoint
 class HomeFragment: Fragment() {
 
-    private var _binding: HomeFragmentBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val vm: HomeViewModel by viewModels()
 
@@ -21,7 +21,7 @@ class HomeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = HomeFragmentBinding.inflate(layoutInflater)
+        _binding = FragmentHomeBinding.inflate(layoutInflater)
 
         return binding.root
     }

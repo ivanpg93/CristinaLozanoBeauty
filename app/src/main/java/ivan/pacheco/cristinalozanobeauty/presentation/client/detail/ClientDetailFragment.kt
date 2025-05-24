@@ -19,7 +19,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
-import ivan.pacheco.cristinalozanobeauty.databinding.ClientDetailFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
@@ -33,7 +33,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 @AndroidEntryPoint
 class ClientDetailFragment: Fragment() {
 
-    private var _binding: ClientDetailFragmentBinding? = null
+    private var _binding: FragmentClientDetailBinding? = null
     private val binding get() = _binding!!
     private val vm: ClientDetailViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<NailDisorder>()
@@ -45,7 +45,7 @@ class ClientDetailFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ClientDetailFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentClientDetailBinding.inflate(inflater, container, false)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())
@@ -71,6 +71,12 @@ class ClientDetailFragment: Fragment() {
             loadData(client)
         }
 
+        // Button colors history
+        binding.btnColorHistory.setOnClickListener { navigate(Destination.ColorHistoryList(clientId)) }
+
+        // Button events history
+        binding.btnEventHistory.setOnClickListener { navigate(Destination.EventHistory) }
+
         // Button save client
         binding.btnSave.setOnClickListener { saveAction() }
 
@@ -89,7 +95,7 @@ class ClientDetailFragment: Fragment() {
         // Input date picker
         binding.etBirthdayText.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setTheme(R.style.ClientFormDatePicker)
+                .setTheme(R.style.FormDatePicker)
                 .setSelection(getInitialDate(binding.etBirthdayText.getTrimmedText()))
                 .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
@@ -300,6 +306,13 @@ class ClientDetailFragment: Fragment() {
     private fun navigate(destination: Destination) {
         when(destination) {
             is Destination.Back -> findNavController().popBackStack()
+            is Destination.ColorHistoryList -> {
+                findNavController().navigate(
+                    ClientDetailFragmentDirections.actionClientDetailFragmentToColorHistoryListFragment(
+                        destination.clientId
+                    )
+                )
+            }
             else -> {} // Do nothing
         }
     }

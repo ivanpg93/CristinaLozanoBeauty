@@ -17,7 +17,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
-import ivan.pacheco.cristinalozanobeauty.databinding.ClientFormFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientFormBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
@@ -31,7 +31,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 @AndroidEntryPoint
 class ClientFormFragment: Fragment() {
 
-    private var _binding: ClientFormFragmentBinding? = null
+    private var _binding: FragmentClientFormBinding? = null
     private val binding get() = _binding!!
     private val vm: ClientFormViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<NailDisorder>()
@@ -43,7 +43,7 @@ class ClientFormFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = ClientFormFragmentBinding.inflate(layoutInflater)
+        _binding = FragmentClientFormBinding.inflate(layoutInflater)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())
@@ -81,7 +81,7 @@ class ClientFormFragment: Fragment() {
         // Input date picker
         binding.etBirthdayText.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setTheme(R.style.ClientFormDatePicker)
+                .setTheme(R.style.FormDatePicker)
                 .setSelection(getInitialDate(binding.etBirthdayText.getTrimmedText()))
                 .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()

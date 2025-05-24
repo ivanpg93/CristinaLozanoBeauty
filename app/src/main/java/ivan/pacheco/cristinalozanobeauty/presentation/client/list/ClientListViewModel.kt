@@ -9,7 +9,7 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import javax.inject.Inject
 

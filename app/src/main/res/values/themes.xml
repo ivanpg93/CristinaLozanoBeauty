@@ -30,7 +30,7 @@
     </style>
 
     <!--Client form-->
-    <style name="ClientForm" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+    <style name="Form" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">@color/gray</item>
@@ -39,7 +39,7 @@
     </style>
 
     <!--Client form text-->
-    <style name="ClientFormText">
+    <style name="FormText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:inputType">textCapWords</item>
@@ -48,7 +48,7 @@
     </style>
 
     <!--Client form date picker-->
-    <style name="ClientFormDatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
+    <style name="FormDatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="colorPrimary">@color/gold</item>
@@ -62,7 +62,7 @@
     </style>
 
     <!--Client form radio group-->
-    <style name="ClientFormRadioGroup">
+    <style name="FormRadioGroup">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
@@ -70,7 +70,7 @@
     </style>
 
     <!--Client form radio button-->
-    <style name="ClientFormRadioButton">
+    <style name="FormRadioButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/black</item>
@@ -78,75 +78,9 @@
     </style>
 
     <!--Checkbox-->
-    <style name="ClientFormCheckbox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+    <style name="FormCheckbox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="colorControlActivated">@color/gold</item>
         <item name="colorControlNormal">@color/black</item>
-    </style>
-
-
-    <!--Login logo-->
-    <style name="LoginLogo">
-        <item name="android:textSize">32sp</item>
-        <item name="android:textColor">@color/green</item>
-        <item name="android:layout_marginTop">10dp</item>
-    </style>
-
-    <!--Login title-->
-    <style name="LoginTitle">
-        <item name="android:textSize">32sp</item>
-        <item name="android:textColor">@color/green</item>
-        <item name="android:layout_marginTop">10dp</item>
-    </style>
-
-    <!--Text field login-->
-    <style name="TextViewLogin">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/red</item>
-    </style>
-
-    <!--Edit text login-->
-    <style name="EditTextFieldLogin">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:maxLines">1</item>
-    </style>
-
-    <!--Text view hello community-->
-    <style name="TextViewCommunityHello">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/color_primary</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <!--Text view try community-->
-    <style name="TextViewTryCommunity">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="CommunitySelected">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/color_primary</item>
-    </style>
-
-    <style name="CommunityUnselected">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>

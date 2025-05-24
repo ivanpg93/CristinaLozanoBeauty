@@ -1,7 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice
 
 import io.reactivex.Completable
-import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
 import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 

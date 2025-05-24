@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import ivan.pacheco.cristinalozanobeauty.databinding.MessageFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentMessageBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
@@ -16,7 +16,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 @AndroidEntryPoint
 class MessageFragment: Fragment() {
 
-    private var _binding: MessageFragmentBinding? = null
+    private var _binding: FragmentMessageBinding? = null
     private val binding get() = _binding!!
     private val vm: MessageViewModel by viewModels()
 
@@ -25,7 +25,7 @@ class MessageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = MessageFragmentBinding.inflate(layoutInflater)
+        _binding = FragmentMessageBinding.inflate(layoutInflater)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())

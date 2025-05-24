@@ -29,7 +29,7 @@ class ClientDetailViewModel @Inject constructor(
 ): ViewModel(), Navigation {
 
     companion object {
-        const val ARG_CLIENT_ID = "id"
+        private const val ARG_CLIENT_ID = "id"
     }
 
     // LiveData

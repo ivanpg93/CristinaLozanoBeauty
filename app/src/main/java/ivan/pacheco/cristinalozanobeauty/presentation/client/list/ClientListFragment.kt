@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.databinding.ClientListFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientListBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
@@ -20,7 +20,7 @@ import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 @AndroidEntryPoint
 class ClientListFragment: Fragment() {
 
-    private var _binding: ClientListFragmentBinding? = null
+    private var _binding: FragmentClientListBinding? = null
     private val binding get() = _binding!!
     private val vm: ClientListViewModel by viewModels()
 
@@ -29,9 +29,7 @@ class ClientListFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = ClientListFragmentBinding.inflate(layoutInflater)
-        // TODO: migrateFieldClients("treatment", "medication")
-        // TODO: migrateFieldClientsToArray("treatment", "serviceList")
+        _binding = FragmentClientListBinding.inflate(layoutInflater)
 
         return binding.root
     }

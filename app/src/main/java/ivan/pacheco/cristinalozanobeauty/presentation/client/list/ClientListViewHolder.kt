@@ -2,7 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.client.list
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.ItemClientBinding
 
 class ClientListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
