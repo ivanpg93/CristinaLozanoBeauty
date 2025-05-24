@@ -6,7 +6,7 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHist
 import java.util.Date
 import javax.inject.Inject
 
-class CreateColorHistoryUC @Inject constructor(private val repository: ColorsHistoryRepository) {
+class CreateColorsHistoryUC @Inject constructor(private val repository: ColorsHistoryRepository) {
 
     fun execute(
         name: String,
@@ -21,7 +21,7 @@ class CreateColorHistoryUC @Inject constructor(private val repository: ColorsHis
             date,
         )
 
-        return repository.create(clientId, color)
+        return repository.create(color, clientId)
     }
 
 }

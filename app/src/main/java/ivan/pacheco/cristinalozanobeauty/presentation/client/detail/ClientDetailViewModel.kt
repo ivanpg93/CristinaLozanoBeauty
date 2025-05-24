@@ -28,8 +28,8 @@ class ClientDetailViewModel @Inject constructor(
     state: SavedStateHandle
 ): ViewModel(), Navigation {
 
-    companion object {
-        private const val ARG_CLIENT_ID = "id"
+    private companion object {
+        const val ARG_CLIENT_ID = "id"
     }
 
     // LiveData
@@ -52,7 +52,6 @@ class ClientDetailViewModel @Inject constructor(
 
     // Actions
     fun actionUpdateClient(
-        id: String,
         firstName: String,
         lastName: String,
         phone: String,
@@ -76,7 +75,7 @@ class ClientDetailViewModel @Inject constructor(
 
         // Update client action
         uc.execute(
-            id,
+            clientId,
             firstName,
             lastName,
             phone,

@@ -32,9 +32,9 @@ class ColorsHistoryDataRepository@Inject constructor(
             }
     }
 
-    override fun find(clientId: String, id: String): Single<Color> = findWS.fetch(clientId, id)
-    override fun create(clientId: String, color: Color): Completable = createWS.fetch(clientId, color)
-    override fun update(clientId: String, color: Color): Completable = updateWS.fetch(clientId, color)
-    override fun delete(clientId: String, color: Color): Completable = deleteWS.deleteColor(clientId, color)
+    override fun find(id: String, clientId: String): Single<Color> = findWS.fetch(id, clientId)
+    override fun create(color: Color, clientId: String): Completable = createWS.fetch(color, clientId)
+    override fun update(color: Color, clientId: String): Completable = updateWS.fetch(color, clientId)
+    override fun delete(color: Color, clientId: String): Completable = deleteWS.deleteColor(color, clientId)
 
 }

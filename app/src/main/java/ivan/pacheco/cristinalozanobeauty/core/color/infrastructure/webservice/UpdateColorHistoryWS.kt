@@ -12,7 +12,7 @@ class UpdateColorHistoryWS: UpdateColorHistoryWebService {
         const val COLORS = "colors"
     }
 
-    override fun fetch(clientId: String, color: Color): Completable = Completable.create { emitter ->
+    override fun fetch(color: Color, clientId: String): Completable = Completable.create { emitter ->
         Firestore.db.collection(CLIENTS)
             .document(clientId)
             .collection(COLORS)

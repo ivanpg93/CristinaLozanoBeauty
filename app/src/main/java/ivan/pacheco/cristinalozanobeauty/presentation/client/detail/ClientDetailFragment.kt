@@ -65,6 +65,7 @@ class ClientDetailFragment: Fragment() {
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
 
+        // Client
         vm.getClientLD().observe(viewLifecycleOwner) { client ->
             clientId = client.id
             setActionBarTitle("${client.firstName} ${client.lastName}")
@@ -219,7 +220,6 @@ class ClientDetailFragment: Fragment() {
 
         // Update client action
         vm.actionUpdateClient(
-            clientId,
             binding.etNameText.getTrimmedText(),
             binding.etLastNameText.getTrimmedText(),
             binding.etPhoneText.getTrimmedText(),

@@ -48,7 +48,7 @@ class ColorHistoryListViewModel @Inject constructor(
     // Actions
 
     fun actionDeleteColor(color: Color) {
-        repository.delete(clientId, color)
+        repository.delete(color, clientId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }

@@ -12,7 +12,7 @@ class CreateColorHistoryWS: CreateColorHistoryWebService {
         const val COLORS = "colors"
     }
 
-    override fun fetch(clientId: String, color: Color): Completable {
+    override fun fetch(color: Color, clientId: String): Completable {
 
         // Create id for color document
         val colorId = Firestore.db.collection(CLIENTS)

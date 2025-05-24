@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.CreateColorHistoryUC
+import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.CreateColorsHistoryUC
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
 import java.util.Date
@@ -17,11 +17,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ColorsHistoryFormViewModel @Inject constructor(
-    private val uc: CreateColorHistoryUC,
+    private val uc: CreateColorsHistoryUC,
     state: SavedStateHandle
 ): ViewModel(), Navigation {
 
-    companion object {
+    private companion object {
         const val ARG_CLIENT_ID = "clientId"
     }
 

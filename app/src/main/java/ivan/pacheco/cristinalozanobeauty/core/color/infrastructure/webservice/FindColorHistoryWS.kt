@@ -12,7 +12,7 @@ class FindColorHistoryWS: FindColorHistoryWebService {
         const val COLORS = "colors"
     }
 
-    override fun fetch(clientId: String, id: String): Single<Color> = Single.create { emitter ->
+    override fun fetch(id: String, clientId: String): Single<Color> = Single.create { emitter ->
 
         // Find color by id
         Firestore.db.collection(CLIENTS)
