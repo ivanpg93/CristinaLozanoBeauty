@@ -14,11 +14,23 @@ import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice.D
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice.FindClientWS
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice.ListClientWS
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice.UpdateClientWS
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.CreateColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.DeleteColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.FindColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.ListColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.webservice.CreateColorHistoryWS
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.webservice.DeleteColorHistoryWS
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.webservice.FindColorHistoryWS
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.webservice.ListColorHistoryWS
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.webservice.UpdateColorHistoryWS
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object WebServiceModule {
+
+    // Client
 
     @Singleton
     @Provides
@@ -39,5 +51,27 @@ object WebServiceModule {
     @Singleton
     @Provides
     fun providesDeleteClientWebService(): DeleteClientWebService = DeleteClientWS()
+
+    // Color history
+
+    @Singleton
+    @Provides
+    fun providesListColorHistoryWebService(): ListColorHistoryWebService = ListColorHistoryWS()
+
+    @Singleton
+    @Provides
+    fun providesFindColorHistoryWebService(): FindColorHistoryWebService = FindColorHistoryWS()
+
+    @Singleton
+    @Provides
+    fun providesCreateColorHistoryWebService(): CreateColorHistoryWebService = CreateColorHistoryWS()
+
+    @Singleton
+    @Provides
+    fun providesUpdateColorHistoryWebService(): UpdateColorHistoryWebService = UpdateColorHistoryWS()
+
+    @Singleton
+    @Provides
+    fun providesDeleteColorHistoryWebService(): DeleteColorHistoryWebService = DeleteColorHistoryWS()
 
 }

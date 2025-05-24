@@ -20,12 +20,9 @@
     <!--Home-->
     <string name="home_events">Eventos</string>
 
-    <!--Client-->
-    <string name="client_list_add_client">Añadir clienta</string>
-    <string name="client_detail_title">Clienta</string>
-    <string name="client_form_title">Nueva clienta</string>
-
     <!--Client list-->
+    <string name="client_list_title">Clientas</string>
+    <string name="client_list_add_client">Añadir clienta</string>
     <string name="client_list_error_list">No se han podido cargar las clientas</string>
     <string name="client_list_error_delete">No se ha podido eliminar la clienta</string>
 
@@ -33,7 +30,8 @@
     <string name="dialog_delete_client_title">Eliminar clienta</string>
     <string name="dialog_delete_client_message">¿Quieres eliminar la clienta?</string>
 
-    <!--Form-->
+    <!--Client form-->
+    <string name="client_form_title">Nueva clienta</string>
     <string name="client_form_name">Nombre</string>
     <string name="client_form_last_name">Apellidos</string>
     <string name="client_form_phone">Teléfono</string>
@@ -54,9 +52,37 @@
     <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
     <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
 
-    <!--Form error-->
+    <!--Client form error-->
     <string name="client_form_error_phone">Introduce un teléfono correcto</string>
     <string name="client_form_error_mandatory_fields">Rellena todos los campos obligatorios antes de continuar</string>
     <string name="client_form_error_create">No se ha podido registrar la clienta</string>
     <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
+
+    <!--Client detail-->
+    <string name="client_detail_title">Clienta</string>
+
+    <!--Color history list-->
+    <string name="color_history_list_title">Historial de colores</string>
+    <string name="color_history_list_add_color">Añadir color</string>
+    <string name="color_history_list_error_list">No se han podido cargar los colores</string>
+    <string name="color_history_list_error_delete">No se ha podido eliminar el color</string>
+
+    <!--Color history list dialog-->
+    <string name="dialog_delete_color_title">Eliminar color</string>
+    <string name="dialog_delete_color_message">¿Quieres eliminar el color?</string>
+
+    <!--Color history form-->
+    <string name="color_history_form_title">Nuevo color</string>
+    <string name="color_history_form_name">Nombre</string>
+    <string name="color_history_form_date">Fecha</string>
+    <string name="color_history_form_action_save">Guardar</string>
+
+    <!--Color history form error-->
+    <string name="color_history_form_error_mandatory_fields">Rellena todos los campos obligatorios antes de continuar</string>
+    <string name="color_history_form_error_create">No se ha podido registrar el color</string>
+    <string name="color_history_detail_error_find">No se ha podido cargar los datos del color</string>
+
+    <!--Color history detail-->
+    <string name="color_history_detail_title">Color</string>
+
 </resources>

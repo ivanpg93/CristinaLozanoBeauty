@@ -11,6 +11,13 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClien
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDataRepository
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.CreateColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.DeleteColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.FindColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.ListColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColorHistoryWebService
+import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.repository.ColorsHistoryDataRepository
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +33,15 @@ object RepositoryModule {
         updateWS: UpdateClientWebService,
         deleteWS: DeleteClientWebService
     ): ClientRepository = ClientDataRepository(listWS, findWS, createWS, updateWS, deleteWS)
+
+    @Singleton
+    @Provides
+    fun providesColorsHistoryRepository(
+        listWS: ListColorHistoryWebService,
+        findWS: FindColorHistoryWebService,
+        createWS: CreateColorHistoryWebService,
+        updateWS: UpdateColorHistoryWebService,
+        deleteWS: DeleteColorHistoryWebService
+    ): ColorsHistoryRepository = ColorsHistoryDataRepository(listWS, findWS, createWS, updateWS, deleteWS)
 
 }
