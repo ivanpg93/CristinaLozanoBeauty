@@ -25,6 +25,7 @@
     <string name="client_list_add_client">Añadir clienta</string>
     <string name="client_list_error_list">No se han podido cargar las clientas</string>
     <string name="client_list_error_delete">No se ha podido eliminar la clienta</string>
+    <string name="client_list_search_by_name">Buscar por nombre</string>
 
     <!--Client list dialog-->
     <string name="dialog_delete_client_title">Eliminar clienta</string>
