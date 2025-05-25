@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.core.color.application.usecase
 
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import java.util.Date
 import javax.inject.Inject
@@ -9,7 +10,8 @@ import javax.inject.Inject
 class CreateColorsHistoryUC @Inject constructor(private val repository: ColorsHistoryRepository) {
 
     fun execute(
-        name: String,
+        brand: NailPolishBrand,
+        reference: String,
         date: Date,
         clientId: String
     ): Completable {
@@ -17,7 +19,8 @@ class CreateColorsHistoryUC @Inject constructor(private val repository: ColorsHi
         // Build color. Id will set from Firebase
         val color = Color(
             "",
-            name,
+            brand,
+            reference,
             date,
         )
 

@@ -15,7 +15,8 @@ class ColorHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         onItemSelected: (Color) -> Unit,
         onItemDeleted: (Color) -> Unit
     ) {
-        binding.txtName.text = color.name
+        binding.txtBrand.text = color.brand?.name
+        binding.txtReference.text = color.brand?.name
         binding.txtDate.text = DateUtils.formatDate(color.date)
         binding.btnDelete.setOnClickListener { onItemDeleted(color) }
         binding.root.setOnClickListener { onItemSelected(color) }

@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.UpdateColorsHistoryUC
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
@@ -51,11 +52,12 @@ class ColorsHistoryDetailViewModel @Inject constructor(
 
     // Actions
     fun actionUpdateColor(
-        name: String,
+        brand: NailPolishBrand,
+        reference: String,
         date: Date?
     ) {
         // Check mandatory fields before continue to create client
-        if (!checkMandatoryFields(listOf(name, date.toString())) || date == null) {
+        if (!checkMandatoryFields(listOf(brand.name, reference, date.toString())) || date == null) {
             errorLD.value = R.string.client_form_error_mandatory_fields
             return
         }
@@ -63,7 +65,8 @@ class ColorsHistoryDetailViewModel @Inject constructor(
         // Update client action
         uc.execute(
             colorId,
-            name,
+            brand,
+            reference,
             date,
             clientId
         )

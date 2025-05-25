@@ -20,16 +20,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--Name-->
+            <!--Nail polish brand-->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/et_name"
+                android:id="@+id/et_brand"
                 style="@style/Form"
-                android:hint="@string/color_history_form_name"
+                android:hint="@string/color_history_form_brand"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_name_text"
+                    android:id="@+id/et_brand_text"
+                    style="@style/FormText"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Reference-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_reference"
+                style="@style/Form"
+                android:hint="@string/color_history_form_reference"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_reference_text"
                     style="@style/FormText" />
 
             </com.google.android.material.textfield.TextInputLayout>

@@ -10,6 +10,7 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.CreateColorsHistoryUC
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
 import java.util.Date
@@ -39,17 +40,18 @@ class ColorsHistoryFormViewModel @Inject constructor(
 
     // Actions
     fun actionSave(
-        name: String,
+        brand: NailPolishBrand,
+        reference: String,
         date: Date?
     ) {
         // Check mandatory fields before continue to create client
-        if (!checkMandatoryFields(listOf(name, date.toString())) || date == null) {
+        if (!checkMandatoryFields(listOf(brand.name, reference, date.toString())) || date == null) {
             errorLD.value = R.string.color_history_form_error_mandatory_fields
             return
         }
 
         // Create client action
-        uc.execute(name, date, clientId)
+        uc.execute(brand, reference, date, clientId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }

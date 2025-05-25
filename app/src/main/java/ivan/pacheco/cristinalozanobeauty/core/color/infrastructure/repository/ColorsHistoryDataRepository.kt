@@ -25,7 +25,8 @@ class ColorsHistoryDataRepository@Inject constructor(
                 colorList.map { color ->
                     Color(
                         color.id,
-                        color.name,
+                        color.brand,
+                        color.reference,
                         color.date,
                     )
                 }.sortedBy { it.date }
