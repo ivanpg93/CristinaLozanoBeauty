@@ -15,6 +15,8 @@ enum class NailPolishBrand {
     VICTORIA_VYNN,
     JOIA,
     GELFIX,
+    PALU,
+    ONYX,
     OTHER
 }
 

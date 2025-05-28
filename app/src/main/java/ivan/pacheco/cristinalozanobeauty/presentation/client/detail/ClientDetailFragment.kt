@@ -264,7 +264,7 @@ class ClientDetailFragment: Fragment() {
 
     private fun List<Enum<*>>.formatSelection(): String {
         return joinToString(", ") { option ->
-            option.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+            option.name.replace("_", " ").lowercase().replaceFirstChar { it.titlecase() }
         }
     }
 
@@ -274,9 +274,13 @@ class ClientDetailFragment: Fragment() {
         selectedOptions: Set<T>,
         onSelected: (List<T>) -> Unit
     ) {
-        val items = enumValues.map { it.name.replace("_", " ").lowercase()
-            .replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
-        val checkedItems = enumValues.map { it in selectedOptions }.toBooleanArray()
+        val displayOptions = enumValues
+            .map { it to it.name.replace("_", " ").lowercase()
+                .replaceFirstChar { c -> c.titlecase() } }
+            .sortedBy { it.second }
+
+        val items = displayOptions.map { it.second }.toTypedArray()
+        val checkedItems = displayOptions.map { it.first in selectedOptions }.toBooleanArray()
         val selectedList = selectedOptions.toMutableSet()
 
         val checkedColor = ContextCompat.getColor(requireContext(), R.color.gold)
@@ -289,10 +293,12 @@ class ClientDetailFragment: Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setMultiChoiceItems(items, checkedItems) { _, index, isChecked ->
-                if (isChecked) selectedList.add(enumValues[index])
-                else selectedList.remove(enumValues[index])
+                val item = displayOptions[index].first
+                if (isChecked) selectedList.add(item) else selectedList.remove(item)
             }
-            .setPositiveButton(getString(R.string.accept)) { _, _ -> onSelected(selectedList.toList()) }
+            .setPositiveButton(getString(R.string.accept)) { _, _ ->
+                onSelected(displayOptions.map { it.first }.filter { it in selectedList })
+            }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }

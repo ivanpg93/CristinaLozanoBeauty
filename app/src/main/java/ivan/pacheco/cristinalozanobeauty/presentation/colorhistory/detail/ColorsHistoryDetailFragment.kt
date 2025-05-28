@@ -15,9 +15,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryDetailBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryFormBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
@@ -30,7 +30,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 @AndroidEntryPoint
 class ColorsHistoryDetailFragment: Fragment() {
 
-    private var _binding: FragmentColorsHistoryFormBinding? = null
+    private var _binding: FragmentColorsHistoryDetailBinding? = null
     private val binding get() = _binding!!
     private val vm: ColorsHistoryDetailViewModel by viewModels()
     private var selectedNailPolishBrand: NailPolishBrand? = null
@@ -40,7 +40,7 @@ class ColorsHistoryDetailFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = FragmentColorsHistoryFormBinding.inflate(layoutInflater)
+        _binding = FragmentColorsHistoryDetailBinding.inflate(layoutInflater)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())
@@ -164,9 +164,14 @@ class ColorsHistoryDetailFragment: Fragment() {
         selectedOption: T?,
         onSelected: (T) -> Unit
     ) {
-        val items = enumValues.map { it.name.replace("_", " ").lowercase()
-            .replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
-        val selectedIndex = enumValues.indexOfFirst { it == selectedOption }
+        val options = enumValues
+            .map { it to it.name.replace("_", " ")
+                .lowercase()
+                .replaceFirstChar { c -> c.titlecase() } }
+            .sortedBy { it.second }
+
+        val selectedIndex = options.indexOfFirst { it.first == selectedOption }
+        var tempSelectedIndex = selectedIndex
 
         val checkedColor = ContextCompat.getColor(requireContext(), R.color.gold)
         val uncheckedColor = ContextCompat.getColor(requireContext(), R.color.black)
@@ -177,8 +182,13 @@ class ColorsHistoryDetailFragment: Fragment() {
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
-            .setSingleChoiceItems(items, selectedIndex) { _, index -> onSelected(enumValues[index]) }
-            .setPositiveButton(getString(R.string.accept)) { dialog, _ -> dialog.dismiss() }
+            .setSingleChoiceItems(options.map { it.second }.toTypedArray(), selectedIndex) { _, index ->
+                tempSelectedIndex = index
+            }
+            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
+                tempSelectedIndex.takeIf { it >= 0 }?.let { onSelected(options[it].first) }
+                dialog.dismiss()
+            }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }

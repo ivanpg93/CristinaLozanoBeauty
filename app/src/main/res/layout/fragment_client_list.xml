@@ -28,7 +28,7 @@
             android:layout_marginTop="@dimen/sbMarginTop"
             android:background="@drawable/label_form_background"
             android:drawableEnd="@android:drawable/ic_menu_search"
-            android:hint="@string/client_list_search_by_name"
+            android:hint="@string/client_list_search"
             android:inputType="text"
             android:padding="@dimen/sbPadding"
             app:drawableTint="@color/gold" />
