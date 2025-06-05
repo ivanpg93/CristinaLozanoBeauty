@@ -25,6 +25,16 @@ object FormUtils {
         .lowercase()
 
     /**
+     * Format enum value to String
+     */
+    fun Enum<*>.toDisplayName(): String =
+        name
+            .lowercase()
+            .replace("_", " ")
+            .split(" ")
+            .joinToString(" ") { it.replaceFirstChar { c -> c.titlecase() } }
+
+    /**
      * Enable form button when required fields are filled
      * @param requiredFields: List of required input fields
      * @param button: Button to enable/disable

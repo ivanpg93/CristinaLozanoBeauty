@@ -16,7 +16,7 @@
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@id/txt_date"
+        app:layout_constraintEnd_toStartOf="@id/txt_reference"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,9 +34,9 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@id/txt_date"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/txt_brand"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Neonail rojo" />
+        tools:text="123456" />
 
     <!--Date-->
     <TextView

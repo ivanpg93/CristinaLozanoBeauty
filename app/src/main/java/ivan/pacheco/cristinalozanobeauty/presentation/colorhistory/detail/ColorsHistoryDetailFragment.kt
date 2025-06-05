@@ -22,6 +22,7 @@ import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryFormBi
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
@@ -106,7 +107,7 @@ class ColorsHistoryDetailFragment: Fragment() {
     private fun loadData(color: Color) {
         with(binding) {
             selectedNailPolishBrand = color.brand
-            etBrandText.setText(color.brand?.name)
+            etBrandText.setText(color.brand?.toDisplayName())
             etReferenceText.setText(color.reference)
             etDateText.setText(DateUtils.formatDate(color.date))
         }

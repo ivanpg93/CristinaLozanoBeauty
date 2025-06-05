@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.databinding.ItemColorHistoryBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 
 class ColorHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -15,8 +16,8 @@ class ColorHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         onItemSelected: (Color) -> Unit,
         onItemDeleted: (Color) -> Unit
     ) {
-        binding.txtBrand.text = color.brand?.name
-        binding.txtReference.text = color.brand?.name
+        binding.txtBrand.text = color.brand?.toDisplayName()
+        binding.txtReference.text = color.reference
         binding.txtDate.text = DateUtils.formatDate(color.date)
         binding.btnDelete.setOnClickListener { onItemDeleted(color) }
         binding.root.setOnClickListener { onItemSelected(color) }

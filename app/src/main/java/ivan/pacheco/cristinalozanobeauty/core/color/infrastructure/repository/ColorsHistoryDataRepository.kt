@@ -29,7 +29,7 @@ class ColorsHistoryDataRepository@Inject constructor(
                         color.reference,
                         color.date,
                     )
-                }.sortedBy { it.date }
+                }.sortedByDescending { it.date }
             }
     }
 

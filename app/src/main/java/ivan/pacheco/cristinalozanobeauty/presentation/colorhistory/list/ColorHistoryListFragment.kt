@@ -41,8 +41,8 @@ class ColorHistoryListFragment: Fragment() {
             onItemDeleted = { color ->
                 DialogUtils.createDialog(
                     requireContext(),
-                    getString(R.string.dialog_delete_client_title),
-                    getString(R.string.dialog_delete_client_message)
+                    getString(R.string.dialog_delete_color_title),
+                    getString(R.string.dialog_delete_color_message)
                 ) { vm.actionDeleteColor(color) }
             }
         )
