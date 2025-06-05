@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding">
+
+    <!--Scrollview-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--Form-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--Nail polish brand-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_brand"
+                style="@style/Form"
+                android:hint="@string/color_history_form_brand"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_brand_text"
+                    style="@style/FormText"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Reference-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_reference"
+                style="@style/Form"
+                android:hint="@string/color_history_form_reference"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_reference_text"
+                    style="@style/FormText" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Birthday-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_date"
+                style="@style/Form"
+                android:hint="@string/color_history_form_date"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_date_text"
+                    style="@style/FormText"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Button save-->
+            <Button
+                android:id="@+id/btn_save"
+                style="@style/Button"
+                android:layout_marginVertical="@dimen/margin"
+                android:text="@string/color_history_form_action_save"
+                app:backgroundTint="@color/gold" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

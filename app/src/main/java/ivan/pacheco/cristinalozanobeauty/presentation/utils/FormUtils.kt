@@ -5,6 +5,7 @@ import android.widget.EditText
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputLayout
 import ivan.pacheco.cristinalozanobeauty.R
+import java.text.Normalizer
 
 object FormUtils {
 
@@ -14,6 +15,24 @@ object FormUtils {
         val phoneRegex = Regex("^(\\+34)?[67]\\d{8}$")
         return getTrimmedText().matches(phoneRegex)
     }
+
+    /**
+     * Ignore accents in comparison strings
+     */
+    fun String.normalizeForSearch() = Normalizer
+        .normalize(this, Normalizer.Form.NFD)
+        .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
+        .lowercase()
+
+    /**
+     * Format enum value to String
+     */
+    fun Enum<*>.toDisplayName(): String =
+        name
+            .lowercase()
+            .replace("_", " ")
+            .split(" ")
+            .joinToString(" ") { it.replaceFirstChar { c -> c.titlecase() } }
 
     /**
      * Enable form button when required fields are filled

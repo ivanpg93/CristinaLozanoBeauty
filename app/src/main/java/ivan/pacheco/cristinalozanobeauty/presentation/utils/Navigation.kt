@@ -10,6 +10,10 @@ sealed class Destination {
     data class ClientDetail(val clientId: String) : Destination()
     data object ClientForm : Destination()
     data object Message : Destination()
+    data class ColorHistoryList(val clientId: String) : Destination()
+    data class ColorHistoryDetail(val clientId: String, val colorId: String) : Destination()
+    data class ColorHistoryForm(val clientId: String) : Destination()
+    data object EventHistory : Destination()
 }
 
 interface Navigation {

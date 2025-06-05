@@ -3,6 +3,7 @@ package ivan.pacheco.cristinalozanobeauty.core.client.application.usecase
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import java.util.Date
@@ -20,13 +21,14 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
         town: String,
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
-        treatment: String,
+        serviceList: List<Service>,
         allergy: String,
         hasDiabetes: Boolean,
-        hasPoorCoagulation: Boolean
+        hasPoorCoagulation: Boolean,
+        others: String
     ): Completable {
 
-        // Create client. Id will set from Firebase
+        // Build client. Id will set from Firebase
         val client = Client(
             "",
             firstName,
@@ -38,10 +40,11 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
             town,
             nailDisorderList,
             skinDisorderList,
-            treatment,
+            serviceList,
             allergy,
             hasDiabetes,
-            hasPoorCoagulation
+            hasPoorCoagulation,
+            others
         )
 
         return repository.create(client)

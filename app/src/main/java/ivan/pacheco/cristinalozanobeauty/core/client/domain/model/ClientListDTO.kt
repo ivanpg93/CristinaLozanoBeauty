@@ -1,4 +1,4 @@
-package ivan.pacheco.cristinalozanobeauty.core.client.application.usecase
+package ivan.pacheco.cristinalozanobeauty.core.client.domain.model
 
 data class ClientListDTO(
     val id: String,

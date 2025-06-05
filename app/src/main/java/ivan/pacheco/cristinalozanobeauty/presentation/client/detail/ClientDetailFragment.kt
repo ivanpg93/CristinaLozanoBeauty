@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,8 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
-import ivan.pacheco.cristinalozanobeauty.databinding.ClientDetailFragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
@@ -33,18 +33,19 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 @AndroidEntryPoint
 class ClientDetailFragment: Fragment() {
 
-    private var _binding: ClientDetailFragmentBinding? = null
+    private var _binding: FragmentClientDetailBinding? = null
     private val binding get() = _binding!!
     private val vm: ClientDetailViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<NailDisorder>()
     private val selectedSkinDisorders = mutableSetOf<SkinDisorder>()
+    private val selectedServices = mutableSetOf<Service>()
     private lateinit var clientId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ClientDetailFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentClientDetailBinding.inflate(inflater, container, false)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())
@@ -64,11 +65,18 @@ class ClientDetailFragment: Fragment() {
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
 
+        // Client
         vm.getClientLD().observe(viewLifecycleOwner) { client ->
             clientId = client.id
             setActionBarTitle("${client.firstName} ${client.lastName}")
             loadData(client)
         }
+
+        // Button colors history
+        binding.btnColorHistory.setOnClickListener { navigate(Destination.ColorHistoryList(clientId)) }
+
+        // Button events history
+        binding.btnEventHistory.setOnClickListener { navigate(Destination.EventHistory) }
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction() }
@@ -88,17 +96,16 @@ class ClientDetailFragment: Fragment() {
         // Input date picker
         binding.etBirthdayText.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setTheme(R.style.ClientFormDatePicker)
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+                .setTheme(R.style.FormDatePicker)
+                .setSelection(getInitialDate(binding.etBirthdayText.getTrimmedText()))
+                .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
 
             datePicker.show(childFragmentManager, "")
 
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
-                val dateString = DateUtils.formatDate(selectedDate)
-                binding.etBirthdayText.setText(dateString)
+                binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
             }
         }
 
@@ -116,6 +123,14 @@ class ClientDetailFragment: Fragment() {
             R.string.client_form_select_skin_disorder,
             SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
+        )
+
+        // Input service
+        setupMultiChoiceInput(
+            binding.etServiceText,
+            R.string.client_form_select_service,
+            Service.entries.toTypedArray(),
+            selectedServices
         )
     }
 
@@ -148,8 +163,13 @@ class ClientDetailFragment: Fragment() {
             selectedSkinDisorders.addAll(client.skinDisorderList)
             etSkinDisorderText.setText(selectedSkinDisorders.formatSelection())
 
-            etTreatmentText.setText(client.treatment)
+            // Update selectedServices list
+            selectedServices.clear()
+            selectedServices.addAll(client.serviceList)
+            etServiceText.setText(selectedServices.formatSelection())
+
             etAllergyText.setText(client.allergy)
+            etOthersText.setText(client.others)
 
             rbDiabetesYes.isChecked = client.hasDiabetes
             rbDiabetesNo.isChecked = !client.hasDiabetes
@@ -157,6 +177,14 @@ class ClientDetailFragment: Fragment() {
             rbPoorCoagulationYes.isChecked = client.hasPoorCoagulation
             rbPoorCoagulationNo.isChecked = !client.hasPoorCoagulation
         }
+    }
+
+    /**
+     * If there is value, it is displayed.
+     * If not, get date from 18 years ago is displayed
+     */
+    private fun getInitialDate(dateStr: String): Long? {
+        return dateStr.takeIf { it.isNotBlank() }?.let { DateUtils.parseDate(it)?.time }
     }
 
     private fun saveAction() {
@@ -178,18 +206,20 @@ class ClientDetailFragment: Fragment() {
             else -> null
         }
 
+        // Validate phone
         if (!validatePhone()) {
             showAlert(R.string.client_form_error_phone)
             return
         }
 
+        // Check mandatory fields
         if (hasDiabetes == null || hasPoorCoagulation == null) {
             showAlert(R.string.client_form_error_mandatory_fields)
             return
         }
 
+        // Update client action
         vm.actionUpdateClient(
-            clientId,
             binding.etNameText.getTrimmedText(),
             binding.etLastNameText.getTrimmedText(),
             binding.etPhoneText.getTrimmedText(),
@@ -199,10 +229,11 @@ class ClientDetailFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            binding.etTreatmentText.getTrimmedText(),
+            selectedServices.toList(),
             binding.etAllergyText.getTrimmedText(),
             binding.rbDiabetesYes.isChecked,
-            binding.rbDiabetesNo.isChecked
+            binding.rbDiabetesNo.isChecked,
+            binding.etOthersText.getTrimmedText()
         )
     }
 
@@ -233,7 +264,7 @@ class ClientDetailFragment: Fragment() {
 
     private fun List<Enum<*>>.formatSelection(): String {
         return joinToString(", ") { option ->
-            option.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+            option.name.replace("_", " ").lowercase().replaceFirstChar { it.titlecase() }
         }
     }
 
@@ -243,9 +274,13 @@ class ClientDetailFragment: Fragment() {
         selectedOptions: Set<T>,
         onSelected: (List<T>) -> Unit
     ) {
-        val items = enumValues.map { it.name.replace("_", " ").lowercase()
-            .replaceFirstChar { c -> c.uppercase() } }.toTypedArray()
-        val checkedItems = enumValues.map { it in selectedOptions }.toBooleanArray()
+        val displayOptions = enumValues
+            .map { it to it.name.replace("_", " ").lowercase()
+                .replaceFirstChar { c -> c.titlecase() } }
+            .sortedBy { it.second }
+
+        val items = displayOptions.map { it.second }.toTypedArray()
+        val checkedItems = displayOptions.map { it.first in selectedOptions }.toBooleanArray()
         val selectedList = selectedOptions.toMutableSet()
 
         val checkedColor = ContextCompat.getColor(requireContext(), R.color.gold)
@@ -258,10 +293,12 @@ class ClientDetailFragment: Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setMultiChoiceItems(items, checkedItems) { _, index, isChecked ->
-                if (isChecked) selectedList.add(enumValues[index])
-                else selectedList.remove(enumValues[index])
+                val item = displayOptions[index].first
+                if (isChecked) selectedList.add(item) else selectedList.remove(item)
             }
-            .setPositiveButton(getString(R.string.accept)) { _, _ -> onSelected(selectedList.toList()) }
+            .setPositiveButton(getString(R.string.accept)) { _, _ ->
+                onSelected(displayOptions.map { it.first }.filter { it in selectedList })
+            }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
@@ -275,6 +312,13 @@ class ClientDetailFragment: Fragment() {
     private fun navigate(destination: Destination) {
         when(destination) {
             is Destination.Back -> findNavController().popBackStack()
+            is Destination.ColorHistoryList -> {
+                findNavController().navigate(
+                    ClientDetailFragmentDirections.actionClientDetailFragmentToColorHistoryListFragment(
+                        destination.clientId
+                    )
+                )
+            }
             else -> {} // Do nothing
         }
     }

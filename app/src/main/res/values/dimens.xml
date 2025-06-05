@@ -20,4 +20,8 @@
     <!--Separator-->
     <dimen name="separatorMargin">8dp</dimen>
 
+    <!--SearchBar-->
+    <dimen name="sbPadding">8dp</dimen>
+    <dimen name="sbMarginTop">16dp</dimen>
+
 </resources>

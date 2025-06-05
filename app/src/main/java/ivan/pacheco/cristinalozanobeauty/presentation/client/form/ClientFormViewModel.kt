@@ -10,6 +10,7 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.CreateClientUC
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
@@ -41,11 +42,19 @@ class ClientFormViewModel @Inject constructor(
         town: String,
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
-        treatment: String,
+        serviceList: List<Service>,
         allergy: String,
         diabetes: Boolean,
-        poorCoagulation: Boolean
+        poorCoagulation: Boolean,
+        others: String
     ) {
+        // Check mandatory fields before continue to create client
+        if (!checkMandatoryFields(listOf(firstName, lastName, phone))) {
+            errorLD.value = R.string.client_form_error_mandatory_fields
+            return
+        }
+
+        // Create client action
         uc.execute(
             firstName,
             lastName,
@@ -56,10 +65,11 @@ class ClientFormViewModel @Inject constructor(
             town,
             nailDisorderList,
             skinDisorderList,
-            treatment,
+            serviceList,
             allergy,
             diabetes,
-            poorCoagulation
+            poorCoagulation,
+            others
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -70,5 +80,10 @@ class ClientFormViewModel @Inject constructor(
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
             })
     }
+
+    /**
+     * Check if mandatory fields are empty
+     */
+    private fun checkMandatoryFields(mandatoryFields: List<String>) = !mandatoryFields.any { it.isBlank() }
 
 }

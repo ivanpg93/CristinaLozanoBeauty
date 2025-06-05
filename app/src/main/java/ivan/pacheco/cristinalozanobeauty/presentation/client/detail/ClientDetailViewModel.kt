@@ -13,6 +13,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.UpdateClientUC
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
@@ -27,7 +28,7 @@ class ClientDetailViewModel @Inject constructor(
     state: SavedStateHandle
 ): ViewModel(), Navigation {
 
-    companion object {
+    private companion object {
         const val ARG_CLIENT_ID = "id"
     }
 
@@ -51,7 +52,6 @@ class ClientDetailViewModel @Inject constructor(
 
     // Actions
     fun actionUpdateClient(
-        id: String,
         firstName: String,
         lastName: String,
         phone: String,
@@ -61,13 +61,21 @@ class ClientDetailViewModel @Inject constructor(
         town: String,
         nailDisorderList: List<NailDisorder>,
         skinDisorderList: List<SkinDisorder>,
-        treatment: String,
+        serviceList: List<Service>,
         allergy: String,
         diabetes: Boolean,
-        poorCoagulation: Boolean
+        poorCoagulation: Boolean,
+        others: String
     ) {
+        // Check mandatory fields before continue to create client
+        if (!checkMandatoryFields(listOf(firstName, lastName, phone))) {
+            errorLD.value = R.string.client_form_error_mandatory_fields
+            return
+        }
+
+        // Update client action
         uc.execute(
-            id,
+            clientId,
             firstName,
             lastName,
             phone,
@@ -77,10 +85,11 @@ class ClientDetailViewModel @Inject constructor(
             town,
             nailDisorderList,
             skinDisorderList,
-            treatment,
+            serviceList,
             allergy,
             diabetes,
-            poorCoagulation
+            poorCoagulation,
+            others
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -103,5 +112,10 @@ class ClientDetailViewModel @Inject constructor(
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_find }
             })
     }
+
+    /**
+     * Check if mandatory fields are empty
+     */
+    private fun checkMandatoryFields(mandatoryFields: List<String>) = !mandatoryFields.any { it.isBlank() }
 
 }

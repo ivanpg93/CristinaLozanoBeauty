@@ -10,7 +10,7 @@
         android:id="@+id/homeFragment"
         android:label="@string/nav_bar_home"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.home.HomeFragment"
-        tools:layout="@layout/home_fragment">
+        tools:layout="@layout/fragment_home">
 
         <!--Nav to client list-->
         <action
@@ -26,9 +26,9 @@
     <!--Client list-->
     <fragment
         android:id="@+id/clientListFragment"
-        android:label="@string/nav_bar_client"
+        android:label="@string/client_list_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.list.ClientListFragment"
-        tools:layout="@layout/client_list_fragment">
+        tools:layout="@layout/fragment_client_list">
 
         <!--Nav to client detail-->
         <action
@@ -41,12 +41,17 @@
         android:id="@+id/clientDetailFragment"
         android:label="@string/client_detail_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragment"
-        tools:layout="@layout/client_detail_fragment">
+        tools:layout="@layout/fragment_client_detail">
 
         <!--Args client id-->
         <argument
             android:name="id"
             app:argType="string" />
+
+        <!--Nav to client detail-->
+        <action
+            android:id="@+id/action_clientDetailFragment_to_colorHistoryListFragment"
+            app:destination="@id/colorHistoryListFragment" />
     </fragment>
 
     <!--Add client-->
@@ -54,7 +59,61 @@
         android:id="@+id/clientFormFragment"
         android:label="@string/client_form_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment"
-        tools:layout="@layout/client_form_fragment">
+        tools:layout="@layout/fragment_client_form">
+    </fragment>
+
+    <!--Color history list-->
+    <fragment
+        android:id="@+id/colorHistoryListFragment"
+        android:label="@string/color_history_list_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.colorhistory.list.ColorHistoryListFragment"
+        tools:layout="@layout/fragment_color_history_list">
+
+        <!--Args client id-->
+        <argument
+            android:name="clientId"
+            app:argType="string" />
+
+        <!--Nav to color history detail-->
+        <action
+            android:id="@+id/action_colorHistoryListFragment_to_colorsHistoryDetailFragment"
+            app:destination="@id/colorsHistoryDetailFragment" />
+
+        <!--Nav to color history form-->
+        <action
+            android:id="@+id/action_colorHistoryListFragment_to_colorsHistoryFormFragment"
+            app:destination="@id/colorsHistoryFormFragment" />
+    </fragment>
+
+    <!--Color history detail-->
+    <fragment
+        android:id="@+id/colorsHistoryDetailFragment"
+        android:label="@string/color_history_detail_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.colorhistory.detail.ColorsHistoryDetailFragment"
+        tools:layout="@layout/fragment_colors_history_detail">
+
+        <!--Args client id-->
+        <argument
+            android:name="clientId"
+            app:argType="string" />
+
+        <!--Args color id-->
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+
+    <!--Add color history-->
+    <fragment
+        android:id="@+id/colorsHistoryFormFragment"
+        android:label="@string/color_history_form_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.colorhistory.form.ColorsHistoryFormFragment"
+        tools:layout="@layout/fragment_colors_history_form">
+
+        <!--Args client id-->
+        <argument
+            android:name="clientId"
+            app:argType="string" />
     </fragment>
 
     <!--Message-->
@@ -62,7 +121,7 @@
         android:id="@+id/messageFragment"
         android:label="@string/nav_bar_message"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageFragment"
-        tools:layout="@layout/message_fragment">
+        tools:layout="@layout/fragment_message">
     </fragment>
 
 </navigation>

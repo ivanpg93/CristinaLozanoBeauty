@@ -32,6 +32,18 @@ enum class SkinDisorder {
     SABAÑONES
 }
 
+enum class Service {
+    SEMIPERMANENTE,
+    NIVELACION,
+    ACRILICO,
+    ACRYGEL,
+    MANICURA_COMBINADA,
+    RETIRADA_DE_MATERIAL,
+    ESMALTE_NORMAL,
+    PEDICURA_SEMI,
+    PEDICURA_COMPLETA
+}
+
 data class Client(
     val id: String = "",
     val firstName: String = "",
@@ -43,30 +55,30 @@ data class Client(
     val town: String = "",
     val nailDisorderList: List<NailDisorder> = listOf(),
     val skinDisorderList: List<SkinDisorder> = listOf(),
-    val treatment: String = "",
+    val serviceList: List<Service> = listOf(),
     val allergy: String = "",
     val hasDiabetes: Boolean = false,
     val hasPoorCoagulation: Boolean = false,
+    val others: String = "",
     val appointmentList: List<Appointment> = listOf()
 ) {
 
-    fun toMap(): Map<String, Any?> {
-        return mapOf(
-            "id" to id,
-            "firstName" to firstName,
-            "lastName" to lastName,
-            "phone" to phone,
-            "email" to email,
-            "birthday" to birthday?.let { Timestamp(it) },
-            "profession" to profession,
-            "town" to town,
-            "nailDisorderList" to nailDisorderList.map { it.name },
-            "skinDisorderList" to skinDisorderList.map { it.name },
-            "treatment" to treatment,
-            "allergy" to allergy,
-            "hasDiabetes" to hasDiabetes,
-            "hasPoorCoagulation" to hasPoorCoagulation
-        )
-    }
+    fun toMap() = mapOf(
+        "id" to id,
+        "firstName" to firstName,
+        "lastName" to lastName,
+        "phone" to phone,
+        "email" to email,
+        "birthday" to birthday?.let { Timestamp(it) },
+        "profession" to profession,
+        "town" to town,
+        "nailDisorderList" to nailDisorderList.map { it.name },
+        "skinDisorderList" to skinDisorderList.map { it.name },
+        "serviceList" to serviceList.map { it.name },
+        "allergy" to allergy,
+        "hasDiabetes" to hasDiabetes,
+        "hasPoorCoagulation" to hasPoorCoagulation,
+        "others" to others
+    )
 
 }

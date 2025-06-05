@@ -23,42 +23,42 @@
             <!--Name-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_name"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_name"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name_text"
-                    style="@style/ClientFormText" />
+                    style="@style/FormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Last name-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_last_name"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_last_name"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_last_name_text"
-                    style="@style/ClientFormText" />
+                    style="@style/FormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Phone-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_phone"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_phone"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_phone_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
                     android:inputType="phone"
                     android:maxLength="12" />
 
@@ -67,14 +67,14 @@
             <!--Email-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_email"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_email"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_email_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
                     android:inputType="textEmailAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -82,14 +82,14 @@
             <!--Birthday-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_birthday"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_birthday"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_birthday_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
                     android:focusable="false"
                     android:inputType="none" />
 
@@ -98,42 +98,42 @@
             <!--Profession-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_profession"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_profession"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_profession_text"
-                    style="@style/ClientFormText" />
+                    style="@style/FormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Town-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_town"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_town"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_town_text"
-                    style="@style/ClientFormText" />
+                    style="@style/FormText" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Nail disorder-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_nail_disorder"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_nail_disorder"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_nail_disorder_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
                     android:focusable="false"
                     android:inputType="none" />
 
@@ -142,45 +142,61 @@
             <!--Skin disorder-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_skin_disorder"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_skin_disorder"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_skinDisorder_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
                     android:focusable="false"
                     android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!--Treatment-->
+            <!--Service-->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/et_treatment"
-                style="@style/ClientForm"
-                android:hint="@string/client_form_treatment"
+                android:id="@+id/et_service"
+                style="@style/Form"
+                android:hint="@string/client_form_service"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_treatment_text"
-                    style="@style/ClientFormText"
-                    android:inputType="textMultiLine" />
+                    android:id="@+id/et_service_text"
+                    style="@style/FormText"
+                    android:focusable="false"
+                    android:inputType="none" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--Allergy-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_allergy"
-                style="@style/ClientForm"
+                style="@style/Form"
                 android:hint="@string/client_form_allergy"
                 app:boxStrokeColor="@color/gold"
                 app:hintTextColor="@color/gold">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_allergy_text"
-                    style="@style/ClientFormText"
+                    style="@style/FormText"
+                    android:inputType="textMultiLine" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Others-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_others"
+                style="@style/Form"
+                android:hint="@string/client_form_others"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_others_text"
+                    style="@style/FormText"
                     android:inputType="textMultiLine" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -198,23 +214,37 @@
                     android:text="@string/client_form_has_diabetes"
                     android:textSize="@dimen/textSize" />
 
-                <RadioGroup
-                    android:id="@+id/rg_has_diabetes"
-                    style="@style/ClientFormRadioGroup">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <RadioButton
-                        android:id="@+id/rb_diabetes_yes"
-                        style="@style/ClientFormRadioButton"
-                        android:text="@string/yes"
-                        app:buttonTint="@color/gold" />
+                    <RadioGroup
+                        android:id="@+id/rg_has_diabetes"
+                        style="@style/FormRadioGroup">
 
-                    <RadioButton
-                        android:id="@+id/rb_diabetes_no"
-                        style="@style/ClientFormRadioButton"
-                        android:layout_marginStart="@dimen/rbMargin"
-                        android:text="@string/no"
-                        app:buttonTint="@color/gold" />
-                </RadioGroup>
+                        <RadioButton
+                            android:id="@+id/rb_diabetes_yes"
+                            style="@style/FormRadioButton"
+                            android:text="@string/yes"
+                            app:buttonTint="@color/gold" />
+
+                        <RadioButton
+                            android:id="@+id/rb_diabetes_no"
+                            style="@style/FormRadioButton"
+                            android:layout_marginStart="@dimen/rbMargin"
+                            android:text="@string/no"
+                            app:buttonTint="@color/gold" />
+                    </RadioGroup>
+
+                    <ImageView
+                        android:id="@+id/btn_color_history"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_palette_colors"
+                        app:tint="@color/gold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -231,23 +261,37 @@
                     android:text="@string/client_form_has_poor_coagulation"
                     android:textSize="@dimen/textSize" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
                 <RadioGroup
                     android:id="@+id/rg_has_poor_coagulation"
-                    style="@style/ClientFormRadioGroup">
+                    style="@style/FormRadioGroup">
 
                     <RadioButton
                         android:id="@+id/rb_poor_coagulation_yes"
-                        style="@style/ClientFormRadioButton"
+                        style="@style/FormRadioButton"
                         android:text="@string/yes"
                         app:buttonTint="@color/gold" />
 
                     <RadioButton
                         android:id="@+id/rb_poor_coagulation_no"
-                        style="@style/ClientFormRadioButton"
+                        style="@style/FormRadioButton"
                         android:layout_marginStart="@dimen/rbMargin"
                         android:text="@string/no"
                         app:buttonTint="@color/gold" />
                 </RadioGroup>
+
+                <ImageView
+                    android:id="@+id/btn_event_history"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_events"
+                    app:tint="@color/gold" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

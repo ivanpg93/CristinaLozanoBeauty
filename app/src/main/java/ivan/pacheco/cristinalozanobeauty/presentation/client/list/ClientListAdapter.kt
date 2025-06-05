@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 
 class ClientListAdapter(
     private val onItemSelected: (ClientListDTO) -> Unit,
