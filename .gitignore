@@ -14,3 +14,6 @@
 .cxx
 local.properties
 .idea
+
+# Ignore client secrets
+app/client_secret_*.json
