@@ -16,9 +16,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -26,7 +24,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
