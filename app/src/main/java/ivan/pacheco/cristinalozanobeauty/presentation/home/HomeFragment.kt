@@ -6,11 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +27,9 @@ class HomeFragment: Fragment() {
     private val vm: HomeViewModel by viewModels()
 
     private lateinit var googleSignInOptions: GoogleSignInOptions
+    private lateinit var client: GoogleSignInClient
     private val SIGN_IN_REQUEST_CODE = 1001
+    private val RECOVERABLE_REQUEST_CODE = 2001
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,8 +44,7 @@ class HomeFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initGoogleSignIn()
-        silentSignIn(requireContext())
-
+        silentSignIn()
         setupCalendar()
 
         vm.getEventsLD().observe(viewLifecycleOwner) { events ->
@@ -59,6 +61,10 @@ class HomeFragment: Fragment() {
 
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
+
+        vm.getRecoverableExceptionLD().observe(viewLifecycleOwner) { exception ->
+            exception.intent?.let { startActivityForResult(it, RECOVERABLE_REQUEST_CODE) }
+        }
     }
 
     override fun onDestroyView() {
@@ -81,12 +87,11 @@ class HomeFragment: Fragment() {
             .requestEmail()
             .requestScopes(Scope("https://www.googleapis.com/auth/calendar"))
             .build()
+        client = GoogleSignIn.getClient(requireContext(), googleSignInOptions)
     }
 
-    private fun silentSignIn(context: Context) {
-        val client = GoogleSignIn.getClient(context, googleSignInOptions)
+    private fun silentSignIn() {
         val task = client.silentSignIn()
-
         if (task.isSuccessful) {
             val account = task.result
             vm.onGoogleAccountReady(account)
@@ -96,8 +101,7 @@ class HomeFragment: Fragment() {
                     val account = completedTask.getResult(ApiException::class.java)
                     vm.onGoogleAccountReady(account)
                 } catch (e: ApiException) {
-                    val signInIntent = client.signInIntent
-                    startActivityForResult(signInIntent, SIGN_IN_REQUEST_CODE)
+                    startActivityForResult(client.signInIntent, SIGN_IN_REQUEST_CODE)
                 }
             }
         }
@@ -106,13 +110,21 @@ class HomeFragment: Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == SIGN_IN_REQUEST_CODE) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                vm.onGoogleAccountReady(account)
-            } catch (e: ApiException) {
-                // Aquí decides qué hacer, por ejemplo mostrar un mensaje de error
+        when (requestCode) {
+            SIGN_IN_REQUEST_CODE -> {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    vm.onGoogleAccountReady(account)
+                } catch (e: ApiException) {
+                    Toast.makeText(requireContext(), "Fallo al iniciar sesión: ${e.statusCode}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            RECOVERABLE_REQUEST_CODE -> {
+                // Intenta de nuevo obtener el token tras el consentimiento
+                GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
+                    vm.onGoogleAccountReady(account)
+                }
             }
         }
     }
