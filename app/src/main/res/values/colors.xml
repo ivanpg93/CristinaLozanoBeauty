@@ -30,6 +30,5 @@
     <color name="red_800">#C62828</color>
     <color name="blue_800">#1565C0</color>
     <color name="cyan_700">#0097A7</color>
-    <color name="example_1_selection_color">#FCCA3E</color>
     <color name="inactive_text_color">#BEBEBE</color>
 </resources>

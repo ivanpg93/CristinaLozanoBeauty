@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -41,6 +42,8 @@ import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toEvent
 import ivan.pacheco.cristinalozanobeauty.databinding.Example3CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.Example3CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.Example3FragmentBinding
@@ -53,10 +56,13 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.inputMethodM
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeGone
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -71,47 +77,10 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.example_3_dialog_delete_confirmation)
             .setPositiveButton(R.string.delete) { _, _ ->
-                deleteEvent(it)
+                vm.deleteEvent(it.id)
             }
             .setNegativeButton(R.string.close, null)
             .show()
-    }
-
-    private val inputDialog by lazy {
-        val editText = AppCompatEditText(requireContext())
-        val layout = FrameLayout(requireContext()).apply {
-            // Setting the padding on the EditText only pads the input area
-            // not the entire EditText so we wrap it in a FrameLayout.
-            val padding = dpToPx(20, requireContext())
-            setPadding(padding, padding, padding, padding)
-            addView(editText, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
-        }
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.example_3_input_dialog_title))
-            .setView(layout)
-            .setPositiveButton(R.string.save) { _, _ ->
-                saveEvent(editText.text.toString())
-                // Prepare EditText for reuse.
-                editText.setText("")
-            }
-            .setNegativeButton(R.string.close, null)
-            .create()
-            .apply @Suppress("DEPRECATION") {
-                setOnShowListener {
-                    // Show the keyboard
-                    editText.requestFocus()
-                    context.inputMethodManager
-                        .toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-                }
-                setOnDismissListener {
-                    // Hide the keyboard
-                    context.inputMethodManager
-                        .toggleSoftInput(
-                            InputMethodManager.SHOW_IMPLICIT,
-                            InputMethodManager.HIDE_IMPLICIT_ONLY
-                        )
-                }
-            }
     }
 
     private var selectedDate: LocalDate? = null
@@ -144,13 +113,21 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         silentSignIn()
         setupCalendar()
 
-        vm.getEventsLD().observe(viewLifecycleOwner) { events ->
-            events.forEach { event ->
-                // Aquí quieres marcar el día del calendario
-                // De momento, simplemente imprimimos en log:
-                println("Evento: ${event.summary} desde ${event.startDateTime} hasta ${event.endDateTime}")
-                // Luego mejoramos para pintar días en el CalendarView
-            }
+        vm.getEventsLD().observe(viewLifecycleOwner) { eventList ->
+            // Limpia el mapa actual
+            events.clear()
+
+            // Agrupa los eventos por fecha
+            eventList.groupBy { it.startDateTime.toLocalDate() }
+                .forEach { (date, eventsForDate) ->
+                    events[date] = eventsForDate.map { it.toEvent() }
+                }
+
+            // Notifica al calendario que algo cambió
+            binding.exThreeCalendar.notifyCalendarChanged()
+
+            // Si ya hay una fecha seleccionada, actualiza el adaptador
+            selectedDate?.let { updateAdapterForDate(it) }
         }
 
         // Loading
@@ -164,7 +141,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         }
 
         // Calendar
-        addStatusBarColorUpdate(R.color.example_3_toolbar_color)
+        addStatusBarColorUpdate(R.color.gold)
         applyInsets(binding)
         binding.exThreeRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -174,7 +151,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
 
         binding.exThreeCalendar.monthScrollListener = {
             binding.toolbar.title = if (it.yearMonth.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth)
+                titleSameYearFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
             } else {
                 titleFormatter.format(it.yearMonth)
             }
@@ -196,14 +173,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             // Show today's events initially.
             binding.exThreeCalendar.post { selectDate(today) }
         }
-        binding.exThreeAddButton.setOnClickListener { inputDialog.show() }
-
-        // Setup Toolbar como support action bar
-        (requireActivity() as AppCompatActivity).apply {
-            setSupportActionBar(binding.toolbar)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.title = getString(R.string.example_3_title)
-        }
+        binding.exThreeAddButton.setOnClickListener { selectedDate?.let { showAddEventDialog(it) } }
 
         // Aplicar insets si quieres
         applyInsets(binding)
@@ -320,20 +290,18 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         super.onStart()
 
         // Configurar el AppBar y Toolbar del fragmento
-        val color = requireContext().getColorCompat(R.color.example_3_toolbar_color)
+        val color = requireContext().getColorCompat(R.color.gold)
         binding.toolbar.setBackgroundColor(color)
         binding.activityAppBar.setBackgroundColor(color)
         binding.activityAppBar.makeVisible()
-        binding.activityAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            height = WRAP_CONTENT
-        }
+        binding.activityAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { height = WRAP_CONTENT }
     }
 
     override fun onStop() {
         super.onStop()
 
         // Resetear colores o visibilidad si quieres
-        val color = requireContext().getColorCompat(R.color.colorPrimary)
+        val color = requireContext().getColorCompat(R.color.gold)
         binding.toolbar.setBackgroundColor(color)
         binding.activityAppBar.setBackgroundColor(color)
 
@@ -370,7 +338,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                             textView.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.example_3_white
+                                    R.color.white
                                 )
                             )
                             textView.setBackgroundResource(R.drawable.example_3_today_bg)
@@ -381,7 +349,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                             textView.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.example_3_blue
+                                    R.color.white
                                 )
                             )
                             textView.setBackgroundResource(R.drawable.example_3_selected_bg)
@@ -392,7 +360,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                             textView.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.example_3_black
+                                    R.color.black
                                 )
                             )
                             textView.background = null
@@ -422,7 +390,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                                 tv.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.example_3_black
+                                        R.color.black
                                     )
                                 )
                             }
@@ -444,5 +412,40 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             windowInsets
         }
     }
+
+    private fun showAddEventDialog(selectedDate: LocalDate) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_new_event, null)
+
+        val titleEditText = dialogView.findViewById<EditText>(R.id.eventTitleEditText)
+        val startTimeEditText = dialogView.findViewById<EditText>(R.id.startTimeEditText)
+        val endTimeEditText = dialogView.findViewById<EditText>(R.id.endTimeEditText)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Nuevo evento")
+            .setView(dialogView)
+            .setPositiveButton("Guardar") { _, _ ->
+                val title = titleEditText.text.toString()
+                val startTime = startTimeEditText.text.toString()
+                val endTime = endTimeEditText.text.toString()
+
+                val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                val start = LocalDateTime.of(selectedDate, LocalTime.parse(startTime, formatter))
+                val end = LocalDateTime.of(selectedDate, LocalTime.parse(endTime, formatter))
+
+                val newEvent = CalendarEvent(
+                    id = UUID.randomUUID().toString(),
+                    summary = title,
+                    description = null,
+                    startDateTime = start.toString(),
+                    endDateTime = end.toString()
+                )
+
+                // Llama a tu método para guardarlo (en VM o directamente)
+                vm.saveEvent(newEvent)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
 
 }

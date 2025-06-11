@@ -2,6 +2,10 @@ package ivan.pacheco.cristinalozanobeauty.presentation.utils
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeParseException
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -28,6 +32,14 @@ object DateUtils {
             sdf.parse(dateString)
         } catch (e: ParseException) {
             null
+        }
+    }
+
+    fun String.toLocalDate(): LocalDate {
+        return try {
+            OffsetDateTime.parse(this).toLocalDate()
+        } catch (e: DateTimeParseException) {
+            LocalDateTime.parse(this).toLocalDate()
         }
     }
 

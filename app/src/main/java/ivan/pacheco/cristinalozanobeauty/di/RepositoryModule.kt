@@ -11,9 +11,6 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClien
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDataRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.CalendarDataRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.CalendarRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.GoogleCalendarApi
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.CreateColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.DeleteColorHistoryWebService
@@ -21,6 +18,9 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.FindColorH
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.ListColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.repository.ColorsHistoryDataRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.CalendarDataRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.home.GoogleCalendarApi
 import javax.inject.Singleton
 
 @Module

@@ -12,18 +12,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import kotlinx.coroutines.runBlocking
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.GoogleCalendarEventRequest
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +50,7 @@ class HomeViewModel @Inject constructor(
     fun getRecoverableExceptionLD(): LiveData<UserRecoverableAuthException> = recoverableExceptionLD
 
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
-        val today = LocalDate.now().toString() // "2025-06-07"
+        val today = "2025-06-07"//LocalDate.now().toString()
         getAccessTokenRx(application.applicationContext, account)
             .flatMap { token -> calendarRepository.getEventsForDate(today, token) }
             .subscribeOn(Schedulers.io())
@@ -57,8 +60,7 @@ class HomeViewModel @Inject constructor(
             .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
                 override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
                 override fun onError(e: Throwable) {
-                    if (e is UserRecoverableAuthException) {
-                        recoverableExceptionLD.value = e
+                    if (e is UserRecoverableAuthException) { recoverableExceptionLD.value = e
                     } else {
                         errorLD.value = R.string.client_list_error_list
                     }
@@ -69,8 +71,9 @@ class HomeViewModel @Inject constructor(
     private fun getAccessTokenRx(context: Context, account: GoogleSignInAccount): Single<String> {
         return Single.create { emitter: SingleEmitter<String> ->
             try {
-                val scope = "oauth2:https://www.googleapis.com/auth/calendar.readonly"
+                val scope = "oauth2:https://www.googleapis.com/auth/calendar"
                 val token = GoogleAuthUtil.getToken(context, account.account!!, scope)
+                idToken = token
                 emitter.onSuccess(token)
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -92,11 +95,62 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun loadEventsForCurrentMonth(date: String) {
+        idToken?.let { token ->
+            calendarRepository.getEventsForDate(date, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
+                    override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_list }
+                })
+        }
+    }
+
+    fun saveEvent(event: CalendarEvent) {
+        idToken?.let { token ->
+            calendarRepository.createEvent(event, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableSingleObserver<CalendarEvent>() {
+                    override fun onSuccess(event: CalendarEvent) {
+                        eventsLD.value = eventsLD.value?.plus(event)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        errorLD.value = R.string.client_form_error_create
+                    }
+                })
+        }
+    }
+
+    fun deleteEvent(eventId: String) {
+        idToken?.let { token ->
+            calendarRepository.deleteEvent(eventId, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                        val updated = eventsLD.value.orEmpty().filterNot { it.id == eventId }
+                        eventsLD.value = updated
+                    }
+
+                    override fun onError(e: Throwable) {
+                        errorLD.value = R.string.client_form_error_create
+                    }
+                })
+        }
+    }
+
 }
 
-interface CalendarRepository {
-    fun getEventsForDate(date: String, token: String): Single<List<CalendarEvent>>
-}
+
 
 interface GoogleCalendarApi {
     @GET("calendar/v3/calendars/primary/events")
@@ -107,6 +161,18 @@ interface GoogleCalendarApi {
         @Query("singleEvents") singleEvents: Boolean = true,
         @Query("orderBy") orderBy: String = "startTime"
     ): GoogleCalendarResponse
+
+    @POST("calendar/v3/calendars/primary/events")
+    suspend fun createEvent(
+        @Header("Authorization") authHeader: String,
+        @Body event: GoogleCalendarEventRequest
+    ): GoogleCalendarEvent
+
+    @DELETE("calendar/v3/calendars/primary/events/{eventId}")
+    suspend fun deleteEvent(
+        @Header("Authorization") authHeader: String,
+        @Path("eventId") eventId: String
+    ): Response<Unit>
 }
 
 data class GoogleCalendarResponse(
@@ -125,34 +191,3 @@ data class DateTimeData(
     val dateTime: String
 )
 
-class CalendarDataRepository @Inject constructor(
-    private val googleCalendarApi: GoogleCalendarApi
-) : CalendarRepository {
-
-    override fun getEventsForDate(date: String, token: String): Single<List<CalendarEvent>> {
-        return Single.fromCallable {
-            val dateFormatted = LocalDate.parse(date)
-            val timeMin = dateFormatted.atStartOfDay().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-            val timeMax = dateFormatted.atTime(LocalTime.MAX).atZone(ZoneId.of("UTC")).format(
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-
-            val response = runBlocking {
-                googleCalendarApi.getEvents(
-                    authHeader = "Bearer $token",
-                    timeMin = timeMin,
-                    timeMax = timeMax
-                )
-            }
-            response.items.map { item ->
-                CalendarEvent(
-                    id = item.id,
-                    summary = item.summary,
-                    description = item.description,
-                    startDateTime = item.start.dateTime,
-                    endDateTime = item.end.dateTime
-                )
-            }
-        }
-    }
-
-}
