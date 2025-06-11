@@ -18,13 +18,18 @@ class CalendarDataRepository @Inject constructor(
     private val googleCalendarApi: GoogleCalendarApi
 ) : CalendarRepository {
 
-    override fun getEventsForDate(date: String, token: String): Single<List<CalendarEvent>> {
+    override fun getEventsForDate(startDate: String, endDate: String, token: String): Single<List<CalendarEvent>> {
         return Single.fromCallable {
-            val dateFormatted = LocalDate.parse(date)
-            val timeMin = dateFormatted.atStartOfDay().atZone(ZoneId.of("UTC")).format(
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-            val timeMax = dateFormatted.atTime(LocalTime.MAX).atZone(ZoneId.of("UTC")).format(
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+            val start = LocalDate.parse(startDate)
+            val end = LocalDate.parse(endDate)
+
+            val timeMin = start.atStartOfDay()
+                .atZone(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+            val timeMax = end.atTime(LocalTime.MAX)
+                .atZone(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
             val response = runBlocking {
                 googleCalendarApi.getEvents(
@@ -34,7 +39,7 @@ class CalendarDataRepository @Inject constructor(
                 )
             }
             response.items
-                .filter { it.start?.dateTime != null }
+                .filter { it.start.dateTime != null && it.end?.dateTime != null }
                 .map { item ->
                 CalendarEvent(
                     id = item.id,

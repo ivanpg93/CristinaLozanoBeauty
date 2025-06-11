@@ -156,6 +156,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             }
             // Select the first day of the visible month.
             selectDate(it.yearMonth.atDay(1))
+            vm.onDateSelected(selectedDate.toString())
         }
 
         val daysOfWeek = daysOfWeek()
@@ -168,11 +169,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             scrollToMonth(currentMonth)
         }
 
-        if (savedInstanceState == null) {
-            // Show today's events initially.
-            binding.exThreeCalendar.post { selectDate(today) }
-        }
-        binding.exThreeAddButton.setOnClickListener { selectedDate?.let { showAddEventDialog(it) } }
+        binding.exThreeAddButton.setOnClickListener { showAddEventDialog(selectedDate) }
 
         // Aplicar insets si quieres
         applyInsets(binding)
@@ -243,7 +240,6 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             oldDate.let { binding.exThreeCalendar.notifyDateChanged(it) }
             binding.exThreeCalendar.notifyDateChanged(date)
             updateAdapterForDate(date)
-            vm.onDateSelected(selectedDate.toString())
         }
     }
 

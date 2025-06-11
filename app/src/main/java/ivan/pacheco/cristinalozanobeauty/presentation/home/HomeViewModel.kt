@@ -27,6 +27,8 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,7 +54,7 @@ class HomeViewModel @Inject constructor(
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
         val today = "2025-06-07"//LocalDate.now().toString()
         getAccessTokenRx(application.applicationContext, account)
-            .flatMap { token -> calendarRepository.getEventsForDate(today, token) }
+            .flatMap { token -> calendarRepository.getEventsForDate(today, today, token) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
@@ -84,7 +86,9 @@ class HomeViewModel @Inject constructor(
 
     fun onDateSelected(date: String) {
         idToken?.let { token ->
-            calendarRepository.getEventsForDate(date, token)
+            val localDate = LocalDate.parse(date)
+            val (startDate, endDate) = getMonthRange(localDate)
+            calendarRepository.getEventsForDate(startDate, endDate, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
@@ -96,18 +100,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadEventsForCurrentMonth(date: String) {
-        idToken?.let { token ->
-            calendarRepository.getEventsForDate(date, token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
-                .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
-                    override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
-                    override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_list }
-                })
-        }
+    private fun getMonthRange(date: LocalDate): Pair<String, String> {
+        val startOfMonth = date.withDayOfMonth(1)
+        val endOfMonth = date.withDayOfMonth(date.lengthOfMonth())
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+        return startOfMonth.format(formatter) to endOfMonth.format(formatter)
     }
 
     fun saveEvent(event: CalendarEvent) {
