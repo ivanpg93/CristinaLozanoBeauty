@@ -33,7 +33,9 @@ class CalendarDataRepository @Inject constructor(
                     timeMax = timeMax
                 )
             }
-            response.items.map { item ->
+            response.items
+                .filter { it.start?.dateTime != null }
+                .map { item ->
                 CalendarEvent(
                     id = item.id,
                     summary = item.summary,

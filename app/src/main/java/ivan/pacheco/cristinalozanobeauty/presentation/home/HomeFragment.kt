@@ -83,7 +83,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             .show()
     }
 
-    private var selectedDate: LocalDate? = null
+    private var selectedDate: LocalDate = LocalDate.now()
     private val today = LocalDate.now()
 
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
@@ -101,7 +101,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreate(savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
         _binding = Example3FragmentBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -111,7 +111,6 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
 
         initGoogleSignIn()
         silentSignIn()
-        setupCalendar()
 
         vm.getEventsLD().observe(viewLifecycleOwner) { eventList ->
             // Limpia el mapa actual
@@ -127,7 +126,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             binding.exThreeCalendar.notifyCalendarChanged()
 
             // Si ya hay una fecha seleccionada, actualiza el adaptador
-            selectedDate?.let { updateAdapterForDate(it) }
+            updateAdapterForDate(selectedDate)
         }
 
         // Loading
@@ -182,16 +181,6 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun setupCalendar() {
-        val year = Calendar.getInstance().get(Calendar.YEAR)
-        val month = Calendar.getInstance().get(Calendar.MONTH) + 1 // enero=0
-        val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        val monthFormatted = String.format("%02d", month)
-        val dayFormatted = String.format("%02d", day)
-        val date = "$year-$monthFormatted-$dayFormatted"
-        vm.onDateSelected(date)
     }
 
     private fun initGoogleSignIn() {
@@ -251,29 +240,11 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
-            oldDate?.let { binding.exThreeCalendar.notifyDateChanged(it) }
+            oldDate.let { binding.exThreeCalendar.notifyDateChanged(it) }
             binding.exThreeCalendar.notifyDateChanged(date)
             updateAdapterForDate(date)
+            vm.onDateSelected(selectedDate.toString())
         }
-    }
-
-    private fun saveEvent(text: String) {
-        if (text.isBlank()) {
-            Toast.makeText(requireContext(), R.string.example_3_empty_input_text, Toast.LENGTH_LONG)
-                .show()
-        } else {
-            selectedDate?.let {
-                events[it] =
-                    events[it].orEmpty().plus(Event(UUID.randomUUID().toString(), text, it))
-                updateAdapterForDate(it)
-            }
-        }
-    }
-
-    private fun deleteEvent(event: Event) {
-        val date = event.date
-        events[date] = events[date].orEmpty().minus(event)
-        updateAdapterForDate(date)
     }
 
     @SuppressLint("NotifyDataSetChanged")

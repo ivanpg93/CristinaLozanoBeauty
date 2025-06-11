@@ -60,7 +60,8 @@ class HomeViewModel @Inject constructor(
             .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
                 override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
                 override fun onError(e: Throwable) {
-                    if (e is UserRecoverableAuthException) { recoverableExceptionLD.value = e
+                    if (e is UserRecoverableAuthException) {
+                        recoverableExceptionLD.value = e
                     } else {
                         errorLD.value = R.string.client_list_error_list
                     }
@@ -117,13 +118,8 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableSingleObserver<CalendarEvent>() {
-                    override fun onSuccess(event: CalendarEvent) {
-                        eventsLD.value = eventsLD.value?.plus(event)
-                    }
-
-                    override fun onError(e: Throwable) {
-                        errorLD.value = R.string.client_form_error_create
-                    }
+                    override fun onSuccess(event: CalendarEvent) { eventsLD.value = eventsLD.value?.plus(event) }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
                 })
         }
     }
