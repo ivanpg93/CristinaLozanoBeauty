@@ -4,6 +4,16 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.CreateAppointmentWebService
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.DeleteAppointmentWebService
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.FindAppointmentWebService
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.ListAppointmentWebService
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.UpdateAppointmentWebService
+import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.CreateAppointmentWS
+import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.DeleteAppointmentWS
+import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.FindAppointmentWS
+import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.ListAppointmentWS
+import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.UpdateAppointmentWS
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClientWebService
@@ -31,7 +41,6 @@ import javax.inject.Singleton
 object WebServiceModule {
 
     // Client
-
     @Singleton
     @Provides
     fun providesListClientWebService(): ListClientWebService = ListClientWS()
@@ -53,7 +62,6 @@ object WebServiceModule {
     fun providesDeleteClientWebService(): DeleteClientWebService = DeleteClientWS()
 
     // Color history
-
     @Singleton
     @Provides
     fun providesListColorHistoryWebService(): ListColorHistoryWebService = ListColorHistoryWS()
@@ -73,5 +81,26 @@ object WebServiceModule {
     @Singleton
     @Provides
     fun providesDeleteColorHistoryWebService(): DeleteColorHistoryWebService = DeleteColorHistoryWS()
+
+    // Appointment
+    @Singleton
+    @Provides
+    fun providesListAppointmentWebService(): ListAppointmentWebService = ListAppointmentWS()
+
+    @Singleton
+    @Provides
+    fun providesFindAppointmentWebService(): FindAppointmentWebService = FindAppointmentWS()
+
+    @Singleton
+    @Provides
+    fun providesCreateAppointmentWebService(): CreateAppointmentWebService = CreateAppointmentWS()
+
+    @Singleton
+    @Provides
+    fun providesUpdateAppointmentWebService(): UpdateAppointmentWebService = UpdateAppointmentWS()
+
+    @Singleton
+    @Provides
+    fun providesDeleteAppointmentWebService(): DeleteAppointmentWebService = DeleteAppointmentWS()
 
 }

@@ -11,7 +11,7 @@ class DeleteClientWS: DeleteClientWebService {
         const val CLIENTS = "clients"
     }
 
-    override fun deleteClient(client: ClientListDTO): Completable = Completable.create { emitter ->
+    override fun fetch(client: ClientListDTO): Completable = Completable.create { emitter ->
         Firestore.db.collection(CLIENTS)
             .document(client.id)
             .delete()

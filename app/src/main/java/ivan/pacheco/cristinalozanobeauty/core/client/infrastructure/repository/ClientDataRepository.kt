@@ -37,6 +37,6 @@ class ClientDataRepository @Inject constructor(
     override fun find(id: String): Single<Client> = findWS.fetch(id)
     override fun create(client: Client): Completable = createWS.fetch(client)
     override fun update(client: Client): Completable = updateWS.fetch(client)
-    override fun delete(client: ClientListDTO): Completable = deleteWS.deleteClient(client)
+    override fun delete(client: ClientListDTO): Completable = deleteWS.fetch(client)
 
 }
