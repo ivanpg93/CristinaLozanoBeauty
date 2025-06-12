@@ -18,15 +18,6 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
-import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.GoogleCalendarEventRequest
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -36,6 +27,10 @@ class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val application: Application
 ) : ViewModel() {
+
+    private companion object {
+        const val SCOPE_OAUTH2 = "oauth2:https://www.googleapis.com/auth/calendar"
+    }
 
     private var idToken: String? = null
 
@@ -51,10 +46,12 @@ class HomeViewModel @Inject constructor(
     fun getEventsLD(): LiveData<List<CalendarEvent>> = eventsLD
     fun getRecoverableExceptionLD(): LiveData<UserRecoverableAuthException> = recoverableExceptionLD
 
+    // Actions
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
-        val today = "2025-06-07"//LocalDate.now().toString()
+        val localDate = LocalDate.parse(LocalDate.now().toString())
+        val (startDate, endDate) = getMonthRange(localDate)
         getAccessTokenRx(application.applicationContext, account)
-            .flatMap { token -> calendarRepository.getEventsForDate(today, today, token) }
+            .flatMap { token -> calendarRepository.getEventsForDate(startDate, endDate, token) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
@@ -69,19 +66,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             })
-    }
-
-    private fun getAccessTokenRx(context: Context, account: GoogleSignInAccount): Single<String> {
-        return Single.create { emitter: SingleEmitter<String> ->
-            try {
-                val scope = "oauth2:https://www.googleapis.com/auth/calendar"
-                val token = GoogleAuthUtil.getToken(context, account.account!!, scope)
-                idToken = token
-                emitter.onSuccess(token)
-            } catch (e: Exception) {
-                emitter.onError(e)
-            }
-        }.subscribeOn(Schedulers.io())
     }
 
     fun onDateSelected(date: String) {
@@ -100,14 +84,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getMonthRange(date: LocalDate): Pair<String, String> {
-        val startOfMonth = date.withDayOfMonth(1)
-        val endOfMonth = date.withDayOfMonth(date.lengthOfMonth())
-        val formatter = DateTimeFormatter.ISO_LOCAL_DATE
-        return startOfMonth.format(formatter) to endOfMonth.format(formatter)
-    }
-
-    fun saveEvent(event: CalendarEvent) {
+    fun actionSaveEvent(event: CalendarEvent) {
         idToken?.let { token ->
             calendarRepository.createEvent(event, token)
                 .subscribeOn(Schedulers.io())
@@ -121,7 +98,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteEvent(eventId: String) {
+    fun actionDeleteEvent(eventId: String) {
         idToken?.let { token ->
             calendarRepository.deleteEvent(eventId, token)
                 .subscribeOn(Schedulers.io())
@@ -133,54 +110,30 @@ class HomeViewModel @Inject constructor(
                         val updated = eventsLD.value.orEmpty().filterNot { it.id == eventId }
                         eventsLD.value = updated
                     }
-
-                    override fun onError(e: Throwable) {
-                        errorLD.value = R.string.client_form_error_create
-                    }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
                 })
         }
     }
 
+    private fun getAccessTokenRx(context: Context, account: GoogleSignInAccount): Single<String> {
+        return Single.create { emitter: SingleEmitter<String> ->
+            try {
+                account.account?.let { account ->
+                    val token = GoogleAuthUtil.getToken(context, account, SCOPE_OAUTH2)
+                    idToken = token
+                    emitter.onSuccess(token)
+                }
+            } catch (e: Exception) {
+                emitter.onError(e)
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    private fun getMonthRange(date: LocalDate): Pair<String, String> {
+        val startOfMonth = date.withDayOfMonth(1)
+        val endOfMonth = date.withDayOfMonth(date.lengthOfMonth())
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+        return startOfMonth.format(formatter) to endOfMonth.format(formatter)
+    }
+
 }
-
-
-
-interface GoogleCalendarApi {
-    @GET("calendar/v3/calendars/primary/events")
-    suspend fun getEvents(
-        @Header("Authorization") authHeader: String,
-        @Query("timeMin") timeMin: String,
-        @Query("timeMax") timeMax: String,
-        @Query("singleEvents") singleEvents: Boolean = true,
-        @Query("orderBy") orderBy: String = "startTime"
-    ): GoogleCalendarResponse
-
-    @POST("calendar/v3/calendars/primary/events")
-    suspend fun createEvent(
-        @Header("Authorization") authHeader: String,
-        @Body event: GoogleCalendarEventRequest
-    ): GoogleCalendarEvent
-
-    @DELETE("calendar/v3/calendars/primary/events/{eventId}")
-    suspend fun deleteEvent(
-        @Header("Authorization") authHeader: String,
-        @Path("eventId") eventId: String
-    ): Response<Unit>
-}
-
-data class GoogleCalendarResponse(
-    val items: List<GoogleCalendarEvent>
-)
-
-data class GoogleCalendarEvent(
-    val id: String,
-    val summary: String,
-    val description: String?,
-    val start: DateTimeData,
-    val end: DateTimeData
-)
-
-data class DateTimeData(
-    val dateTime: String
-)
-

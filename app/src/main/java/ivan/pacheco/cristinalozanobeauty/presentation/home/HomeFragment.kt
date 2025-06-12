@@ -6,16 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
@@ -41,19 +36,17 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
+import ivan.pacheco.cristinalozanobeauty.BuildConfig
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toEvent
-import ivan.pacheco.cristinalozanobeauty.databinding.Example3CalendarDayBinding
-import ivan.pacheco.cristinalozanobeauty.databinding.Example3CalendarHeaderBinding
-import ivan.pacheco.cristinalozanobeauty.databinding.Example3FragmentBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Example3EventsAdapter
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.addStatusBarColorUpdate
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.dpToPx
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.inputMethodManager
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeGone
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
@@ -65,21 +58,26 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import java.util.UUID
 
 @AndroidEntryPoint
-class HomeFragment: Fragment(R.layout.example_3_fragment) {
+class HomeFragment: Fragment(R.layout.fragment_home) {
 
-    private var _binding: Example3FragmentBinding? = null
+    private companion object {
+        const val SIGN_IN_REQUEST_CODE = 1001
+        const val RECOVERABLE_REQUEST_CODE = 2001
+        const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
+    }
+
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val eventsAdapter = Example3EventsAdapter {
+    private val eventsAdapter = EventsAdapter {
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.example_3_dialog_delete_confirmation)
-            .setPositiveButton(R.string.delete) { _, _ ->
-                vm.deleteEvent(it.id)
+            .setMessage(R.string.dialog_calendar_event_delete_message)
+            .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
+                vm.actionDeleteEvent(it.id)
             }
-            .setNegativeButton(R.string.close, null)
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
@@ -94,15 +92,13 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
 
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var client: GoogleSignInClient
-    private val SIGN_IN_REQUEST_CODE = 1001
-    private val RECOVERABLE_REQUEST_CODE = 2001
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        _binding = Example3FragmentBinding.inflate(layoutInflater)
+        _binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -175,37 +171,6 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         applyInsets(binding)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun initGoogleSignIn() {
-        googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("217437853819-ohqt67v4ioejvkjvkha2dlmj6gh1sr36.apps.googleusercontent.com")
-            .requestEmail()
-            .requestScopes(Scope("https://www.googleapis.com/auth/calendar"))
-            .build()
-        client = GoogleSignIn.getClient(requireContext(), googleSignInOptions)
-    }
-
-    private fun silentSignIn() {
-        val task = client.silentSignIn()
-        if (task.isSuccessful) {
-            val account = task.result
-            vm.onGoogleAccountReady(account)
-        } else {
-            task.addOnCompleteListener { completedTask ->
-                try {
-                    val account = completedTask.getResult(ApiException::class.java)
-                    vm.onGoogleAccountReady(account)
-                } catch (e: ApiException) {
-                    startActivityForResult(client.signInIntent, SIGN_IN_REQUEST_CODE)
-                }
-            }
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -233,6 +198,50 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // Configurar el AppBar y Toolbar del fragmento
+        val color = requireContext().getColorCompat(R.color.gold)
+        binding.toolbar.setBackgroundColor(color)
+        binding.activityAppBar.setBackgroundColor(color)
+        binding.activityAppBar.makeVisible()
+        binding.activityAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { height = WRAP_CONTENT }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun initGoogleSignIn() {
+        googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildConfig.GOOGLE_ACCESS_TOKEN)
+            .requestEmail()
+            .requestScopes(Scope(SCOPE_GOOGLE_CALENDAR))
+            .build()
+        client = GoogleSignIn.getClient(requireContext(), googleSignInOptions)
+    }
+
+    private fun silentSignIn() {
+        val task = client.silentSignIn()
+        if (task.isSuccessful) {
+            val account = task.result
+            vm.onGoogleAccountReady(account)
+        } else {
+            task.addOnCompleteListener { completedTask ->
+                try {
+                    val account = completedTask.getResult(ApiException::class.java)
+                    vm.onGoogleAccountReady(account)
+                } catch (e: ApiException) {
+                    client.signOut().addOnCompleteListener {
+                        startActivityForResult(client.signInIntent, SIGN_IN_REQUEST_CODE)
+                    }
+                }
+            }
+        }
+    }
+
     private fun selectDate(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
@@ -253,33 +262,10 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         binding.exThreeSelectedDateText.text = selectionFormatter.format(date)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // Configurar el AppBar y Toolbar del fragmento
-        val color = requireContext().getColorCompat(R.color.gold)
-        binding.toolbar.setBackgroundColor(color)
-        binding.activityAppBar.setBackgroundColor(color)
-        binding.activityAppBar.makeVisible()
-        binding.activityAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> { height = WRAP_CONTENT }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        // Resetear colores o visibilidad si quieres
-        val color = requireContext().getColorCompat(R.color.gold)
-        binding.toolbar.setBackgroundColor(color)
-        binding.activityAppBar.setBackgroundColor(color)
-
-        // Aquí decides si ocultar el appBar o dejar visible
-        binding.activityAppBar.makeGone()
-    }
-
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
-            val binding = Example3CalendarDayBinding.bind(view)
+            val binding = CalendarDayBinding.bind(view)
 
             init {
                 view.setOnClickListener {
@@ -289,6 +275,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                 }
             }
         }
+
         binding.exThreeCalendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
@@ -308,7 +295,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                                     R.color.white
                                 )
                             )
-                            textView.setBackgroundResource(R.drawable.example_3_today_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_today_background)
                             dotView.makeInVisible()
                         }
 
@@ -319,7 +306,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                                     R.color.white
                                 )
                             )
-                            textView.setBackgroundResource(R.drawable.example_3_selected_bg)
+                            textView.setBackgroundResource(R.drawable.calendar_selected_day_background)
                             dotView.makeInVisible()
                         }
 
@@ -342,8 +329,9 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         }
 
         class MonthViewContainer(view: View) : ViewContainer(view) {
-            val legendLayout = Example3CalendarHeaderBinding.bind(view).legendLayout.root
+            val legendLayout = CalendarHeaderBinding.bind(view).legendLayout.root
         }
+
         binding.exThreeCalendar.monthHeaderBinder =
             object : MonthHeaderFooterBinder<MonthViewContainer> {
                 override fun create(view: View) = MonthViewContainer(view)
@@ -366,7 +354,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
             }
     }
 
-    private fun applyInsets(binding: Example3FragmentBinding) {
+    private fun applyInsets(binding: FragmentHomeBinding) {
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root,
         ) { _, windowInsets ->
@@ -382,7 +370,6 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
 
     private fun showAddEventDialog(selectedDate: LocalDate) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_new_event, null)
-
         val titleEditText = dialogView.findViewById<EditText>(R.id.eventTitleEditText)
         val startTimeEditText = dialogView.findViewById<EditText>(R.id.startTimeEditText)
         val endTimeEditText = dialogView.findViewById<EditText>(R.id.endTimeEditText)
@@ -390,7 +377,7 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
         AlertDialog.Builder(requireContext())
             .setTitle("Nuevo evento")
             .setView(dialogView)
-            .setPositiveButton("Guardar") { _, _ ->
+            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save)) { _, _ ->
                 val title = titleEditText.text.toString()
                 val startTime = startTimeEditText.text.toString()
                 val endTime = endTimeEditText.text.toString()
@@ -407,12 +394,11 @@ class HomeFragment: Fragment(R.layout.example_3_fragment) {
                     endDateTime = end.toString()
                 )
 
-                // Llama a tu método para guardarlo (en VM o directamente)
-                vm.saveEvent(newEvent)
+                // Save event
+                vm.actionSaveEvent(newEvent)
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
-
 
 }

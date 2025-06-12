@@ -19,6 +19,7 @@ android {
         targetSdk 35
         versionCode project.versionCode
         versionName project.versionName
+        buildConfigField "String", "GOOGLE_ACCESS_TOKEN", "\"217437853819-ohqt67v4ioejvkjvkha2dlmj6gh1sr36.apps.googleusercontent.com\""
     }
 
     buildTypes {

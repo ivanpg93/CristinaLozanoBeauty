@@ -3,8 +3,10 @@ package ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository
 import io.reactivex.Completable
 import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.GoogleCalendarApi
+import ivan.pacheco.cristinalozanobeauty.core.shared.GoogleCalendarApi
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.time.LocalDate
@@ -39,7 +41,7 @@ class CalendarDataRepository @Inject constructor(
                 )
             }
             response.items
-                .filter { it.start.dateTime != null && it.end?.dateTime != null }
+                .filter { it.start.dateTime != null && it.end?.dateTime != null } // TODO: Fix nulls
                 .map { item ->
                 CalendarEvent(
                     id = item.id,
@@ -95,15 +97,3 @@ class CalendarDataRepository @Inject constructor(
     }
 
 }
-
-data class GoogleCalendarEventRequest(
-    val summary: String,
-    val description: String?,
-    val start: EventDateTime,
-    val end: EventDateTime
-)
-
-data class EventDateTime(
-    val dateTime: String,
-    val timeZone: String = "Europe/Madrid"
-)

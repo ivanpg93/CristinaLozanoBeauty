@@ -88,21 +88,10 @@
     <!--Color history detail-->
     <string name="color_history_detail_title">Color</string>
 
-
-
     <!--Calendar-->
-    <string name="activity_title_view">Calendar View Sample</string>
-    <string name="example_3_title">Example 3</string>
-    <string name="example_3_subtitle">Event style implementation, day labels as header view, single selection, month scroll listener. Similar to what is in the Google Calendar app.</string>
-    <string name="save">Save</string>
-    <string name="close">Close</string>
-    <string name="example_3_input_dialog_title">Enter event title</string>
-    <string name="example_3_empty_input_text">Text is empty</string>
-    <string name="example_3_dialog_delete_confirmation">Delete this event?</string>
-    <string name="delete">Delete</string>
-    <string name="start_date">Start date</string>
-    <string name="end_date">End date</string>
-    <string name="clear">Clear</string>
-    <string name="week_mode">Week mode</string>
+    <string name="dialog_calendar_event_title">Nueva cita</string>
+    <string name="dialog_calendar_event_action_save">Guardar</string>
+    <string name="dialog_calendar_event_delete_message">Quieres borrar esta cita?</string>
+    <string name="dialog_calendar_event_action_delete">Eliminar</string>
 
 </resources>

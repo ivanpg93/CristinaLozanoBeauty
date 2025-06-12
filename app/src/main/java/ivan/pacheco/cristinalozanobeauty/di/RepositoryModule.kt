@@ -20,7 +20,7 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColo
 import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.repository.ColorsHistoryDataRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.CalendarDataRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.GoogleCalendarApi
+import ivan.pacheco.cristinalozanobeauty.core.shared.GoogleCalendarApi
 import javax.inject.Singleton
 
 @Module
