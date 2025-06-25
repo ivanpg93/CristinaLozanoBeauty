@@ -17,6 +17,11 @@ enum class NailPolishBrand {
     GELFIX,
     PALU,
     ONYX,
+    GAIRRY,
+    GREENSTYLE,
+    ABNAILS,
+    LYC,
+    BEAUTILUX,
     OTHER
 }
 
