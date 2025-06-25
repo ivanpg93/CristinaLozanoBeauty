@@ -11,14 +11,15 @@ plugins {
 
 android {
     namespace 'ivan.pacheco.cristinalozanobeauty'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ivan.pacheco.cristinalozanobeauty"
         minSdk 28
-        targetSdk 34
+        targetSdk 35
         versionCode project.versionCode
         versionName project.versionName
+        buildConfigField "String", "GOOGLE_ACCESS_TOKEN", "\"217437853819-ohqt67v4ioejvkjvkha2dlmj6gh1sr36.apps.googleusercontent.com\""
     }
 
     buildTypes {
@@ -44,6 +45,10 @@ android {
         buildConfig = true
     }
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
 }
 
 dependencies {
@@ -62,17 +67,18 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.9.0"
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.11.0'
 
     // Gson
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     // Hilt
-    implementation 'com.google.dagger:hilt-android:2.48'
-    kapt 'com.google.dagger:hilt-android-compiler:2.48'
+    implementation 'com.google.dagger:hilt-android:2.55'
+    kapt 'com.google.dagger:hilt-android-compiler:2.55'
 
     // Rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -83,11 +89,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-perf-ktx'
-    implementation libs.firebase.firestore.ktx
-    /*implementation 'com.google.android.gms:play-services-auth:20.3.0'
-    implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.25.0'
-    implementation 'com.google.api-client:google-api-client-android:1.35.0'
-    implementation 'com.google.http-client:google-http-client-gson:1.41.0'*/
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.11.0'
+
+    // Google Calendar
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+
+    implementation 'com.kizitonwose.calendar:view:2.7.0'
 }
 
 kapt {

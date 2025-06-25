@@ -48,10 +48,15 @@
             android:name="id"
             app:argType="string" />
 
-        <!--Nav to client detail-->
+        <!--Nav to color list-->
         <action
             android:id="@+id/action_clientDetailFragment_to_colorHistoryListFragment"
             app:destination="@id/colorHistoryListFragment" />
+
+        <!--Nav to appointment list-->
+        <action
+            android:id="@+id/action_clientDetailFragment_to_appointmentHistoryListFragment"
+            app:destination="@id/appointmentHistoryListFragment" />
     </fragment>
 
     <!--Add client-->
@@ -60,6 +65,19 @@
         android:label="@string/client_form_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment"
         tools:layout="@layout/fragment_client_form">
+    </fragment>
+
+    <!--Appointment history list-->
+    <fragment
+        android:id="@+id/appointmentHistoryListFragment"
+        android:label="@string/appointment_history_list_title"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.appointmenthistory.list.AppointmentHistoryListFragment"
+        tools:layout="@layout/fragment_appointment_history_list">
+
+        <!--Args client id-->
+        <argument
+            android:name="clientId"
+            app:argType="string" />
     </fragment>
 
     <!--Color history list-->
