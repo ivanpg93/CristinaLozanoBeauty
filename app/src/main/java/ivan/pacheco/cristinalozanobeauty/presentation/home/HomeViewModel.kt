@@ -16,6 +16,11 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.CreateEventUC
+import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
 import java.time.LocalDate
@@ -25,6 +30,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
+    private val clientRepository: ClientRepository,
+    private val createEventUC: CreateEventUC,
+    private val deleteEventUC: DeleteEventUC,
     private val application: Application
 ) : ViewModel() {
 
@@ -38,12 +46,18 @@ class HomeViewModel @Inject constructor(
     private val isLoadingLD = MutableLiveData<Boolean>()
     private val errorLD = MutableLiveData<Int>()
     private val eventsLD = MutableLiveData<List<CalendarEvent>>()
+    private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val recoverableExceptionLD = MutableLiveData<UserRecoverableAuthException>()
+
+    init {
+        loadClients()
+    }
 
     // Getters
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
     fun getEventsLD(): LiveData<List<CalendarEvent>> = eventsLD
+    fun getClientsLD(): LiveData<List<ClientListDTO>> = clientsLD
     fun getRecoverableExceptionLD(): LiveData<UserRecoverableAuthException> = recoverableExceptionLD
 
     // Actions
@@ -84,23 +98,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun actionSaveEvent(event: CalendarEvent) {
+    fun actionCreateEvent(event: CalendarEvent, service: Service, client: ClientListDTO) {
         idToken?.let { token ->
-            calendarRepository.createEvent(event, token)
+            createEventUC.execute(event, service, client, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
-                .subscribe(object : DisposableSingleObserver<CalendarEvent>() {
-                    override fun onSuccess(event: CalendarEvent) { eventsLD.value = eventsLD.value?.plus(event) }
-                    override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
+                //.subscribe(object : DisposableSingleObserver<CalendarEvent>() {
+                //override fun onSuccess(event: CalendarEvent) { eventsLD.value = eventsLD.value?.plus(event) }
+                .subscribe(object : DisposableCompletableObserver() {
+                    override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }
                 })
         }
     }
 
-    fun actionDeleteEvent(eventId: String) {
+    fun actionDeleteEvent(eventId: String, clientId: String) {
         idToken?.let { token ->
-            calendarRepository.deleteEvent(eventId, token)
+            deleteEventUC.execute(eventId, clientId, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
@@ -110,7 +126,7 @@ class HomeViewModel @Inject constructor(
                         val updated = eventsLD.value.orEmpty().filterNot { it.id == eventId }
                         eventsLD.value = updated
                     }
-                    override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
                 })
         }
     }
@@ -123,9 +139,7 @@ class HomeViewModel @Inject constructor(
                     idToken = token
                     emitter.onSuccess(token)
                 }
-            } catch (e: Exception) {
-                emitter.onError(e)
-            }
+            } catch (e: Exception) { emitter.onError(e) }
         }.subscribeOn(Schedulers.io())
     }
 
@@ -134,6 +148,18 @@ class HomeViewModel @Inject constructor(
         val endOfMonth = date.withDayOfMonth(date.lengthOfMonth())
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE
         return startOfMonth.format(formatter) to endOfMonth.format(formatter)
+    }
+
+    private fun loadClients() {
+        clientRepository.list()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { isLoadingLD.value = true }
+            .doFinally { isLoadingLD.value = false }
+            .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
+                override fun onSuccess(clients: List<ClientListDTO>) { clientsLD.value = clients }
+                override fun onError(error: Throwable) { errorLD.value = R.string.client_list_error_list }
+            })
     }
 
 }

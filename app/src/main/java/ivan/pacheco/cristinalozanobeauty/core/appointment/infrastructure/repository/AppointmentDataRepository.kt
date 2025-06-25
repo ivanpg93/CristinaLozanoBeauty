@@ -19,24 +19,22 @@ class AppointmentDataRepository @Inject constructor(
     private val deleteWS: DeleteAppointmentWebService
 ): AppointmentRepository {
 
-    override fun list(): Single<List<Appointment>> {
-        TODO("Not yet implemented")
+    override fun list(clientId: String): Single<List<Appointment>> {
+        return listWS.fetch(clientId)
+            .map { appointmentList ->
+                appointmentList.map { appointment ->
+                    Appointment(
+                        appointment.id,
+                        appointment.event,
+                        appointment.service
+                    )
+                }.sortedByDescending { it.event?.startDateTime }
+            }
     }
 
-    override fun find(id: String): Single<Appointment> {
-        TODO("Not yet implemented")
-    }
-
-    override fun create(client: Appointment): Completable {
-        TODO("Not yet implemented")
-    }
-
-    override fun update(client: Appointment): Completable {
-        TODO("Not yet implemented")
-    }
-
-    override fun delete(client: Appointment): Completable {
-        TODO("Not yet implemented")
-    }
+    override fun find(id: String, clientId: String): Single<Appointment> = findWS.fetch(id, clientId)
+    override fun create(appointment: Appointment, clientId: String): Completable = createWS.fetch(appointment, clientId)
+    override fun update(appointment: Appointment, clientId: String): Completable = updateWS.fetch(appointment, clientId)
+    override fun delete(appointment: Appointment, clientId: String): Completable = deleteWS.fetch(appointment, clientId)
 
 }

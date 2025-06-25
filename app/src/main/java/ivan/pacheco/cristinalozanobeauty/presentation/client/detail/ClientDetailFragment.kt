@@ -76,7 +76,7 @@ class ClientDetailFragment: Fragment() {
         binding.btnColorHistory.setOnClickListener { navigate(Destination.ColorHistoryList(clientId)) }
 
         // Button events history
-        binding.btnEventHistory.setOnClickListener { navigate(Destination.EventHistory) }
+        binding.btnEventHistory.setOnClickListener { navigate(Destination.AppointmentHistoryList(clientId)) }
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction() }
@@ -315,6 +315,13 @@ class ClientDetailFragment: Fragment() {
             is Destination.ColorHistoryList -> {
                 findNavController().navigate(
                     ClientDetailFragmentDirections.actionClientDetailFragmentToColorHistoryListFragment(
+                        destination.clientId
+                    )
+                )
+            }
+            is Destination.AppointmentHistoryList -> {
+                findNavController().navigate(
+                    ClientDetailFragmentDirections.actionClientDetailFragmentToAppointmentHistoryListFragment(
                         destination.clientId
                     )
                 )

@@ -8,11 +8,14 @@ import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 class DeleteAppointmentWS: DeleteAppointmentWebService {
 
     private companion object {
+        const val CLIENTS = "clients"
         const val APPOINTMENTS = "appointments"
     }
 
-    override fun fetch(appointment: Appointment): Completable = Completable.create { emitter ->
-        Firestore.db.collection(APPOINTMENTS)
+    override fun fetch(appointment: Appointment, clientId: String): Completable = Completable.create { emitter ->
+        Firestore.db.collection(CLIENTS)
+            .document(clientId)
+            .collection(APPOINTMENTS)
             .document(appointment.id)
             .delete()
             .addOnSuccessListener { emitter.onComplete() }

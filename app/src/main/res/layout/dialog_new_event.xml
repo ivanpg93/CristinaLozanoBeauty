@@ -1,27 +1,83 @@
-<!-- res/layout/dialog_new_event.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="20dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/eventTitleEditText"
-        android:hint="Título del evento"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <!--Title-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_title"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_hint_title_event"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
 
-    <EditText
-        android:id="@+id/startTimeEditText"
-        android:hint="Hora inicio (HH:mm)"
-        android:inputType="time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_title_text"
+            style="@style/FormText" />
 
-    <EditText
-        android:id="@+id/endTimeEditText"
-        android:hint="Hora fin (HH:mm)"
-        android:inputType="time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--Start time-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_start_time"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_hint_start_time_event"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_start_time_text"
+            style="@style/FormText"
+            android:inputType="time" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--End time-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_end_time"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_hint_end_time_event"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_end_time_text"
+            style="@style/FormText"
+            android:inputType="time" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--Clients-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_selected_client"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_event_clients"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_selected_client_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--Service-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_selected_service"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_event_service"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_selected_service_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -38,6 +40,8 @@ import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.BuildConfig
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toEvent
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
@@ -50,6 +54,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorComp
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import java.time.DayOfWeek
@@ -58,7 +63,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @AndroidEntryPoint
 class HomeFragment: Fragment(R.layout.fragment_home) {
@@ -71,12 +75,11 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val eventsAdapter = EventsAdapter {
+    private val eventsAdapter = EventsAdapter { event ->
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.dialog_calendar_event_delete_message)
             .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
-                vm.actionDeleteEvent(it.id)
-            }
+                vm.actionDeleteEvent(event.id, "") }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }
@@ -89,6 +92,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
     private val events = mutableMapOf<LocalDate, List<Event>>()
     private val vm: HomeViewModel by viewModels()
+    private var clientList: List<ClientListDTO> = listOf()
+    private var selectedClient: ClientListDTO? = null
 
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var client: GoogleSignInClient
@@ -108,7 +113,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         initGoogleSignIn()
         silentSignIn()
 
+        // Events
         vm.getEventsLD().observe(viewLifecycleOwner) { eventList ->
+
             // Limpia el mapa actual
             events.clear()
 
@@ -124,6 +131,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             // Si ya hay una fecha seleccionada, actualiza el adaptador
             updateAdapterForDate(selectedDate)
         }
+
+        // Clients
+        vm.getClientsLD().observe(viewLifecycleOwner) { clients -> clientList = clients }
 
         // Loading
         vm.isLoadingLD().observe(viewLifecycleOwner) { isLoading -> showLoading(isLoading) }
@@ -369,35 +379,178 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     }
 
     private fun showAddEventDialog(selectedDate: LocalDate) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_new_event, null)
-        val titleEditText = dialogView.findViewById<EditText>(R.id.eventTitleEditText)
-        val startTimeEditText = dialogView.findViewById<EditText>(R.id.startTimeEditText)
-        val endTimeEditText = dialogView.findViewById<EditText>(R.id.endTimeEditText)
+        val context = requireContext()
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_new_event, null)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Nuevo evento")
+        val titleInput = dialogView.findViewById<EditText>(R.id.et_event_title_text)
+        val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
+        val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
+        val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
+        val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
+        var selectedService: Service? = null
+
+        // Input select client
+        setupClientSelector(
+            clientInput,
+            clientList,
+            { selectedClient },
+            { selectedClient = it }
+        )
+
+        // Input nail polish brand
+        setupSingleChoiceInput(
+            serviceInput,
+            R.string.dialog_calendar_event_select_service,
+            Service.entries.toTypedArray(),
+            { selectedService }
+        ) { selectedService = it }
+
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(getString(R.string.dialog_calendar_event_title))
             .setView(dialogView)
-            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save)) { _, _ ->
-                val title = titleEditText.text.toString()
-                val startTime = startTimeEditText.text.toString()
-                val endTime = endTimeEditText.text.toString()
-
-                val formatter = DateTimeFormatter.ofPattern("HH:mm")
-                val start = LocalDateTime.of(selectedDate, LocalTime.parse(startTime, formatter))
-                val end = LocalDateTime.of(selectedDate, LocalTime.parse(endTime, formatter))
-
-                val newEvent = CalendarEvent(
-                    id = UUID.randomUUID().toString(),
-                    summary = title,
-                    description = null,
-                    startDateTime = start.toString(),
-                    endDateTime = end.toString()
-                )
-
-                // Save event
-                vm.actionSaveEvent(newEvent)
-            }
             .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save), null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val title = titleInput.text.toString()
+                val startTime = startTimeInput.text.toString()
+                val endTime = endTimeInput.text.toString()
+
+                if (title.isBlank() || startTime.isBlank() || endTime.isBlank()) {
+                    showAlert(R.string.client_form_error_mandatory_fields)
+                    return@setOnClickListener
+                }
+
+                if (selectedClient == null) {
+                    showAlert(R.string.dialog_calendar_event_select_client)
+                    return@setOnClickListener
+                }
+
+                if (selectedService == null) {
+                    showAlert(R.string.dialog_calendar_event_select_service)
+                    return@setOnClickListener
+                }
+
+                try {
+                    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+                    val startTime = LocalDateTime.of(selectedDate, LocalTime.parse(startTime, formatter))
+                    val endTime = LocalDateTime.of(selectedDate, LocalTime.parse(endTime, formatter))
+
+                    if (!startTime.isBefore(endTime)) {
+                        showAlert(R.string.calendar_event_form_error_time)
+                        return@setOnClickListener
+                    }
+
+                    val newEvent = CalendarEvent(
+                        id = "",
+                        summary = title,
+                        startDateTime = startTime.toString(),
+                        endDateTime = endTime.toString()
+                    )
+
+                    vm.actionCreateEvent(newEvent, selectedService!!, selectedClient!!) // TODO
+                    dialog.dismiss()
+                } catch (e: Exception) { showAlert(R.string.calendar_event_form_error_time) }
+            }
+        }
+        dialog.show()
+    }
+
+    private fun setupClientSelector(
+        editText: EditText,
+        clients: List<ClientListDTO>,
+        getSelectedClient: () -> ClientListDTO?,
+        onSelected: (ClientListDTO) -> Unit
+    ) {
+        editText.setOnClickListener {
+            showClientChoiceDialog(clients, getSelectedClient(), onSelected) { fullName ->
+                editText.setText(fullName)
+            }
+        }
+    }
+
+    private fun showClientChoiceDialog(
+        clients: List<ClientListDTO>,
+        selectedClient: ClientListDTO?,
+        onSelected: (ClientListDTO) -> Unit,
+        onDisplayText: (String) -> Unit
+    ) {
+        val sortedClients = clients.sortedBy { it.firstName + it.lastName }
+        val clientNames = sortedClients.map { "${it.firstName} ${it.lastName}" }.toTypedArray()
+        val selectedIndex = sortedClients.indexOfFirst { it.id == selectedClient?.id }
+        var tempSelectedIndex = selectedIndex
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.dialog_calendar_event_select_client))
+            .setSingleChoiceItems(clientNames, selectedIndex) { _, index ->
+                tempSelectedIndex = index
+            }
+            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
+                tempSelectedIndex.takeIf { it >= 0 }?.let { i ->
+                    val client = sortedClients[i]
+                    onSelected(client)
+                    onDisplayText("${client.firstName} ${client.lastName}")
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun <T : Enum<T>> setupSingleChoiceInput(
+        editText: EditText,
+        titleResId: Int,
+        options: Array<T>,
+        getSelectedOption: () -> T?,
+        onSelected: (T) -> Unit
+    ) {
+        editText.setOnClickListener {
+            showSingleChoiceDialog(
+                getString(titleResId),
+                options,
+                getSelectedOption()
+            ) { selected ->
+                onSelected(selected)
+                editText.setText(selected.name.replace("_", " ").lowercase()
+                    .replaceFirstChar { it.uppercase() })
+            }
+        }
+    }
+
+    private fun <T: Enum<T>> showSingleChoiceDialog(
+        title: String,
+        enumValues: Array<T>,
+        selectedOption: T?,
+        onSelected: (T) -> Unit
+    ) {
+        val options = enumValues
+            .map { it to it.name.replace("_", " ")
+                .lowercase()
+                .replaceFirstChar { c -> c.titlecase() } }
+            .sortedBy { it.second }
+
+        val selectedIndex = options.indexOfFirst { it.first == selectedOption }
+        var tempSelectedIndex = selectedIndex
+
+        val checkedColor = ContextCompat.getColor(requireContext(), R.color.gold)
+        val uncheckedColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val colorStateList = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(checkedColor, uncheckedColor)
+        )
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setSingleChoiceItems(options.map { it.second }.toTypedArray(), selectedIndex) { _, index ->
+                tempSelectedIndex = index
+            }
+            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
+                tempSelectedIndex.takeIf { it >= 0 }?.let { onSelected(options[it].first) }
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
             .show()
     }
 
