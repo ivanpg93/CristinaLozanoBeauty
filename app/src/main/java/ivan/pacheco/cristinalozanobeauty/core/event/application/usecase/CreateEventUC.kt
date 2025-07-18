@@ -15,7 +15,10 @@ class CreateEventUC @Inject constructor(
 
     fun execute(event: CalendarEvent, service: Service, client: ClientListDTO, token: String): Completable {
         return calendarRepository.createEvent(event, token)
-            .flatMapCompletable { createAppointmentUC.execute(event, service, client.id) }
+            .flatMapCompletable { calendarEvent ->
+                val updatedEvent = event.copy(id = calendarEvent.id)
+                createAppointmentUC.execute(updatedEvent, service, client.id)
+            }
     }
 
 }

@@ -79,7 +79,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.dialog_calendar_event_delete_message)
             .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
-                vm.actionDeleteEvent(event.id, "") }
+                vm.actionDeleteEvent(event.id, selectedClient?.id ?: "") }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }

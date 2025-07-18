@@ -13,13 +13,11 @@ class DeleteEventUC @Inject constructor(
 
     fun execute(eventId: String, clientId: String, token: String): Completable {
         return calendarRepository.deleteEvent(eventId, token)
-            /*.andThen(
-            appointmentRepository.list(clientId).flatMapCompletable { list ->
+            .andThen(appointmentRepository.list(clientId).flatMapCompletable { list ->
                 list.find { it.event?.id == eventId }?.let { appointment ->
                     appointmentRepository.delete(appointment, clientId)
                 } ?: Completable.error(AppointmentNotFound())
-            }
-        )*/
+            })
     }
 
 }

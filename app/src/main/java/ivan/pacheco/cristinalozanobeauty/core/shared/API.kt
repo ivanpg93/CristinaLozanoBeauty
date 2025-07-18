@@ -27,6 +27,12 @@ interface GoogleCalendarApi {
         @Query("orderBy") orderBy: String = "startTime"
     ): GoogleCalendarResponse
 
+    @GET("${API.GOOGLE_CALENDAR_EVENTS_PATH}/{eventId}")
+    suspend fun getEvent(
+        @Header("Authorization") authHeader: String,
+        @Path("eventId") eventId: String
+    ): Response<GoogleCalendarEvent>
+
     @POST(API.GOOGLE_CALENDAR_EVENTS_PATH)
     suspend fun createEvent(
         @Header("Authorization") authHeader: String,

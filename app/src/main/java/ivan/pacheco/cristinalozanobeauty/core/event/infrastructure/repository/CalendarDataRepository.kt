@@ -4,11 +4,13 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
 import ivan.pacheco.cristinalozanobeauty.core.shared.GoogleCalendarApi
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
+import retrofit2.Response
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -86,12 +88,27 @@ class CalendarDataRepository @Inject constructor(
     }
 
     override fun deleteEvent(eventId: String, token: String): Completable {
-        return Completable.fromCallable {
-            val response = runBlocking {
-                googleCalendarApi.deleteEvent("Bearer $token", eventId)
+        return getEventById(eventId, token)
+            .flatMapCompletable { response ->
+                if (!response.isSuccessful) {
+                    Completable.error(HttpException(response))
+                } else {
+                    Completable.fromCallable {
+                        val deleteResponse = runBlocking {
+                            googleCalendarApi.deleteEvent("Bearer $token", eventId)
+                        }
+                        if (!deleteResponse.isSuccessful) {
+                            throw HttpException(deleteResponse)
+                        }
+                    }
+                }
             }
-            if (!response.isSuccessful) {
-                throw HttpException(response)
+    }
+
+    private fun getEventById(eventId: String, token: String): Single<Response<GoogleCalendarEvent>> {
+        return Single.fromCallable {
+            runBlocking {
+                googleCalendarApi.getEvent("Bearer $token", eventId)
             }
         }
     }
