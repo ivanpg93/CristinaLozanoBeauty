@@ -49,7 +49,6 @@ import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.addStatusBarColorUpdate
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
@@ -86,10 +85,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private var selectedDate: LocalDate = LocalDate.now()
     private val today = LocalDate.now()
+    private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
     private val events = mutableMapOf<LocalDate, List<Event>>()
     private val vm: HomeViewModel by viewModels()
     private var clientList: List<ClientListDTO> = listOf()
@@ -146,7 +144,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
 
         // Calendar
-        addStatusBarColorUpdate(R.color.gold)
         applyInsets(binding)
         binding.exThreeRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -155,11 +152,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
 
         binding.exThreeCalendar.monthScrollListener = {
-            binding.toolbar.title = if (it.yearMonth.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
-            } else {
-                titleFormatter.format(it.yearMonth)
-            }
+            binding.toolbar.title = titleFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
+
             // Select the first day of the visible month.
             selectDate(it.yearMonth.atDay(1))
             vm.onDateSelected(selectedDate.toString())
@@ -176,9 +170,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
 
         binding.exThreeAddButton.setOnClickListener { showAddEventDialog(selectedDate) }
-
-        // Aplicar insets si quieres
-        applyInsets(binding)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -513,8 +504,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 getSelectedOption()
             ) { selected ->
                 onSelected(selected)
-                editText.setText(selected.name.replace("_", " ").lowercase()
-                    .replaceFirstChar { it.uppercase() })
+                editText.setText(
+                    selected.name
+                        .replace("_", " ")
+                        .lowercase()
+                        .replaceFirstChar { it.uppercase() }
+                )
             }
         }
     }
@@ -526,9 +521,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         onSelected: (T) -> Unit
     ) {
         val options = enumValues
-            .map { it to it.name.replace("_", " ")
+            .map {
+                it to it.name
+                .replace("_", " ")
                 .lowercase()
-                .replaceFirstChar { c -> c.titlecase() } }
+                .replaceFirstChar { c -> c.titlecase() }
+            }
             .sortedBy { it.second }
 
         val selectedIndex = options.indexOfFirst { it.first == selectedOption }

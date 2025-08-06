@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         // Load bottom navigation
         loadBottomNavBar()
+
+        // Customize status bar color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.gold)
     }
 
     override fun onDestroy() {
