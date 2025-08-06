@@ -77,13 +77,6 @@ class ClientListFragment: Fragment() {
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // Load clients when arrive this screen
-        vm.loadData()
-    }
-
     override fun onDestroyView() {
         compositeDisposable.clear()
         super.onDestroyView()
