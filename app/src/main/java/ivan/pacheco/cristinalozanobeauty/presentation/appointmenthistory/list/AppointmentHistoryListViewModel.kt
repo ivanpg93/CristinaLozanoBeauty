@@ -27,7 +27,6 @@ class AppointmentHistoryListViewModel @Inject constructor(
     }
 
     // LiveData
-
     private val appointmentListLD = MutableLiveData<List<Appointment>>()
     private val clientIdLD = MutableLiveData<String>()
     private val isLoadingLD = MutableLiveData<Boolean>()
@@ -37,7 +36,6 @@ class AppointmentHistoryListViewModel @Inject constructor(
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!
 
     // Getters
-
     fun getAppointmentListLD(): LiveData<List<Appointment>> = appointmentListLD
     fun getClientIdLD(): LiveData<String> = clientIdLD
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
@@ -48,7 +46,6 @@ class AppointmentHistoryListViewModel @Inject constructor(
     }
 
     // Actions
-
     fun actionDeleteAppointment(appointment: Appointment) {
         repository.delete(appointment, clientId)
             .subscribeOn(Schedulers.io())

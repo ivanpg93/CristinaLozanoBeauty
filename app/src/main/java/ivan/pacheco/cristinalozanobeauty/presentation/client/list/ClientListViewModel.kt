@@ -23,7 +23,6 @@ class ClientListViewModel @Inject constructor(
 ): ViewModel() {
 
     // LiveData
-
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val isLoadingLD = MutableLiveData<Boolean>()
     private val errorLD = MutableLiveData<Int>()
@@ -32,7 +31,6 @@ class ClientListViewModel @Inject constructor(
     private val compositeDisposable = CompositeDisposable()
 
     // Getters
-
     fun getClientsLD(): LiveData<List<ClientListDTO>> = clientsLD
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
@@ -43,7 +41,6 @@ class ClientListViewModel @Inject constructor(
     }
 
     // Actions
-
     init {
         observeSearch()
         loadData()

@@ -22,22 +22,28 @@ class CalendarDataRepository @Inject constructor(
     private val googleCalendarApi: GoogleCalendarApi
 ) : CalendarRepository {
 
+    private companion object {
+        const val BEARER = "Bearer"
+        const val SPAIN_ZONE = "Europe/Madrid"
+        const val UTC = "UTC"
+    }
+
     override fun getEventsForDate(startDate: String, endDate: String, token: String): Single<List<CalendarEvent>> {
         return Single.fromCallable {
             val start = LocalDate.parse(startDate)
             val end = LocalDate.parse(endDate)
 
             val timeMin = start.atStartOfDay()
-                .atZone(ZoneId.of("UTC"))
+                .atZone(ZoneId.of(UTC))
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
             val timeMax = end.atTime(LocalTime.MAX)
-                .atZone(ZoneId.of("UTC"))
+                .atZone(ZoneId.of(UTC))
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
             val response = runBlocking {
                 googleCalendarApi.getEvents(
-                    authHeader = "Bearer $token",
+                    authHeader = "$BEARER $token",
                     timeMin = timeMin,
                     timeMax = timeMax
                 )
@@ -58,7 +64,7 @@ class CalendarDataRepository @Inject constructor(
 
     override fun createEvent(event: CalendarEvent, token: String): Single<CalendarEvent> {
         return Single.fromCallable {
-            val zoneId = ZoneId.of("Europe/Madrid")
+            val zoneId = ZoneId.of(SPAIN_ZONE)
 
             val start = LocalDateTime.parse(event.startDateTime)
             val end = LocalDateTime.parse(event.endDateTime)
@@ -69,13 +75,11 @@ class CalendarDataRepository @Inject constructor(
             val request = GoogleCalendarEventRequest(
                 summary = event.summary,
                 description = event.description,
-                start = EventDateTime(dateTime = startFormatted, timeZone = "Europe/Madrid"),
-                end = EventDateTime(dateTime = endFormatted, timeZone = "Europe/Madrid")
+                start = EventDateTime(dateTime = startFormatted, timeZone = SPAIN_ZONE),
+                end = EventDateTime(dateTime = endFormatted, timeZone = SPAIN_ZONE)
             )
 
-            val response = runBlocking {
-                googleCalendarApi.createEvent("Bearer $token", request)
-            }
+            val response = runBlocking { googleCalendarApi.createEvent("$BEARER $token", request) }
 
             CalendarEvent(
                 id = response.id,
@@ -95,7 +99,7 @@ class CalendarDataRepository @Inject constructor(
                 } else {
                     Completable.fromCallable {
                         val deleteResponse = runBlocking {
-                            googleCalendarApi.deleteEvent("Bearer $token", eventId)
+                            googleCalendarApi.deleteEvent("$BEARER $token", eventId)
                         }
                         if (!deleteResponse.isSuccessful) {
                             throw HttpException(deleteResponse)
@@ -105,12 +109,9 @@ class CalendarDataRepository @Inject constructor(
             }
     }
 
-    private fun getEventById(eventId: String, token: String): Single<Response<GoogleCalendarEvent>> {
-        return Single.fromCallable {
-            runBlocking {
-                googleCalendarApi.getEvent("Bearer $token", eventId)
-            }
+    private fun getEventById(eventId: String, token: String): Single<Response<GoogleCalendarEvent>> =
+        Single.fromCallable {
+            runBlocking { googleCalendarApi.getEvent("$BEARER $token", eventId) }
         }
-    }
 
 }

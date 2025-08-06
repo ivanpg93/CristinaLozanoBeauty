@@ -105,8 +105,6 @@ class HomeViewModel @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
-                //.subscribe(object : DisposableSingleObserver<CalendarEvent>() {
-                //override fun onSuccess(event: CalendarEvent) { eventsLD.value = eventsLD.value?.plus(event) }
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }

@@ -25,7 +25,6 @@ class ColorHistoryListViewModel @Inject constructor(
     }
 
     // LiveData
-
     private val colorsLD = MutableLiveData<List<Color>>()
     private val clientIdLD = MutableLiveData<String>()
     private val isLoadingLD = MutableLiveData<Boolean>()
@@ -35,7 +34,6 @@ class ColorHistoryListViewModel @Inject constructor(
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!
 
     // Getters
-
     fun getColorsLD(): LiveData<List<Color>> = colorsLD
     fun getClientIdLD(): LiveData<String> = clientIdLD
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
@@ -46,7 +44,6 @@ class ColorHistoryListViewModel @Inject constructor(
     }
 
     // Actions
-
     fun actionDeleteColor(color: Color) {
         repository.delete(color, clientId)
             .subscribeOn(Schedulers.io())
