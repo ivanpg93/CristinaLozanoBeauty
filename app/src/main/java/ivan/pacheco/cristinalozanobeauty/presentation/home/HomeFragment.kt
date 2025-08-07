@@ -184,11 +184,17 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
         }
 
-        binding.exThreeCalendar.monthScrollListener = {
-            binding.toolbar.title = titleFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
+        binding.exThreeCalendar.monthScrollListener = { month ->
+            binding.toolbar.title = titleFormatter.format(month.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
 
-            // Select current day by default
-            selectDate(LocalDate.now())
+            // Select current day for current month or first day of month
+            val dateToSelect = if (month.yearMonth .year == today.year && month.yearMonth.month == today.month) {
+                today
+            } else {
+                month.yearMonth.atDay(1)
+            }
+
+            selectDate(dateToSelect)
             vm.onDateSelected(selectedDate.toString())
         }
 
