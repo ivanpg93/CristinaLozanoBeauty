@@ -187,8 +187,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         binding.exThreeCalendar.monthScrollListener = {
             binding.toolbar.title = titleFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
 
-            // Select first day of current month
-            selectDate(it.yearMonth.atDay(1))
+            // Select current day by default
+            selectDate(LocalDate.now())
             vm.onDateSelected(selectedDate.toString())
         }
 
@@ -412,6 +412,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             .create()
 
         dialog.setOnShowListener {
+
+            // Customize color for buttons
+            val goldColor = ContextCompat.getColor(context, R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val title = titleInput.text.toString()
                 val startTime = startTimeInput.text.toString()
@@ -449,9 +455,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                         endDateTime = endTime.toString()
                     )
 
-                    vm.actionCreateEvent(newEvent, selectedService!!, selectedClient!!) // TODO
+                    vm.actionCreateEvent(newEvent, selectedService, selectedClient!!) // TODO
                     dialog.dismiss()
-                } catch (e: Exception) { showAlert(R.string.calendar_event_form_error_time) }
+                } catch (_: Exception) { showAlert(R.string.calendar_event_form_error_time) }
             }
         }
         dialog.show()
@@ -481,7 +487,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val selectedIndex = sortedClients.indexOfFirst { it.id == selectedClient?.id }
         var tempSelectedIndex = selectedIndex
 
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_calendar_event_select_client))
             .setSingleChoiceItems(clientNames, selectedIndex) { _, index ->
                 tempSelectedIndex = index
@@ -495,7 +501,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 dialog.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val goldColor = ContextCompat.getColor(requireContext(), R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+        }
+
+        dialog.show()
     }
 
     private fun <T : Enum<T>> setupSingleChoiceInput(
@@ -547,17 +562,28 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             intArrayOf(checkedColor, uncheckedColor)
         )
 
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setSingleChoiceItems(options.map { it.second }.toTypedArray(), selectedIndex) { _, index ->
                 tempSelectedIndex = index
             }
-            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
-                tempSelectedIndex.takeIf { it >= 0 }?.let { onSelected(options[it].first) }
-                dialog.dismiss()
+            .setPositiveButton(getString(R.string.accept)) { dialogInterface, _ ->
+                tempSelectedIndex.takeIf { it >= 0 }?.let {
+                    onSelected(options[it].first)
+                }
+                dialogInterface.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val goldColor = ContextCompat.getColor(requireContext(), R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+        }
+
+        dialog.show()
     }
 
 }
