@@ -1,6 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -95,6 +98,34 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var client: GoogleSignInClient
+    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+    private lateinit var recoverableLauncher: ActivityResultLauncher<Intent>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Launcher para iniciar sesión
+        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    vm.onGoogleAccountReady(account)
+                } catch (e: ApiException) {
+                    Toast.makeText(requireContext(), "Fallo al iniciar sesión: ${e.statusCode}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // Launcher para resolver intent recuperable
+        recoverableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+            // Siempre intenta obtener el token al volver
+            GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
+                vm.onGoogleAccountReady(account)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,6 +139,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Google login from device account
         initGoogleSignIn()
         silentSignIn()
 
@@ -140,11 +172,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
 
         vm.getRecoverableExceptionLD().observe(viewLifecycleOwner) { exception ->
-            exception.intent?.let { startActivityForResult(it, RECOVERABLE_REQUEST_CODE) }
+            exception.intent?.let { recoverableLauncher.launch(it) }
         }
 
         // Calendar
         applyInsets(binding)
+
         binding.exThreeRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = eventsAdapter
@@ -154,7 +187,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         binding.exThreeCalendar.monthScrollListener = {
             binding.toolbar.title = titleFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
 
-            // Select the first day of the visible month.
+            // Select first day of current month
             selectDate(it.yearMonth.atDay(1))
             vm.onDateSelected(selectedDate.toString())
         }
@@ -170,33 +203,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
 
         binding.exThreeAddButton.setOnClickListener { showAddEventDialog(selectedDate) }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            SIGN_IN_REQUEST_CODE -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                try {
-                    val account = task.getResult(ApiException::class.java)
-                    vm.onGoogleAccountReady(account)
-                } catch (e: ApiException) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Fallo al iniciar sesión: ${e.statusCode}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            RECOVERABLE_REQUEST_CODE -> {
-                // Intenta de nuevo obtener el token tras el consentimiento
-                GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
-                    vm.onGoogleAccountReady(account)
-                }
-            }
-        }
     }
 
     override fun onStart() {
@@ -234,9 +240,11 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 try {
                     val account = completedTask.getResult(ApiException::class.java)
                     vm.onGoogleAccountReady(account)
-                } catch (e: ApiException) {
+                } catch (_: ApiException) {
                     client.signOut().addOnCompleteListener {
-                        startActivityForResult(client.signInIntent, SIGN_IN_REQUEST_CODE)
+                        if (isAdded) {
+                            signInLauncher.launch(client.signInIntent)
+                        }
                     }
                 }
             }
