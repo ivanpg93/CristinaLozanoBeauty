@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ActivityMainBinding
+import ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -93,6 +94,16 @@ class MainActivity : AppCompatActivity() {
                 toolbar.setNavigationIcon(null);
             } else {
                 toolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+            }
+        }
+
+        // Show dialog for save changes before navigate back
+        toolbar.setNavigationOnClickListener {
+            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+            if (currentFragment is ClientFormFragment) {
+                currentFragment.showBackPressDialog()
+            } else {
+                if (!navController.popBackStack()) finish()
             }
         }
     }

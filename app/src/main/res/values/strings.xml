@@ -52,6 +52,8 @@
     <string name="client_form_select_service">Selecciona un servicio a realizar</string>
     <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
     <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
+    <string name="client_form_save_changes_title">Guardar cambios</string>
+    <string name="client_form_save_changes">¿Quieres guardar los cambios antes de salir?</string>
 
     <!--Client form error-->
     <string name="client_form_error_phone">Introduce un teléfono correcto</string>

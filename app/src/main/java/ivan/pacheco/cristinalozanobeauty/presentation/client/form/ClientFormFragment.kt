@@ -1,11 +1,13 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.client.form
 
+import androidx.appcompat.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,7 +31,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
 
 @AndroidEntryPoint
-class ClientFormFragment: Fragment() {
+class ClientFormFragment : Fragment() {
 
     private var _binding: FragmentClientFormBinding? = null
     private val binding get() = _binding!!
@@ -54,6 +56,9 @@ class ClientFormFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // On back pressed
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { showBackPressDialog() }
+
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
 
@@ -61,7 +66,7 @@ class ClientFormFragment: Fragment() {
         vm.isLoadingLD().observe(viewLifecycleOwner) { isLoading -> showLoading(isLoading) }
 
         // Error
-        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
+        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction() }
@@ -122,6 +127,38 @@ class ClientFormFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun showBackPressDialog() {
+        val context = requireContext()
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.client_form_save_changes_title)
+            .setMessage(R.string.client_form_save_changes)
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save), null)
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+            val goldColor = ContextCompat.getColor(context, R.color.gold)
+            positiveButton?.setTextColor(goldColor)
+            negativeButton?.setTextColor(goldColor)
+
+            positiveButton?.setOnClickListener {
+                dialog.dismiss()
+                saveAction()
+            }
+
+            negativeButton?.setOnClickListener {
+                dialog.dismiss()
+                navigate(Destination.Back)
+            }
+        }
+
+        dialog.show()
     }
 
     /**
@@ -188,7 +225,7 @@ class ClientFormFragment: Fragment() {
     private fun validatePhone(): Boolean =
         binding.etPhoneText.text.toString().isEmpty() || binding.etPhoneText.isCorrectMobilePhone()
 
-    private fun <T: Enum<T>> setupMultiChoiceInput(
+    private fun <T : Enum<T>> setupMultiChoiceInput(
         editText: EditText,
         titleResId: Int,
         options: Array<T>,
@@ -213,15 +250,17 @@ class ClientFormFragment: Fragment() {
         }
     }
 
-    private fun <T: Enum<T>> showMultiChoiceDialog(
+    private fun <T : Enum<T>> showMultiChoiceDialog(
         title: String,
         enumValues: Array<T>,
         selectedOptions: Set<T>,
         onSelected: (List<T>) -> Unit
     ) {
         val displayOptions = enumValues
-            .map { it to it.name.replace("_", " ").lowercase()
-                .replaceFirstChar { c -> c.titlecase() } }
+            .map {
+                it to it.name.replace("_", " ").lowercase()
+                    .replaceFirstChar { c -> c.titlecase() }
+            }
             .sortedBy { it.second }
 
         val items = displayOptions.map { it.second }.toTypedArray()
@@ -249,7 +288,7 @@ class ClientFormFragment: Fragment() {
     }
 
     private fun navigate(destination: Destination) {
-        when(destination) {
+        when (destination) {
             is Destination.Back -> findNavController().popBackStack()
             else -> {} // Do nothing
         }
