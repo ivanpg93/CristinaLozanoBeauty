@@ -31,7 +31,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
 
 @AndroidEntryPoint
-class ClientFormFragment : Fragment() {
+class ClientFormFragment: Fragment() {
 
     private var _binding: FragmentClientFormBinding? = null
     private val binding get() = _binding!!
@@ -225,7 +225,7 @@ class ClientFormFragment : Fragment() {
     private fun validatePhone(): Boolean =
         binding.etPhoneText.text.toString().isEmpty() || binding.etPhoneText.isCorrectMobilePhone()
 
-    private fun <T : Enum<T>> setupMultiChoiceInput(
+    private fun <T: Enum<T>> setupMultiChoiceInput(
         editText: EditText,
         titleResId: Int,
         options: Array<T>,
@@ -250,7 +250,7 @@ class ClientFormFragment : Fragment() {
         }
     }
 
-    private fun <T : Enum<T>> showMultiChoiceDialog(
+    private fun <T: Enum<T>> showMultiChoiceDialog(
         title: String,
         enumValues: Array<T>,
         selectedOptions: Set<T>,

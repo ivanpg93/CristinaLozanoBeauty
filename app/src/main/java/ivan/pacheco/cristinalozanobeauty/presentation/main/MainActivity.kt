@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ActivityMainBinding
+import ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragment
 import ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment
 
 @AndroidEntryPoint
@@ -101,6 +102,8 @@ class MainActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
             if (currentFragment is ClientFormFragment) {
+                currentFragment.showBackPressDialog()
+            } else if (currentFragment is ClientDetailFragment) {
                 currentFragment.showBackPressDialog()
             } else {
                 if (!navController.popBackStack()) finish()
