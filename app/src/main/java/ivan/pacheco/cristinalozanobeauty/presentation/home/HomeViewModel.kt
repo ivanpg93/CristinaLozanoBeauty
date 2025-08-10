@@ -76,7 +76,7 @@ class HomeViewModel @Inject constructor(
                     if (e is UserRecoverableAuthException) {
                         recoverableExceptionLD.value = e
                     } else {
-                        errorLD.value = R.string.client_list_error_list
+                        errorLD.value = R.string.appointment_history_list_error_list
                     }
                 }
             })
@@ -93,7 +93,7 @@ class HomeViewModel @Inject constructor(
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
                     override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
-                    override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_list }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_list }
                 })
         }
     }

@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.databinding.EventItemViewBinding
 import java.time.LocalDate
+import java.time.LocalTime
 
-data class Event(val id: String, val text: String, val date: LocalDate)
+data class Event(val id: String, val text: String, val date: LocalDate, val startTime: LocalTime, val endTime: LocalTime)
 
 class EventsAdapter(val onClick: (Event) -> Unit): RecyclerView.Adapter<EventsAdapter.EventsViewHolder>() {
 
@@ -33,7 +34,8 @@ class EventsAdapter(val onClick: (Event) -> Unit): RecyclerView.Adapter<EventsAd
         }
 
         fun bind(event: Event) {
-            binding.itemEventText.text = event.text
+            binding.txtEventTitle.text = event.text
+            binding.txtEventTime.text = "${event.startTime} - ${event.endTime}"
         }
     }
 

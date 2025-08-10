@@ -4,7 +4,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.databinding.ItemAppointmentHistoryBinding
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toHour
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 
 class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -17,7 +18,8 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
         onItemDeleted: (Appointment) -> Unit
     ) {
         binding.txtService.text = appointment.service?.toDisplayName()
-        binding.txtDate.text = appointment.event?.startDateTime?.toLocalDate().toString()//DateUtils.formatDate(appointment.event.startDateTime)
+        binding.txtTime.text = "${appointment.event?.startDateTime?.toHour()} - ${appointment.event?.endDateTime?.toHour()}"
+        binding.txtDate.text = appointment.event?.startDateTime?.toDate().toString()
         binding.btnDelete.setOnClickListener { onItemDeleted(appointment) }
         binding.root.setOnClickListener { onItemSelected(appointment) }
     }
