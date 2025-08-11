@@ -44,7 +44,10 @@ class EventsAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
-                onClick(events[bindingAdapterPosition])
+                val event = events[bindingAdapterPosition]
+                event.assisted = !(event.assisted ?: false)
+                notifyItemChanged(bindingAdapterPosition)
+                onClick(event)
             }
         }
 
@@ -58,7 +61,7 @@ class EventsAdapter(
                 binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.red)
             }
             binding.txtEventTime.text = "${event.startTime} - ${event.endTime}"
-            binding.btnDelete.setOnClickListener { deleteAction }
+            binding.btnDelete.setOnClickListener { deleteAction(event) }
         }
     }
 

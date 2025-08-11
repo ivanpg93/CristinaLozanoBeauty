@@ -70,8 +70,6 @@ import java.time.format.DateTimeFormatter
 class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private companion object {
-        const val SIGN_IN_REQUEST_CODE = 1001
-        const val RECOVERABLE_REQUEST_CODE = 2001
         const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
     }
 
@@ -79,16 +77,32 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private val binding get() = _binding!!
     private val eventsAdapter = EventsAdapter(
         onClick = { event -> // TODO editar
-            event.assisted = !(event.assisted ?: false)
+            //vm.updateEvent(event)
         },
         deleteAction = { event ->
-            AlertDialog.Builder(requireContext())
+            val context = requireContext()
+            val dialog = AlertDialog.Builder(context)
                 .setMessage(R.string.dialog_calendar_event_delete_message)
-                .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.dialog_calendar_event_action_delete), null)
+                .create()
+
+            dialog.setOnShowListener {
+
+                // Customize color for buttons
+                val goldColor = ContextCompat.getColor(context, R.color.gold)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                    dialog.dismiss()
                     vm.actionDeleteEvent(event.id, selectedClient?.id ?: "")
                 }
-                .setNegativeButton(R.string.cancel, null)
-                .show()
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+            dialog.show()
         }
     )
 
@@ -215,7 +229,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             scrollToMonth(currentMonth)
         }
 
-        binding.exThreeAddButton.setOnClickListener { showAddEventDialog(selectedDate) }
+        binding.btnCreateEvent.setOnClickListener { showAddEventDialog(selectedDate) }
     }
 
     override fun onStart() {
