@@ -104,7 +104,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Launcher para iniciar sesión
+        // Launcher for login
         signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
@@ -118,9 +118,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             }
         }
 
-        // Launcher para resolver intent recuperable
+        // Launcher for retry login
         recoverableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-            // Siempre intenta obtener el token al volver
+
+            // Get token when return
             GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
                 vm.onGoogleAccountReady(account)
             }
