@@ -77,14 +77,20 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val eventsAdapter = EventsAdapter { event ->
-        AlertDialog.Builder(requireContext())
-            .setMessage(R.string.dialog_calendar_event_delete_message)
-            .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
-                vm.actionDeleteEvent(event.id, selectedClient?.id ?: "") }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-    }
+    private val eventsAdapter = EventsAdapter(
+        onClick = { event -> // TODO editar
+            event.assisted = !(event.assisted ?: false)
+        },
+        deleteAction = { event ->
+            AlertDialog.Builder(requireContext())
+                .setMessage(R.string.dialog_calendar_event_delete_message)
+                .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
+                    vm.actionDeleteEvent(event.id, selectedClient?.id ?: "")
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+    )
 
     private var selectedDate: LocalDate = LocalDate.now()
     private val today = LocalDate.now()

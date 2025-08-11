@@ -8,12 +8,14 @@ data class Appointment(
     val id: String = "",
     val event: CalendarEvent? = null,
     val service: Service? = null,
+    val assisted: Boolean? = null,
 ) {
 
     fun toMap() = mapOf(
         "id" to id,
         "event" to event?.toMap(),
-        "service" to service?.name
+        "service" to service?.name,
+        "assisted" to assisted
     )
 
 }
