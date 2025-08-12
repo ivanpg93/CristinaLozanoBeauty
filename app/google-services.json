@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "217437853819-2lugogthn23dmph07cqsscldfjp3ki7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ivan.pacheco.cristinalozanobeauty",
+            "certificate_hash": "16961fc7c6877ed4b297a8613196cb17320c0208"
+          }
+        },
+        {
           "client_id": "217437853819-ctpejp011qum1u22e2gvsspkqviifb04.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
