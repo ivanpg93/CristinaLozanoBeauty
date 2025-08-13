@@ -9,5 +9,5 @@ interface AppointmentRepository {
     fun find(id: String, clientId: String): Single<Appointment>
     fun create(appointment: Appointment, clientId: String): Completable
     fun update(appointment: Appointment, clientId: String): Completable
-    fun delete(appointment: Appointment, clientId: String): Completable
+    fun delete(eventId: String): Completable
 }

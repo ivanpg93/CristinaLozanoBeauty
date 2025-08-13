@@ -6,8 +6,8 @@ import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
-import ivan.pacheco.cristinalozanobeauty.core.shared.GoogleCalendarApi
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
+import ivan.pacheco.cristinalozanobeauty.shared.remote.GoogleCalendarApi
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import retrofit2.Response
@@ -18,9 +18,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class CalendarDataRepository @Inject constructor(
+class EventDataRepository @Inject constructor(
     private val googleCalendarApi: GoogleCalendarApi
-) : CalendarRepository {
+) : EventRepository {
 
     private companion object {
         const val BEARER = "Bearer"

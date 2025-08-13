@@ -25,9 +25,9 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.FindColorH
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.ListColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.repository.ColorsHistoryDataRepository
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
-import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.CalendarDataRepository
-import ivan.pacheco.cristinalozanobeauty.core.shared.GoogleCalendarApi
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.EventDataRepository
+import ivan.pacheco.cristinalozanobeauty.shared.remote.GoogleCalendarApi
 import javax.inject.Singleton
 
 @Module
@@ -56,9 +56,9 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideCalendarRepository(
+    fun providesEventRepository(
         googleCalendarApi: GoogleCalendarApi
-    ): CalendarRepository = CalendarDataRepository(googleCalendarApi)
+    ): EventRepository = EventDataRepository(googleCalendarApi)
 
     @Singleton
     @Provides

@@ -1,23 +1,18 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.application.usecase
 
 import io.reactivex.Completable
-import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
-import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.AppointmentNotFound
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.DeleteAppointmentUC
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import javax.inject.Inject
 
 class DeleteEventUC @Inject constructor(
-    private val calendarRepository: CalendarRepository,
-    private val appointmentRepository: AppointmentRepository
+    private val eventRepository: EventRepository,
+    private val deleteAppointmentUC: DeleteAppointmentUC
 ) {
 
-    fun execute(eventId: String, clientId: String, token: String): Completable {
-        return calendarRepository.deleteEvent(eventId, token)
-            .andThen(appointmentRepository.list(clientId).flatMapCompletable { list ->
-                list.find { it.event?.id == eventId }?.let { appointment ->
-                    appointmentRepository.delete(appointment, clientId)
-                } ?: Completable.error(AppointmentNotFound())
-            })
+    fun execute(eventId: String, token: String): Completable {
+        return eventRepository.deleteEvent(eventId, token)
+            .andThen(deleteAppointmentUC.execute(eventId))
     }
 
 }

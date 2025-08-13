@@ -5,16 +5,16 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.Cr
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import javax.inject.Inject
 
 class CreateEventUC @Inject constructor(
-    private val calendarRepository: CalendarRepository,
+    private val eventRepository: EventRepository,
     private val createAppointmentUC: CreateAppointmentUC
 ) {
 
     fun execute(event: CalendarEvent, service: Service, client: ClientListDTO, token: String): Completable {
-        return calendarRepository.createEvent(event, token)
+        return eventRepository.createEvent(event, token)
             .flatMapCompletable { calendarEvent ->
                 val updatedEvent = event.copy(id = calendarEvent.id)
                 createAppointmentUC.execute(updatedEvent, service, client.id)

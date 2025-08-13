@@ -24,8 +24,8 @@ class EventsAdapter(
     val deleteAction: (Event) -> Unit
 ): RecyclerView.Adapter<EventsAdapter.EventsViewHolder>() {
 
+    private lateinit var context: Context
     val events = mutableListOf<Event>()
-    lateinit var context: Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventsViewHolder {
         context = parent.context

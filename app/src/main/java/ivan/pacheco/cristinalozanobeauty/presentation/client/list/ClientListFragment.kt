@@ -85,38 +85,4 @@ class ClientListFragment: Fragment() {
         }
     }
 
-    private fun migrateFieldClients(oldField: String, newField: String) {
-        val clientsRef = Firestore.db.collection("clients")
-
-        clientsRef.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot.documents) {
-                val value = document.get(oldField)
-                if (value != null) {
-                    val updates = mapOf(
-                        newField to value,
-                        oldField to FieldValue.delete()
-                    )
-                    document.reference.update(updates)
-                }
-            }
-        }
-    }
-
-    private fun migrateFieldClientsToArray(oldField: String, newField: String) {
-        val clientsRef = Firestore.db.collection("clients")
-
-        clientsRef.get().addOnSuccessListener { querySnapshot ->
-            for (document in querySnapshot.documents) {
-                val value = document.get(oldField)
-                if (value != null && value.toString().isNotEmpty()) {
-                    val updates = mapOf(
-                        newField to listOf(value),
-                        oldField to FieldValue.delete()
-                    )
-                    document.reference.update(updates)
-                }
-            }
-        }
-    }
-
 }

@@ -10,6 +10,7 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.DeleteAppointmentUC
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppointmentHistoryListViewModel @Inject constructor(
     private val repository: AppointmentRepository,
-    private val deleteEventUC: DeleteEventUC,
+    private val deleteAppointmentUC: DeleteAppointmentUC,
     state: SavedStateHandle
 ): ViewModel() {
 
@@ -47,15 +48,21 @@ class AppointmentHistoryListViewModel @Inject constructor(
 
     // Actions
     fun actionDeleteAppointment(appointment: Appointment) {
-        repository.delete(appointment, clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableCompletableObserver(){
-                override fun onComplete() { loadData() }
-                override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_delete }
-            })
+        appointment.event?.id?.let { eventId ->
+            //repository.delete(eventId)
+            deleteAppointmentUC.execute(eventId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                        loadData()
+                    }
+
+                    override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_delete }
+                })
+        }
     }
 
     fun loadData() {

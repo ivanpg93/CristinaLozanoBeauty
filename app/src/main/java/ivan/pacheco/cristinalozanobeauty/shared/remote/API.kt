@@ -1,4 +1,4 @@
-package ivan.pacheco.cristinalozanobeauty.core.shared
+package ivan.pacheco.cristinalozanobeauty.shared.remote
 
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
@@ -9,6 +9,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -38,6 +39,13 @@ interface GoogleCalendarApi {
     @POST(API.GOOGLE_CALENDAR_EVENTS_PATH)
     suspend fun createEvent(
         @Header(API.AUTHORIZATION) authHeader: String,
+        @Body event: GoogleCalendarEventRequest
+    ): GoogleCalendarEvent
+
+    @PUT("${API.GOOGLE_CALENDAR_EVENTS_PATH}/{${API.EVENT_ID}}")
+    suspend fun updateEvent(
+        @Header(API.AUTHORIZATION) authHeader: String,
+        @Path(API.EVENT_ID) eventId: String,
         @Body event: GoogleCalendarEventRequest
     ): GoogleCalendarEvent
 

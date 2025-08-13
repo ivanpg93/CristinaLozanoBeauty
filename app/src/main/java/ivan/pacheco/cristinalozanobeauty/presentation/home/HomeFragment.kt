@@ -24,6 +24,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,6 +60,9 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDat
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
+import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -96,7 +100,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     dialog.dismiss()
-                    vm.actionDeleteEvent(event.id, selectedClient?.id ?: "")
+                    vm.actionDeleteEvent(event.id)
                 }
                 dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
                     dialog.dismiss()
@@ -167,19 +171,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         // Events
         vm.getEventsLD().observe(viewLifecycleOwner) { eventList ->
 
-            // Limpia el mapa actual
+            // Clear list
             events.clear()
 
-            // Agrupa los eventos por fecha
+            // Group events by date
             eventList.groupBy { it.startDateTime.toLocalDate() }
                 .forEach { (date, eventsForDate) ->
                     events[date] = eventsForDate.map { it.toEvent() }
                 }
 
-            // Notifica al calendario que algo cambió
             binding.exThreeCalendar.notifyCalendarChanged()
-
-            // Si ya hay una fecha seleccionada, actualiza el adaptador
             updateAdapterForDate(selectedDate)
         }
 
@@ -235,7 +236,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     override fun onStart() {
         super.onStart()
 
-        // Configurar el AppBar y Toolbar del fragmento
+        // Set app bar and toolbar
         val color = requireContext().getColorCompat(R.color.gold)
         binding.toolbar.setBackgroundColor(color)
         binding.activityAppBar.setBackgroundColor(color)
@@ -372,6 +373,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             object : MonthHeaderFooterBinder<MonthViewContainer> {
                 override fun create(view: View) = MonthViewContainer(view)
                 override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+
                     // Setup each header day text if we have not done that already.
                     if (container.legendLayout.tag == null) {
                         container.legendLayout.tag = true
