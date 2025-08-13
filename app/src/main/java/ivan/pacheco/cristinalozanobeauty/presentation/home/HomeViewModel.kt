@@ -22,7 +22,6 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.CreateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
-import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
@@ -37,7 +36,6 @@ class HomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val clientRepository: ClientRepository,
     private val createEventUC: CreateEventUC,
-    private val updateEventUC: UpdateEventUC,
     private val deleteEventUC: DeleteEventUC,
     private val application: Application
 ) : ViewModel() {
@@ -92,7 +90,7 @@ class HomeViewModel @Inject constructor(
         idToken?.let { token ->
             val localDate = LocalDate.parse(date)
             val (startDate, endDate) = getMonthRange(localDate)
-            calendarRepository.getEventsForDate(startDate, endDate, token)
+            eventRepository.getEventsForDate(startDate, endDate, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
