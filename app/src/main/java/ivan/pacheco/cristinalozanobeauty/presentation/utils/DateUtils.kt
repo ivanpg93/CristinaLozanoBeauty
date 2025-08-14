@@ -65,10 +65,6 @@ object DateUtils {
         }
     }
 
-//    fun String.toHour(): String {
-//        val localDateTime = LocalDateTime.parse(this, localDateTimeFormatter)
-//        return localDateTime.format(timeFormatter)
-//    }
     fun String.toHour(): String {
         return try {
             val odt = OffsetDateTime.parse(this)

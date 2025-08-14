@@ -55,10 +55,7 @@ class AppointmentHistoryListViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() {
-                        loadData()
-                    }
-
+                    override fun onComplete() { loadData() }
                     override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_delete }
                 })
         }
