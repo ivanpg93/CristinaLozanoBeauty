@@ -18,13 +18,10 @@ class DeleteAppointmentUC @Inject constructor(
 
     fun execute(eventId: String): Completable {
         return Single.fromCallable {
-            runBlocking {
-                SecureTokenDataStore.readToken(context)
-            }
+            runBlocking { SecureTokenDataStore.readToken(context) }
+        }.flatMapCompletable { token ->
+            eventRepository.deleteEvent(eventId, token).andThen(repository.delete(eventId))
         }
-            .flatMapCompletable { token ->
-                eventRepository.deleteEvent(eventId, token).andThen(repository.delete(eventId))
-            }
     }
 
 }

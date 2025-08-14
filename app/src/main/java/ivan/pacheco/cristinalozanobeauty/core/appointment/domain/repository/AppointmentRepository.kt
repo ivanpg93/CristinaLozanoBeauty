@@ -6,8 +6,8 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointme
 
 interface AppointmentRepository {
     fun list(clientId: String): Single<List<Appointment>>
-    fun find(id: String, clientId: String): Single<Appointment>
+    fun find(eventId: String): Single<Appointment>
     fun create(appointment: Appointment, clientId: String): Completable
-    fun update(appointment: Appointment, clientId: String): Completable
+    fun update(appointment: Appointment): Single<String>
     fun delete(eventId: String): Completable
 }

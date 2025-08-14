@@ -49,7 +49,6 @@ class AppointmentHistoryListViewModel @Inject constructor(
     // Actions
     fun actionDeleteAppointment(appointment: Appointment) {
         appointment.event?.id?.let { eventId ->
-            //repository.delete(eventId)
             deleteAppointmentUC.execute(eventId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

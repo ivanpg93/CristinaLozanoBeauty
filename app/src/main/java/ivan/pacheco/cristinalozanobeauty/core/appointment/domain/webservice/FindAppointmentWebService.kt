@@ -4,5 +4,5 @@ import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 
 fun interface FindAppointmentWebService {
-    fun fetch(id: String, clientId: String): Single<Appointment>
+    fun fetch(eventId: String): Single<Appointment>
 }

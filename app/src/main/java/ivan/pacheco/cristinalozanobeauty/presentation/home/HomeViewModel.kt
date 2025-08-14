@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.app.Application
 import android.content.Context
+import android.icu.util.LocaleData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,9 +23,10 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.CreateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
+import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -36,6 +38,7 @@ class HomeViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val clientRepository: ClientRepository,
     private val createEventUC: CreateEventUC,
+    private val updateEventUC: UpdateEventUC,
     private val deleteEventUC: DeleteEventUC,
     private val application: Application
 ) : ViewModel() {
@@ -102,9 +105,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun actionCreateEvent(event: CalendarEvent, service: Service, client: ClientListDTO) {
+    fun actionCreateEvent(event: CalendarEventDTO, client: ClientListDTO) {
         idToken?.let { token ->
-            createEventUC.execute(event, service, client, token)
+            createEventUC.execute(event, client, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
@@ -116,7 +119,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun actionDeleteEvent(eventId: String, clientId: String) {
+    fun actionUpdateEvent(calendarEventDTO: CalendarEventDTO) {
+        idToken?.let { token ->
+            updateEventUC.execute(calendarEventDTO, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableSingleObserver<String>() {
+                    override fun onSuccess(eventId: String) { onDateSelected(LocalDate.now().toString()) }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_update }
+                })
+        }
+    }
+
+    fun actionDeleteEvent(eventId: String) {
         idToken?.let { token ->
             deleteEventUC.execute(eventId, token)
                 .subscribeOn(Schedulers.io())
@@ -124,10 +141,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() {
-                        val updated = eventsLD.value.orEmpty().filterNot { it.id == eventId }
-                        eventsLD.value = updated
-                    }
+                    override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
                 })
         }

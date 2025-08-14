@@ -10,19 +10,40 @@ class FindAppointmentWS: FindAppointmentWebService {
     private companion object {
         const val CLIENTS = "clients"
         const val APPOINTMENTS = "appointments"
+        const val EVENTS_INDEX = "eventsIndex"
+        const val CLIENT_ID = "clientId"
+        const val APPOINTMENT_ID = "appointmentId"
     }
 
-    override fun fetch(id: String, clientId: String): Single<Appointment> = Single.create { emitter ->
+    override fun fetch(eventId: String): Single<Appointment> = Single.create { emitter ->
 
-        // Find client by id
-        Firestore.db.collection(CLIENTS)
-            .document(clientId)
-            .collection(APPOINTMENTS)
-            .document(id).get()
-            .addOnSuccessListener { result ->
-                val client = result.toObject(Appointment::class.java)
-                if (client != null) emitter.onSuccess(client)
-                else emitter.onError(AppointmentNotFound())
+        // Find appointment by event id
+        Firestore.db.collection(EVENTS_INDEX).document(eventId).get()
+            .addOnSuccessListener { indexDoc ->
+                val clientId = indexDoc.getString(CLIENT_ID)
+                val appointmentId = indexDoc.getString(APPOINTMENT_ID)
+
+                if (clientId.isNullOrEmpty() || appointmentId.isNullOrEmpty()) {
+                    emitter.onError(AppointmentNotFound())
+                    return@addOnSuccessListener
+                }
+
+
+                // Find appointment
+                Firestore.db.collection(CLIENTS)
+                    .document(clientId)
+                    .collection(APPOINTMENTS)
+                    .document(appointmentId)
+                    .get()
+                    .addOnSuccessListener { appointmentDoc ->
+                        val appointment = appointmentDoc.toObject(Appointment::class.java)
+                        if (appointment != null) {
+                            emitter.onSuccess(appointment)
+                        } else {
+                            emitter.onError(AppointmentNotFound())
+                        }
+                    }
+                    .addOnFailureListener { exception -> emitter.onError(exception) }
             }
             .addOnFailureListener { exception -> emitter.onError(exception) }
     }

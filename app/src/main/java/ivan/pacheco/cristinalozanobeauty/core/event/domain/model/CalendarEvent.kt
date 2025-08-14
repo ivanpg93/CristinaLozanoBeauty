@@ -1,6 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalTime
 
@@ -9,16 +10,20 @@ data class CalendarEvent(
     val summary: String = "",
     val description: String? = null,
     val startDateTime: String = "",
-    val endDateTime: String = ""
+    val endDateTime: String = "",
+    val service: Service?= null,
+    var assisted: Boolean = false
 )
 
-fun CalendarEvent.toEvent(): Event {
-    return Event(
-        id = this.id,
-        text = this.summary,
-        date = this.startDateTime.toLocalDate(),
-        startTime = this.startDateTime.toLocalTime(),
-        endTime = this.endDateTime.toLocalTime()
+fun CalendarEvent.toDTO(): CalendarEventDTO {
+    return CalendarEventDTO(
+        id = id,
+        text = summary,
+        date = startDateTime.toLocalDate(),
+        startTime = startDateTime.toLocalTime(),
+        endTime = endDateTime.toLocalTime(),
+        service = service,
+        assisted = assisted
     )
 }
 
@@ -27,5 +32,23 @@ fun CalendarEvent.toMap() = mapOf(
     "summary" to summary,
     "description" to description,
     "startDateTime" to startDateTime,
-    "endDateTime" to endDateTime
+    "endDateTime" to endDateTime,
+    "service" to service?.name,
+    "assisted" to assisted
 )
+
+fun CalendarEvent.toGoogleCalendarRequest(organizerEmail: String): GoogleCalendarEventRequest {
+    return GoogleCalendarEventRequest(
+        summary = summary,
+        description = description,
+        start = EventDateTime(dateTime = startDateTime),
+        end = EventDateTime(dateTime = endDateTime),
+        attendees = listOf(
+            EventAttendee(
+                email = organizerEmail,
+                organizer = true,
+                responseStatus = if (assisted) "accepted" else "needsAction"
+            )
+        )
+    )
+}

@@ -5,20 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!--Title-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_event_title"
-        style="@style/Form"
-        android:hint="@string/dialog_calendar_hint_title_event"
-        app:boxStrokeColor="@color/gold"
-        app:hintTextColor="@color/gold">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_event_title_text"
-            style="@style/FormText" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <!--Start time-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_event_start_time"

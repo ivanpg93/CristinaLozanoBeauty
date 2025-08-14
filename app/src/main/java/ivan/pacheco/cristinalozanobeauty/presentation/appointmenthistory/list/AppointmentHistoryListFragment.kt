@@ -36,7 +36,9 @@ class AppointmentHistoryListFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val adapter = AppointmentHistoryListAdapter(
-            onItemSelected = { appointment -> navigate(Destination.ColorHistoryDetail(clientId, appointment.id)) },
+            onItemSelected = { appointment ->
+                // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
+            },
             onItemDeleted = { appointment ->
                 DialogUtils.createDialog(
                     requireContext(),
@@ -45,7 +47,7 @@ class AppointmentHistoryListFragment: Fragment() {
                 ) { vm.actionDeleteAppointment(appointment) }
             }
         )
-        binding.rvColors.adapter = adapter
+        binding.rvAppointments.adapter = adapter
 
         // Load colors
         vm.getAppointmentListLD().observe(viewLifecycleOwner) { colors -> adapter.reload(colors) }
@@ -58,15 +60,12 @@ class AppointmentHistoryListFragment: Fragment() {
 
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
-
-        // Action add client
-        //binding.btnAddColor.setOnClickListener { navigate(Destination.ColorHistoryForm(clientId)) }
     }
 
     override fun onResume() {
         super.onResume()
 
-        // Load clients when arrive this screen
+        // Load appointments when arrive this screen
         vm.loadData()
     }
 

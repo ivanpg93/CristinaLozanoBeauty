@@ -24,7 +24,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,22 +46,20 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
-import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -80,9 +77,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val eventsAdapter = EventsAdapter(
-        onClick = { event -> // TODO editar
-            //vm.updateEvent(event)
-        },
+        onClick = { event -> showEventDialog(LocalDate.now(), event) },
+        assistedAction = { event -> vm.actionUpdateEvent(event) },
         deleteAction = { event ->
             val context = requireContext()
             val dialog = AlertDialog.Builder(context)
@@ -115,7 +111,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-    private val events = mutableMapOf<LocalDate, List<Event>>()
+    private val events = mutableMapOf<LocalDate, List<CalendarEventDTO>>()
     private val vm: HomeViewModel by viewModels()
     private var clientList: List<ClientListDTO> = listOf()
     private var selectedClient: ClientListDTO? = null
@@ -177,7 +173,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             // Group events by date
             eventList.groupBy { it.startDateTime.toLocalDate() }
                 .forEach { (date, eventsForDate) ->
-                    events[date] = eventsForDate.map { it.toEvent() }
+                    events[date] = eventsForDate.map { it.toDTO() }
                 }
 
             binding.exThreeCalendar.notifyCalendarChanged()
@@ -230,7 +226,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             scrollToMonth(currentMonth)
         }
 
-        binding.btnCreateEvent.setOnClickListener { showAddEventDialog(selectedDate) }
+        binding.btnCreateEvent.setOnClickListener { showEventDialog(selectedDate) }
     }
 
     override fun onStart() {
@@ -406,11 +402,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun showAddEventDialog(selectedDate: LocalDate) {
+    private fun showEventDialog(selectedDate: LocalDate, event: CalendarEventDTO? = null) {
         val context = requireContext()
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_new_event, null)
 
-        val titleInput = dialogView.findViewById<EditText>(R.id.et_event_title_text)
         val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
         val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
@@ -433,6 +428,19 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             { selectedService }
         ) { selectedService = it }
 
+        if (event != null) {
+            startTimeInput.setText(event.startTime.toString())
+            endTimeInput.setText(event.endTime.toString())
+
+            selectedClient = clientList.find { client ->
+                "${client.firstName} ${client.lastName}" == event.text.substringBefore(" - ")
+            }
+            clientInput.setText(listOfNotNull(selectedClient?.firstName, selectedClient?.lastName).joinToString(" "))
+
+            selectedService = event.service
+            serviceInput.setText(event.service?.toDisplayName())
+        }
+
         val dialog = AlertDialog.Builder(context)
             .setTitle(getString(R.string.dialog_calendar_event_title))
             .setView(dialogView)
@@ -448,7 +456,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val title = titleInput.text.toString()
+                val clientName = listOfNotNull(selectedClient?.firstName, selectedClient?.lastName)
+                    .joinToString(" ")
+                val title = "$clientName - ${selectedService?.toDisplayName()}"
                 val startTime = startTimeInput.text.toString()
                 val endTime = endTimeInput.text.toString()
 
@@ -477,14 +487,32 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                         return@setOnClickListener
                     }
 
-                    val newEvent = CalendarEvent(
-                        id = "",
-                        summary = title,
-                        startDateTime = startTime.toString(),
-                        endDateTime = endTime.toString()
-                    )
-
-                    vm.actionCreateEvent(newEvent, selectedService, selectedClient!!) // TODO
+                    if (event != null) {
+                        val updatedEvent = event.copy(
+                            text = "$clientName - ${selectedService.toDisplayName()}",
+                            startTime = LocalTime.parse(startTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+                            endTime = LocalTime.parse(endTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+                            service = selectedService
+                        )
+                        vm.actionUpdateEvent(updatedEvent) // TODO
+                    } else {
+                        val newEvent = CalendarEventDTO(
+                            id = "",
+                            text = title,
+                            date = selectedDate,
+                            startTime = startTime.toLocalTime(),
+                            endTime = endTime.toLocalTime(),
+                            service = selectedService,
+                        )
+                        /*val newEvent = CalendarEvent(
+                            id = "",
+                            summary = title,
+                            startDateTime = startTime.toString(),
+                            endDateTime = endTime.toString(),
+                            service = selectedService,
+                        )*/
+                        vm.actionCreateEvent(newEvent, selectedClient!!) // TODO
+                    }
                     dialog.dismiss()
                 } catch (_: Exception) { showAlert(R.string.calendar_event_form_error_time) }
             }

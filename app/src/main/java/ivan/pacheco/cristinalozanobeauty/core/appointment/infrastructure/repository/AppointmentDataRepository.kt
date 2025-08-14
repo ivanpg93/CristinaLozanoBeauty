@@ -25,16 +25,15 @@ class AppointmentDataRepository @Inject constructor(
                 appointmentList.map { appointment ->
                     Appointment(
                         appointment.id,
-                        appointment.event,
-                        appointment.service
+                        appointment.event
                     )
                 }.sortedByDescending { it.event?.startDateTime }
             }
     }
 
-    override fun find(id: String, clientId: String): Single<Appointment> = findWS.fetch(id, clientId)
+    override fun find(eventId: String): Single<Appointment> = findWS.fetch(eventId)
     override fun create(appointment: Appointment, clientId: String): Completable = createWS.fetch(appointment, clientId)
-    override fun update(appointment: Appointment, clientId: String): Completable = updateWS.fetch(appointment, clientId)
+    override fun update(appointment: Appointment): Single<String> = updateWS.fetch(appointment)
     override fun delete(eventId: String): Completable = deleteWS.fetch(eventId)
 
 }

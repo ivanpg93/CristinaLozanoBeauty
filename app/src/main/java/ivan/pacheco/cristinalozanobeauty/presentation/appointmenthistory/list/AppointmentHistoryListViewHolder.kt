@@ -20,8 +20,8 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
         onItemSelected: (Appointment) -> Unit,
         onItemDeleted: (Appointment) -> Unit
     ) {
-        binding.txtService.text = appointment.service?.toDisplayName()
-        if (appointment.assisted == true){
+        binding.txtService.text = appointment.event?.service?.toDisplayName()
+        if (appointment.event?.assisted == true){
             binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_assisted_event))
             binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.green_700)
         } else {

@@ -2,7 +2,9 @@ package ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository
 
 import io.reactivex.Completable
 import io.reactivex.Single
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventAttendee
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
@@ -51,12 +53,16 @@ class EventDataRepository @Inject constructor(
             response.items
                 .filter { it.start.dateTime != null && it.end?.dateTime != null } // TODO: Fix nulls
                 .map { item ->
-                CalendarEvent(
+                    val service = item.description?.let { runCatching { Service.valueOf(it) }.getOrNull() }
+
+                    CalendarEvent(
                     id = item.id,
                     summary = item.summary,
                     description = item.description,
                     startDateTime = item.start.dateTime,
-                    endDateTime = item.end.dateTime
+                    endDateTime = item.end.dateTime,
+                    service = service,
+                    // TODO assisted = item.assistance == "accepted"
                 )
             }
         }
@@ -74,19 +80,72 @@ class EventDataRepository @Inject constructor(
 
             val request = GoogleCalendarEventRequest(
                 summary = event.summary,
-                description = event.description,
+                description = event.service?.name,
                 start = EventDateTime(dateTime = startFormatted, timeZone = SPAIN_ZONE),
-                end = EventDateTime(dateTime = endFormatted, timeZone = SPAIN_ZONE)
+                end = EventDateTime(dateTime = endFormatted, timeZone = SPAIN_ZONE),
+                attendees = listOf() /* TODO listOf(
+                    EventAttendee(
+                        email = "4civanpacheco@gmail.com",
+                        organizer = true,
+                        responseStatus = if (event.assisted) "accepted" else "needsAction"
+                    )
+                )*/
             )
 
             val response = runBlocking { googleCalendarApi.createEvent("$BEARER $token", request) }
+
+            // Get service from description
+            val service = response.description?.let { runCatching { Service.valueOf(it) }.getOrNull() }
 
             CalendarEvent(
                 id = response.id,
                 summary = response.summary,
                 description = response.description,
                 startDateTime = response.start.dateTime,
-                endDateTime = response.end.dateTime
+                endDateTime = response.end.dateTime,
+                service = service
+                // TODO assisted = response.assistance == "accepted"
+            )
+        }
+    }
+
+    override fun updateEvent(event: CalendarEvent, token: String): Single<CalendarEvent> {
+        return Single.fromCallable {
+            val zoneId = ZoneId.of(SPAIN_ZONE)
+
+            val start = LocalDateTime.parse(event.startDateTime)
+            val end = LocalDateTime.parse(event.endDateTime)
+
+            val startFormatted = start.atZone(zoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+            val endFormatted = end.atZone(zoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+            val request = GoogleCalendarEventRequest(
+                summary = event.summary,
+                description = event.service?.name,
+                start = EventDateTime(dateTime = startFormatted, timeZone = SPAIN_ZONE),
+                end = EventDateTime(dateTime = endFormatted, timeZone = SPAIN_ZONE),
+                attendees = listOf() /* TODO: listOf(
+                    EventAttendee(
+                        email = "4civanpacheco@gmail.com",
+                        organizer = true,
+                        responseStatus = if (event.assisted) "accepted" else "needsAction"
+                    )
+                )*/
+            )
+
+            val response = runBlocking { googleCalendarApi.updateEvent("$BEARER $token", event.id, request) }
+
+            // Get service from description
+            val service = response.description?.let { runCatching { Service.valueOf(it) }.getOrNull() }
+
+            CalendarEvent(
+                id = response.id,
+                summary = response.summary,
+                description = response.description,
+                startDateTime = response.start.dateTime,
+                endDateTime = response.end.dateTime,
+                service = service,
+                // TODO assisted = response.assistance == "accepted"
             )
         }
     }
