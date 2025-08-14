@@ -437,6 +437,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             }
             clientInput.setText(listOfNotNull(selectedClient?.firstName, selectedClient?.lastName).joinToString(" "))
 
+            // Temporarily block TODO
+            clientInput.isEnabled = false
+
             selectedService = event.service
             serviceInput.setText(event.service?.toDisplayName())
         }

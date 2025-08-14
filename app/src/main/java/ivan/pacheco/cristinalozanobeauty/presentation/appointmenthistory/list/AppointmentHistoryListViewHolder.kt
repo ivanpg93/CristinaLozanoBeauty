@@ -28,6 +28,7 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
             binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_no_assisted_event))
             binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.red)
         }
+        binding.ivAssisted.visibility = View.GONE // TODO Quitar cuando se gestione la asistencia correctamente
         binding.txtTime.text = "${appointment.event?.startDateTime?.toHour()} - ${appointment.event?.endDateTime?.toHour()}"
         binding.txtDate.text = appointment.event?.startDateTime?.toDate().toString()
         binding.btnDelete.setOnClickListener { onItemDeleted(appointment) }
