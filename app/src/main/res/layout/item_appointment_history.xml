@@ -11,16 +11,37 @@
         android:id="@+id/txt_service"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@id/txt_date"
+        app:layout_constraintEnd_toStartOf="@id/iv_assisted"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Nivelación" />
+
+    <!--Assisted-->
+    <ImageView
+        android:id="@+id/iv_assisted"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginHorizontal="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/txt_time"
+        app:layout_constraintStart_toEndOf="@id/txt_service"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--Hour-->
+    <TextView
+        android:id="@+id/txt_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/txt_date"
+        app:layout_constraintStart_toEndOf="@id/iv_assisted"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="10:00-12:00" />
 
     <!--Date-->
     <TextView
@@ -29,8 +50,9 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="20sp"
+        android:layout_marginHorizontal="8dp"
         app:layout_constraintEnd_toStartOf="@+id/btn_delete"
-        app:layout_constraintStart_toEndOf="@id/txt_service"
+        app:layout_constraintStart_toEndOf="@id/txt_time"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="10/05/2024" />
 
@@ -39,7 +61,6 @@
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:src="@drawable/ic_delete"
         android:textColor="@color/black"
         android:textSize="20sp"

@@ -52,6 +52,8 @@
     <string name="client_form_select_service">Selecciona un servicio a realizar</string>
     <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
     <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
+    <string name="client_form_save_changes_title">Guardar cambios</string>
+    <string name="client_form_save_changes">¿Quieres guardar los cambios antes de salir?</string>
 
     <!--Client form error-->
     <string name="client_form_error_phone">Introduce un teléfono correcto</string>
@@ -106,13 +108,13 @@
     <string name="dialog_calendar_event_select_service">Selecciona un servicio</string>
     <string name="dialog_calendar_event_clients">Clienta</string>
     <string name="dialog_calendar_event_service">Servicio</string>
-    <string name="dialog_calendar_hint_title_event">Título del evento</string>
     <string name="dialog_calendar_hint_start_time_event">Hora inicio (HH:mm)</string>
     <string name="dialog_calendar_hint_end_time_event">Hora fin (HH:mm)</string>
 
     <!--Event form error-->
     <string name="calendar_event_form_error_time">Indica las horas de la cita correctamente</string>
     <string name="calendar_event_form_error_create">No se ha podido registrar la cita</string>
+    <string name="calendar_event_form_error_update">No se ha podido modificar la cita</string>
     <string name="calendar_event_form_error_delete">No se ha podido eliminar la cita</string>
 
 </resources>

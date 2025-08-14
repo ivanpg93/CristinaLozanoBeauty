@@ -10,7 +10,6 @@ class MainApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         FirebaseManager.init(this)
         WorkManager.getInstance(this)
     }

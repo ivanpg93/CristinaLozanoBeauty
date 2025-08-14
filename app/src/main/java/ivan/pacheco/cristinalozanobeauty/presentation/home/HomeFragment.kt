@@ -1,6 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -43,17 +46,17 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.Event
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.addStatusBarColorUpdate
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
@@ -68,35 +71,82 @@ import java.time.format.DateTimeFormatter
 class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private companion object {
-        const val SIGN_IN_REQUEST_CODE = 1001
-        const val RECOVERABLE_REQUEST_CODE = 2001
         const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
     }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val eventsAdapter = EventsAdapter { event ->
-        AlertDialog.Builder(requireContext())
-            .setMessage(R.string.dialog_calendar_event_delete_message)
-            .setPositiveButton(R.string.dialog_calendar_event_action_delete) { _, _ ->
-                vm.actionDeleteEvent(event.id, "") }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-    }
+    private val eventsAdapter = EventsAdapter(
+        onClick = { event -> showEventDialog(LocalDate.now(), event) },
+        assistedAction = { event -> vm.actionUpdateEvent(event) },
+        deleteAction = { event ->
+            val context = requireContext()
+            val dialog = AlertDialog.Builder(context)
+                .setMessage(R.string.dialog_calendar_event_delete_message)
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.dialog_calendar_event_action_delete), null)
+                .create()
+
+            dialog.setOnShowListener {
+
+                // Customize color for buttons
+                val goldColor = ContextCompat.getColor(context, R.color.gold)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                    dialog.dismiss()
+                    vm.actionDeleteEvent(event.id)
+                }
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+            dialog.show()
+        }
+    )
 
     private var selectedDate: LocalDate = LocalDate.now()
     private val today = LocalDate.now()
+    private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-    private val events = mutableMapOf<LocalDate, List<Event>>()
+    private val events = mutableMapOf<LocalDate, List<CalendarEventDTO>>()
     private val vm: HomeViewModel by viewModels()
     private var clientList: List<ClientListDTO> = listOf()
     private var selectedClient: ClientListDTO? = null
 
     private lateinit var googleSignInOptions: GoogleSignInOptions
     private lateinit var client: GoogleSignInClient
+    private lateinit var signInLauncher: ActivityResultLauncher<Intent>
+    private lateinit var recoverableLauncher: ActivityResultLauncher<Intent>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Launcher for login
+        signInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    vm.onGoogleAccountReady(account)
+                } catch (e: ApiException) {
+                    Toast.makeText(requireContext(), "Fallo al iniciar sesión: ${e.statusCode}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // Launcher for retry login
+        recoverableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+
+            // Get token when return
+            GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
+                vm.onGoogleAccountReady(account)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,25 +160,23 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Google login from device account
         initGoogleSignIn()
         silentSignIn()
 
         // Events
         vm.getEventsLD().observe(viewLifecycleOwner) { eventList ->
 
-            // Limpia el mapa actual
+            // Clear list
             events.clear()
 
-            // Agrupa los eventos por fecha
+            // Group events by date
             eventList.groupBy { it.startDateTime.toLocalDate() }
                 .forEach { (date, eventsForDate) ->
-                    events[date] = eventsForDate.map { it.toEvent() }
+                    events[date] = eventsForDate.map { it.toDTO() }
                 }
 
-            // Notifica al calendario que algo cambió
             binding.exThreeCalendar.notifyCalendarChanged()
-
-            // Si ya hay una fecha seleccionada, actualiza el adaptador
             updateAdapterForDate(selectedDate)
         }
 
@@ -142,26 +190,29 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
 
         vm.getRecoverableExceptionLD().observe(viewLifecycleOwner) { exception ->
-            exception.intent?.let { startActivityForResult(it, RECOVERABLE_REQUEST_CODE) }
+            exception.intent?.let { recoverableLauncher.launch(it) }
         }
 
         // Calendar
-        addStatusBarColorUpdate(R.color.gold)
         applyInsets(binding)
+
         binding.exThreeRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = eventsAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
         }
 
-        binding.exThreeCalendar.monthScrollListener = {
-            binding.toolbar.title = if (it.yearMonth.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
+        binding.exThreeCalendar.monthScrollListener = { month ->
+            binding.toolbar.title = titleFormatter.format(month.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
+
+            // Select current day for current month or first day of month
+            val dateToSelect = if (month.yearMonth .year == today.year && month.yearMonth.month == today.month) {
+                today
             } else {
-                titleFormatter.format(it.yearMonth)
+                month.yearMonth.atDay(1)
             }
-            // Select the first day of the visible month.
-            selectDate(it.yearMonth.atDay(1))
+
+            selectDate(dateToSelect)
             vm.onDateSelected(selectedDate.toString())
         }
 
@@ -175,43 +226,13 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             scrollToMonth(currentMonth)
         }
 
-        binding.exThreeAddButton.setOnClickListener { showAddEventDialog(selectedDate) }
-
-        // Aplicar insets si quieres
-        applyInsets(binding)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            SIGN_IN_REQUEST_CODE -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                try {
-                    val account = task.getResult(ApiException::class.java)
-                    vm.onGoogleAccountReady(account)
-                } catch (e: ApiException) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Fallo al iniciar sesión: ${e.statusCode}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            RECOVERABLE_REQUEST_CODE -> {
-                // Intenta de nuevo obtener el token tras el consentimiento
-                GoogleSignIn.getLastSignedInAccount(requireContext())?.let { account ->
-                    vm.onGoogleAccountReady(account)
-                }
-            }
-        }
+        binding.btnCreateEvent.setOnClickListener { showEventDialog(selectedDate) }
     }
 
     override fun onStart() {
         super.onStart()
 
-        // Configurar el AppBar y Toolbar del fragmento
+        // Set app bar and toolbar
         val color = requireContext().getColorCompat(R.color.gold)
         binding.toolbar.setBackgroundColor(color)
         binding.activityAppBar.setBackgroundColor(color)
@@ -243,9 +264,11 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 try {
                     val account = completedTask.getResult(ApiException::class.java)
                     vm.onGoogleAccountReady(account)
-                } catch (e: ApiException) {
+                } catch (_: ApiException) {
                     client.signOut().addOnCompleteListener {
-                        startActivityForResult(client.signInIntent, SIGN_IN_REQUEST_CODE)
+                        if (isAdded) {
+                            signInLauncher.launch(client.signInIntent)
+                        }
                     }
                 }
             }
@@ -346,6 +369,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             object : MonthHeaderFooterBinder<MonthViewContainer> {
                 override fun create(view: View) = MonthViewContainer(view)
                 override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+
                     // Setup each header day text if we have not done that already.
                     if (container.legendLayout.tag == null) {
                         container.legendLayout.tag = true
@@ -378,11 +402,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun showAddEventDialog(selectedDate: LocalDate) {
+    private fun showEventDialog(selectedDate: LocalDate, event: CalendarEventDTO? = null) {
         val context = requireContext()
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_new_event, null)
 
-        val titleInput = dialogView.findViewById<EditText>(R.id.et_event_title_text)
         val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
         val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
@@ -405,6 +428,19 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             { selectedService }
         ) { selectedService = it }
 
+        if (event != null) {
+            startTimeInput.setText(event.startTime.toString())
+            endTimeInput.setText(event.endTime.toString())
+
+            selectedClient = clientList.find { client ->
+                "${client.firstName} ${client.lastName}" == event.text.substringBefore(" - ")
+            }
+            clientInput.setText(listOfNotNull(selectedClient?.firstName, selectedClient?.lastName).joinToString(" "))
+
+            selectedService = event.service
+            serviceInput.setText(event.service?.toDisplayName())
+        }
+
         val dialog = AlertDialog.Builder(context)
             .setTitle(getString(R.string.dialog_calendar_event_title))
             .setView(dialogView)
@@ -413,8 +449,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             .create()
 
         dialog.setOnShowListener {
+
+            // Customize color for buttons
+            val goldColor = ContextCompat.getColor(context, R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val title = titleInput.text.toString()
+                val clientName = listOfNotNull(selectedClient?.firstName, selectedClient?.lastName)
+                    .joinToString(" ")
+                val title = "$clientName - ${selectedService?.toDisplayName()}"
                 val startTime = startTimeInput.text.toString()
                 val endTime = endTimeInput.text.toString()
 
@@ -443,16 +487,34 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                         return@setOnClickListener
                     }
 
-                    val newEvent = CalendarEvent(
-                        id = "",
-                        summary = title,
-                        startDateTime = startTime.toString(),
-                        endDateTime = endTime.toString()
-                    )
-
-                    vm.actionCreateEvent(newEvent, selectedService!!, selectedClient!!) // TODO
+                    if (event != null) {
+                        val updatedEvent = event.copy(
+                            text = "$clientName - ${selectedService.toDisplayName()}",
+                            startTime = LocalTime.parse(startTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+                            endTime = LocalTime.parse(endTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+                            service = selectedService
+                        )
+                        vm.actionUpdateEvent(updatedEvent) // TODO
+                    } else {
+                        val newEvent = CalendarEventDTO(
+                            id = "",
+                            text = title,
+                            date = selectedDate,
+                            startTime = startTime.toLocalTime(),
+                            endTime = endTime.toLocalTime(),
+                            service = selectedService,
+                        )
+                        /*val newEvent = CalendarEvent(
+                            id = "",
+                            summary = title,
+                            startDateTime = startTime.toString(),
+                            endDateTime = endTime.toString(),
+                            service = selectedService,
+                        )*/
+                        vm.actionCreateEvent(newEvent, selectedClient!!) // TODO
+                    }
                     dialog.dismiss()
-                } catch (e: Exception) { showAlert(R.string.calendar_event_form_error_time) }
+                } catch (_: Exception) { showAlert(R.string.calendar_event_form_error_time) }
             }
         }
         dialog.show()
@@ -482,7 +544,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val selectedIndex = sortedClients.indexOfFirst { it.id == selectedClient?.id }
         var tempSelectedIndex = selectedIndex
 
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_calendar_event_select_client))
             .setSingleChoiceItems(clientNames, selectedIndex) { _, index ->
                 tempSelectedIndex = index
@@ -496,7 +558,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 dialog.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val goldColor = ContextCompat.getColor(requireContext(), R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+        }
+
+        dialog.show()
     }
 
     private fun <T : Enum<T>> setupSingleChoiceInput(
@@ -513,8 +584,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 getSelectedOption()
             ) { selected ->
                 onSelected(selected)
-                editText.setText(selected.name.replace("_", " ").lowercase()
-                    .replaceFirstChar { it.uppercase() })
+                editText.setText(
+                    selected.name
+                        .replace("_", " ")
+                        .lowercase()
+                        .replaceFirstChar { it.uppercase() }
+                )
             }
         }
     }
@@ -526,9 +601,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         onSelected: (T) -> Unit
     ) {
         val options = enumValues
-            .map { it to it.name.replace("_", " ")
+            .map {
+                it to it.name
+                .replace("_", " ")
                 .lowercase()
-                .replaceFirstChar { c -> c.titlecase() } }
+                .replaceFirstChar { c -> c.titlecase() }
+            }
             .sortedBy { it.second }
 
         val selectedIndex = options.indexOfFirst { it.first == selectedOption }
@@ -541,17 +619,28 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             intArrayOf(checkedColor, uncheckedColor)
         )
 
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(title)
             .setSingleChoiceItems(options.map { it.second }.toTypedArray(), selectedIndex) { _, index ->
                 tempSelectedIndex = index
             }
-            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
-                tempSelectedIndex.takeIf { it >= 0 }?.let { onSelected(options[it].first) }
-                dialog.dismiss()
+            .setPositiveButton(getString(R.string.accept)) { dialogInterface, _ ->
+                tempSelectedIndex.takeIf { it >= 0 }?.let {
+                    onSelected(options[it].first)
+                }
+                dialogInterface.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val goldColor = ContextCompat.getColor(requireContext(), R.color.gold)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
+        }
+
+        dialog.show()
     }
 
 }

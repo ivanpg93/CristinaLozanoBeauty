@@ -5,7 +5,8 @@ data class GoogleCalendarEvent(
     val summary: String,
     val description: String?,
     val start: DateTimeData,
-    val end: DateTimeData
+    val end: DateTimeData,
+    val assistance: String
 )
 
 data class DateTimeData(val dateTime: String)

@@ -11,15 +11,13 @@ class CreateAppointmentUC @Inject constructor(private val repository: Appointmen
 
     fun execute(
         event: CalendarEvent,
-        service: Service,
         clientId: String
     ): Completable {
 
-        // Build client. Id will set from Firebase
+        // Build appointment. Id will set from Firebase
         val appointment = Appointment(
             "",
-            event,
-            service
+            event
         )
 
         return repository.create(appointment, clientId)

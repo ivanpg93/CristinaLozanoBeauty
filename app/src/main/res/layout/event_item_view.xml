@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/selectableItemBackground"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:padding="20dp">
 
-    <TextView
-        android:id="@+id/itemEventText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        tools:text="Play football with friends" />
+        android:orientation="horizontal">
+
+        <!--Title-->
+        <TextView
+            android:id="@+id/txt_event_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            tools:text="Iván - Nivelación" />
+
+        <!--Assisted-->
+        <ImageView
+            android:id="@+id/iv_assisted"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginHorizontal="8dp" />
+
+        <!--Time-->
+        <TextView
+            android:id="@+id/txt_event_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="10:00-12:00" />
+
+        <!--Button delete-->
+        <ImageView
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_delete"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:tint="@color/gold" />
+
+    </LinearLayout>
 
 </FrameLayout>

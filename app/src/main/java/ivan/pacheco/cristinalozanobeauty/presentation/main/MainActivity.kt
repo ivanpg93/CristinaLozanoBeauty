@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -14,6 +15,8 @@ import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ActivityMainBinding
+import ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragment
+import ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -39,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
         // Load bottom navigation
         loadBottomNavBar()
+
+        // Customize status bar color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.gold)
     }
 
     override fun onDestroy() {
@@ -89,6 +95,18 @@ class MainActivity : AppCompatActivity() {
                 toolbar.setNavigationIcon(null);
             } else {
                 toolbar.setNavigationIcon(R.drawable.ic_navigation_back);
+            }
+        }
+
+        // Show dialog for save changes before navigate back
+        toolbar.setNavigationOnClickListener {
+            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+            if (currentFragment is ClientFormFragment) {
+                currentFragment.showBackPressDialog()
+            } else if (currentFragment is ClientDetailFragment) {
+                currentFragment.showBackPressDialog()
+            } else {
+                if (!navController.popBackStack()) finish()
             }
         }
     }

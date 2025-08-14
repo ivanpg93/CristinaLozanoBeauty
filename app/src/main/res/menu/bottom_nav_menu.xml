@@ -10,9 +10,9 @@
         android:icon="@drawable/ic_clients_selector"
         android:title="@string/nav_bar_client" />
 
-    <item
+    <!-- TODO <item
         android:id="@+id/messageFragment"
         android:icon="@drawable/ic_message_selector"
-        android:title="@string/nav_bar_message" />
+        android:title="@string/nav_bar_message" />-->
 
 </menu>

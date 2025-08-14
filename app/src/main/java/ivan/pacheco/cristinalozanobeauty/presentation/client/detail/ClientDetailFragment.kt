@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -55,6 +57,9 @@ class ClientDetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // On back pressed
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { showBackPressDialog() }
 
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
@@ -137,6 +142,38 @@ class ClientDetailFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun showBackPressDialog() {
+        val context = requireContext()
+        val dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.client_form_save_changes_title)
+            .setMessage(R.string.client_form_save_changes)
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save), null)
+            .create()
+
+        // Customize color for buttons
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+            val goldColor = ContextCompat.getColor(context, R.color.gold)
+            positiveButton?.setTextColor(goldColor)
+            negativeButton?.setTextColor(goldColor)
+
+            positiveButton?.setOnClickListener {
+                dialog.dismiss()
+                saveAction()
+            }
+
+            negativeButton?.setOnClickListener {
+                dialog.dismiss()
+                navigate(Destination.Back)
+            }
+        }
+
+        dialog.show()
     }
 
     private fun setActionBarTitle(title: String) {

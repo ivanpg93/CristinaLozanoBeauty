@@ -2,9 +2,11 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.app.Application
 import android.content.Context
+import android.icu.util.LocaleData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -21,17 +23,22 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.CreateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
+import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.CalendarRepository
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
+import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val calendarRepository: CalendarRepository,
+    private val eventRepository: EventRepository,
     private val clientRepository: ClientRepository,
     private val createEventUC: CreateEventUC,
+    private val updateEventUC: UpdateEventUC,
     private val deleteEventUC: DeleteEventUC,
     private val application: Application
 ) : ViewModel() {
@@ -65,7 +72,7 @@ class HomeViewModel @Inject constructor(
         val localDate = LocalDate.parse(LocalDate.now().toString())
         val (startDate, endDate) = getMonthRange(localDate)
         getAccessTokenRx(application.applicationContext, account)
-            .flatMap { token -> calendarRepository.getEventsForDate(startDate, endDate, token) }
+            .flatMap { token -> eventRepository.getEventsForDate(startDate, endDate, token) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
@@ -76,7 +83,7 @@ class HomeViewModel @Inject constructor(
                     if (e is UserRecoverableAuthException) {
                         recoverableExceptionLD.value = e
                     } else {
-                        errorLD.value = R.string.client_list_error_list
+                        errorLD.value = R.string.appointment_history_list_error_list
                     }
                 }
             })
@@ -86,27 +93,25 @@ class HomeViewModel @Inject constructor(
         idToken?.let { token ->
             val localDate = LocalDate.parse(date)
             val (startDate, endDate) = getMonthRange(localDate)
-            calendarRepository.getEventsForDate(startDate, endDate, token)
+            eventRepository.getEventsForDate(startDate, endDate, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
                     override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
-                    override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_list }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_list }
                 })
         }
     }
 
-    fun actionCreateEvent(event: CalendarEvent, service: Service, client: ClientListDTO) {
+    fun actionCreateEvent(event: CalendarEventDTO, client: ClientListDTO) {
         idToken?.let { token ->
-            createEventUC.execute(event, service, client, token)
+            createEventUC.execute(event, client, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
-                //.subscribe(object : DisposableSingleObserver<CalendarEvent>() {
-                //override fun onSuccess(event: CalendarEvent) { eventsLD.value = eventsLD.value?.plus(event) }
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }
@@ -114,18 +119,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun actionDeleteEvent(eventId: String, clientId: String) {
+    fun actionUpdateEvent(calendarEventDTO: CalendarEventDTO) {
         idToken?.let { token ->
-            deleteEventUC.execute(eventId, clientId, token)
+            updateEventUC.execute(calendarEventDTO, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableSingleObserver<String>() {
+                    override fun onSuccess(eventId: String) { onDateSelected(LocalDate.now().toString()) }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_update }
+                })
+        }
+    }
+
+    fun actionDeleteEvent(eventId: String) {
+        idToken?.let { token ->
+            deleteEventUC.execute(eventId, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() {
-                        val updated = eventsLD.value.orEmpty().filterNot { it.id == eventId }
-                        eventsLD.value = updated
-                    }
+                    override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
                 })
         }
@@ -137,6 +153,16 @@ class HomeViewModel @Inject constructor(
                 account.account?.let { account ->
                     val token = GoogleAuthUtil.getToken(context, account, SCOPE_OAUTH2)
                     idToken = token
+
+                    viewModelScope.launch {
+                        try {
+                            SecureTokenDataStore.saveToken(context, token)
+                        } catch (e: Exception) {
+                            // Log si falla el guardado, pero no cancelamos el Single
+                            e.printStackTrace()
+                        }
+                    }
+
                     emitter.onSuccess(token)
                 }
             } catch (e: Exception) { emitter.onError(e) }
