@@ -17,7 +17,6 @@ object Firestore {
     // Firestore singleton instance
     val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-
     suspend fun migrateEventsIndex() {
 
         // Get all appointments from clients
@@ -28,10 +27,8 @@ object Firestore {
             val event = data[EVENT] as? Map<*, *> ?: continue
             val eventId = event[ID] as? String ?: continue
 
-            // Extract client id from appointment document
-            val pathParts = doc.reference.path.split("/")
-            if (pathParts.size < 4) continue
-            val clientId = pathParts[1]
+            // Extract client id from parent path
+            val clientId = doc.reference.parent.parent?.id ?: continue
             val appointmentId = doc.id
 
             // Create eventsIndex document if not exists
