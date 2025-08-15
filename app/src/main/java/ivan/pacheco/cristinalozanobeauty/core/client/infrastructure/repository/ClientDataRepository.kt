@@ -2,8 +2,8 @@ package ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService

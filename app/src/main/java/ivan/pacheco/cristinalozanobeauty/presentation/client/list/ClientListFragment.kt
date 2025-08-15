@@ -8,7 +8,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientListBinding
@@ -16,7 +15,6 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
-import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
 @AndroidEntryPoint
 class ClientListFragment: Fragment() {

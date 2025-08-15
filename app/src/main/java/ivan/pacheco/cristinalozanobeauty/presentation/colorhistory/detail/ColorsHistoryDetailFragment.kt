@@ -18,7 +18,6 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryDetailBinding
-import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryFormBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText

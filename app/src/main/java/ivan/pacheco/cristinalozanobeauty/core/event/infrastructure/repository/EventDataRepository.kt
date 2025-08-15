@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventAttendee
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.GoogleCalendarEventRequest
