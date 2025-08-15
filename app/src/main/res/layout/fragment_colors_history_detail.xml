@@ -50,7 +50,7 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!--Birthday-->
+            <!--Date-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_date"
                 style="@style/Form"

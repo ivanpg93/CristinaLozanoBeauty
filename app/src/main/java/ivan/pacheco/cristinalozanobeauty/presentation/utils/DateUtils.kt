@@ -74,4 +74,8 @@ object DateUtils {
         }
     }
 
+    fun LocalDate.toFormattedString(): String {
+        return this.format(dateFormatter)
+    }
+
 }

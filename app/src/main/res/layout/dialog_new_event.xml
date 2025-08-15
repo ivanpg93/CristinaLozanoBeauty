@@ -5,6 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!--Date-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_date"
+        style="@style/Form"
+        android:hint="@string/color_history_form_date"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_date_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <!--Start time-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_event_start_time"

@@ -54,6 +54,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapte
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
@@ -65,6 +66,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
 @AndroidEntryPoint
 class HomeFragment: Fragment(R.layout.fragment_home) {
@@ -374,7 +377,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                         container.legendLayout.tag = true
                         container.legendLayout.children.map { it as TextView }
                             .forEachIndexed { index, tv ->
-                                tv.text = daysOfWeek[index].name.first().toString()
+                                tv.text = daysOfWeek[index]
+                                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                    .replaceFirstChar { it.uppercase() }
                                 tv.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
@@ -405,11 +410,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val context = requireContext()
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_new_event, null)
 
+        val dateInput = dialogView.findViewById<EditText>(R.id.et_event_date_text)
         val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
         val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
         val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
         var selectedService: Service? = null
+
+        dateInput.setText(selectedDate.toFormattedString())
 
         // Input select client
         setupClientSelector(
@@ -428,6 +436,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         ) { selectedService = it }
 
         if (event != null) {
+            dateInput.setText(event.date.toFormattedString()) // TODO editable
             startTimeInput.setText(event.startTime.toString())
             endTimeInput.setText(event.endTime.toString())
 
