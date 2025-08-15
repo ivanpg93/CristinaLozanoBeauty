@@ -1,7 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalTime
 

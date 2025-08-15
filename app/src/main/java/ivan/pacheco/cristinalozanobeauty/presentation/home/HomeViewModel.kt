@@ -2,7 +2,6 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.app.Application
 import android.content.Context
-import android.icu.util.LocaleData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,14 +18,13 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.CreateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEventUC
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -48,6 +46,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private var idToken: String? = null
+    private var selectedDate: LocalDate = LocalDate.now()
 
     // LiveData
     private val isLoadingLD = MutableLiveData<Boolean>()
@@ -89,10 +88,10 @@ class HomeViewModel @Inject constructor(
             })
     }
 
-    fun onDateSelected(date: String) {
+    fun onDateSelected(date: LocalDate) {
         idToken?.let { token ->
-            val localDate = LocalDate.parse(date)
-            val (startDate, endDate) = getMonthRange(localDate)
+            selectedDate = date
+            val (startDate, endDate) = getMonthRange(selectedDate)
             eventRepository.getEventsForDate(startDate, endDate, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -113,7 +112,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
+                    override fun onComplete() { onDateSelected(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }
                 })
         }
@@ -127,7 +126,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableSingleObserver<String>() {
-                    override fun onSuccess(eventId: String) { onDateSelected(LocalDate.now().toString()) }
+                    override fun onSuccess(eventId: String) { onDateSelected(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_update }
                 })
         }
@@ -141,7 +140,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() { onDateSelected(LocalDate.now().toString()) }
+                    override fun onComplete() { onDateSelected(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
                 })
         }

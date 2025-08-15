@@ -45,12 +45,11 @@ import ivan.pacheco.cristinalozanobeauty.BuildConfig
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
@@ -213,7 +212,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             }
 
             selectDate(dateToSelect)
-            vm.onDateSelected(selectedDate.toString())
+            vm.onDateSelected(selectedDate)
         }
 
         val daysOfWeek = daysOfWeek()

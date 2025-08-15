@@ -2,9 +2,9 @@ package ivan.pacheco.cristinalozanobeauty.core.event.application.usecase
 
 import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.UpdateAppointmentUC
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventDTO
-import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.toCalendarEvent
 import javax.inject.Inject
 
 class UpdateEventUC @Inject constructor(

@@ -13,7 +13,6 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.DeleteAppointmentUC
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
-import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.DeleteEventUC
 import javax.inject.Inject
 
 @HiltViewModel
