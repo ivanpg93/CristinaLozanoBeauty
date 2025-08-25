@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
@@ -54,6 +55,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapte
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMillis
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
@@ -74,12 +76,18 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private companion object {
         const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
+        const val TIME_FORMAT = "HH:mm"
     }
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private val today = LocalDate.now()
+    private var selectedDate: LocalDate = today
+    private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     private val eventsAdapter = EventsAdapter(
-        onClick = { event -> showEventDialog(LocalDate.now(), event) },
+        onClick = { event -> showEventDialog(selectedDate, event) },
         assistedAction = { event -> vm.actionUpdateEvent(event) },
         deleteAction = { event ->
             val context = requireContext()
@@ -107,11 +115,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             dialog.show()
         }
     )
-
-    private var selectedDate: LocalDate = LocalDate.now()
-    private val today = LocalDate.now()
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
     private val events = mutableMapOf<LocalDate, List<CalendarEventDTO>>()
     private val vm: HomeViewModel by viewModels()
@@ -417,7 +420,26 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
         var selectedService: Service? = null
 
-        dateInput.setText(selectedDate.toFormattedString())
+        var currentDate = event?.date ?: selectedDate
+        dateInput.setText(currentDate.toFormattedString())
+
+        // Input select date
+        dateInput.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTheme(R.style.FormDatePicker)
+                .setSelection(currentDate.toEpochMillis())
+                .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+                .build()
+
+            // Set selected date
+            datePicker.addOnPositiveButtonClickListener { millis ->
+                val localDate = millis.toLocalDate()
+                currentDate = localDate
+                dateInput.setText(localDate.toFormattedString())
+            }
+
+            datePicker.show(childFragmentManager, "")
+        }
 
         // Input select client
         setupClientSelector(
@@ -436,7 +458,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         ) { selectedService = it }
 
         if (event != null) {
-            dateInput.setText(event.date.toFormattedString()) // TODO editable
+            dateInput.setText(event.date.toFormattedString())
             startTimeInput.setText(event.startTime.toString())
             endTimeInput.setText(event.endTime.toString())
 
@@ -489,9 +511,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 }
 
                 try {
-                    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-                    val startTime = LocalDateTime.of(selectedDate, LocalTime.parse(startTime, formatter))
-                    val endTime = LocalDateTime.of(selectedDate, LocalTime.parse(endTime, formatter))
+                    val formatter = DateTimeFormatter.ofPattern(TIME_FORMAT)
+                    val startTime = LocalDateTime.of(currentDate, LocalTime.parse(startTime, formatter))
+                    val endTime = LocalDateTime.of(currentDate, LocalTime.parse(endTime, formatter))
 
                     if (!startTime.isBefore(endTime)) {
                         showAlert(R.string.calendar_event_form_error_time)
@@ -501,27 +523,21 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                     if (event != null) {
                         val updatedEvent = event.copy(
                             text = "$clientName - ${selectedService.toDisplayName()}",
-                            startTime = LocalTime.parse(startTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
-                            endTime = LocalTime.parse(endTimeInput.text.toString(), DateTimeFormatter.ofPattern("HH:mm")),
+                            date = currentDate,
+                            startTime = LocalTime.parse(startTimeInput.text.toString(), formatter),
+                            endTime = LocalTime.parse(endTimeInput.text.toString(), formatter),
                             service = selectedService
                         )
-                        vm.actionUpdateEvent(updatedEvent) // TODO
+                        vm.actionUpdateEvent(updatedEvent)
                     } else {
                         val newEvent = CalendarEventDTO(
                             id = "",
                             text = title,
-                            date = selectedDate,
+                            date = currentDate,
                             startTime = startTime.toLocalTime(),
                             endTime = endTime.toLocalTime(),
                             service = selectedService,
                         )
-                        /*val newEvent = CalendarEvent(
-                            id = "",
-                            summary = title,
-                            startDateTime = startTime.toString(),
-                            endDateTime = endTime.toString(),
-                            service = selectedService,
-                        )*/
                         vm.actionCreateEvent(newEvent, selectedClient!!) // TODO
                     }
                     dialog.dismiss()
