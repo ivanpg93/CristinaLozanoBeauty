@@ -32,7 +32,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_event_start_time_text"
             style="@style/FormText"
-            android:inputType="time" />
+            android:focusable="false"
+            android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -47,7 +48,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_event_end_time_text"
             style="@style/FormText"
-            android:inputType="time" />
+            android:focusable="false"
+            android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

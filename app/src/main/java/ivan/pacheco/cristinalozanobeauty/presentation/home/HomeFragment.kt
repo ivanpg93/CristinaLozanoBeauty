@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -69,6 +70,7 @@ import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -441,6 +443,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             datePicker.show(childFragmentManager, "")
         }
 
+        // Input start time
+        startTimeInput.setOnClickListener {
+            showTimePicker { hour, minute -> startTimeInput.setText(String.format("%02d:%02d", hour, minute)) }
+        }
+
+        // Input end time
+        endTimeInput.setOnClickListener {
+            showTimePicker { hour, minute -> endTimeInput.setText(String.format("%02d:%02d", hour, minute)) }
+        }
+
         // Input select client
         setupClientSelector(
             clientInput,
@@ -667,6 +679,21 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
         }
 
+        dialog.show()
+    }
+
+    private fun showTimePicker(onTimeSelected: (hour: Int, minute: Int) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val dialog = TimePickerDialog(
+            requireContext(),
+            R.style.TimePickerGoldTheme,
+            { _, selectedHour, selectedMinute -> onTimeSelected(selectedHour, selectedMinute) },
+            hour, minute,
+            true
+        )
         dialog.show()
     }
 

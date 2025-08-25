@@ -83,13 +83,26 @@
         <item name="colorControlNormal">@color/black</item>
     </style>
 
-
-
     <!--Calendar-->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--Time Picker-->
+    <style name="TimePicker" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorOnPrimary">@color/gold</item>
+        <item name="android:textColorPrimary">@color/gold</item>
+        <item name="android:colorAccent">@color/gold</item>
+    </style>
+
+    <style name="TimePickerGoldTheme" parent="Theme.Material3.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorOnPrimary">@color/gold</item>
+        <item name="colorSecondary">@color/gold</item>
+        <item name="colorOnSurface">@color/black</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
