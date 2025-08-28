@@ -35,19 +35,3 @@ fun CalendarEvent.toMap() = mapOf(
     "service" to service?.name,
     "assisted" to assisted
 )
-
-fun CalendarEvent.toGoogleCalendarRequest(organizerEmail: String): GoogleCalendarEventRequest {
-    return GoogleCalendarEventRequest(
-        summary = summary,
-        description = description,
-        start = EventDateTime(dateTime = startDateTime),
-        end = EventDateTime(dateTime = endDateTime),
-        attendees = listOf(
-            EventAttendee(
-                email = organizerEmail,
-                organizer = true,
-                responseStatus = if (assisted) "accepted" else "needsAction"
-            )
-        )
-    )
-}

@@ -33,7 +33,7 @@ class AppointmentDataRepository @Inject constructor(
 
     override fun find(eventId: String): Single<Appointment> = findWS.fetch(eventId)
     override fun create(appointment: Appointment, clientId: String): Completable = createWS.fetch(appointment, clientId)
-    override fun update(appointment: Appointment): Single<String> = updateWS.fetch(appointment)
+    override fun update(appointment: Appointment): Completable = updateWS.fetch(appointment)
     override fun delete(eventId: String): Completable = deleteWS.fetch(eventId)
 
 }

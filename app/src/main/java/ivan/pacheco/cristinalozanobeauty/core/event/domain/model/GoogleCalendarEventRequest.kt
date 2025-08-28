@@ -5,7 +5,7 @@ data class GoogleCalendarEventRequest(
     val description: String?,
     val start: EventDateTime,
     val end: EventDateTime,
-    val attendees: List<EventAttendee>
+    val extendedProperties: ExtendedProperties
 )
 
 data class EventDateTime(
@@ -13,19 +13,7 @@ data class EventDateTime(
     val timeZone: String = "Europe/Madrid"
 )
 
-data class EventAttendee(
-    val email: String,
-    val organizer: Boolean = false,
-    val responseStatus: String? = null
+data class ExtendedProperties(
+    val private: Map<String, String>? = null,
+    val shared: Map<String, String>? = null
 )
-
-fun GoogleCalendarEventRequest.toCalendarEvent(): CalendarEvent {
-    val organizerResponse = attendees.firstOrNull { it.organizer }?.responseStatus
-    return CalendarEvent(
-        summary = summary,
-        description = description,
-        startDateTime = start.dateTime,
-        endDateTime = end.dateTime,
-        assisted = organizerResponse == "accepted"
-    )
-}
