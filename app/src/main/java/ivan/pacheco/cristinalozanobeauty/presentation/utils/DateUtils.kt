@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Date
@@ -78,10 +79,9 @@ object DateUtils {
 
     fun LocalDate.toFormattedString(): String = this.format(dateFormatter)
 
-    fun LocalDate.toEpochMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long =
-        this.atStartOfDay(zoneId).toInstant().toEpochMilli()
+    fun LocalDate.toEpochMillisForDatePicker(): Long = this.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
-    fun Long.toLocalDate(zoneId: ZoneId = ZoneId.systemDefault()): LocalDate =
-        Instant.ofEpochMilli(this).atZone(zoneId).toLocalDate()
+    fun Long.toLocalDateFromDatePicker(zoneId: ZoneId = ZoneId.systemDefault()): LocalDate =
+        Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 }

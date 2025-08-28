@@ -56,9 +56,10 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapte
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMillis
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMillisForDatePicker
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateFromDatePicker
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
@@ -429,13 +430,13 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         dateInput.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTheme(R.style.FormDatePicker)
-                .setSelection(currentDate.toEpochMillis())
+                .setSelection(currentDate.toEpochMillisForDatePicker())
                 .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
                 .build()
 
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { millis ->
-                val localDate = millis.toLocalDate()
+                val localDate = millis.toLocalDateFromDatePicker()
                 currentDate = localDate
                 dateInput.setText(localDate.toFormattedString())
             }
