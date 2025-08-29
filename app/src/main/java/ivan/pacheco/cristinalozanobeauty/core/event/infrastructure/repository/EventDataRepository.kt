@@ -160,7 +160,7 @@ class EventDataRepository @Inject constructor(
     private fun parseExtendedProperties(props: ExtendedProperties?): Pair<Service?, Boolean> {
         if (props?.private.isNullOrEmpty()) return null to false
         val service = props.private[SERVICE]?.let { runCatching { Service.valueOf(it) }.getOrNull() }
-        val assisted = props.private[ASSISTED]?.toBoolean() ?: false
+        val assisted = props.private[ASSISTED]?.toBoolean() ?: true
         return service to assisted
     }
 
@@ -188,7 +188,7 @@ class EventDataRepository @Inject constructor(
             startDateTime = item.start.dateTime,
             endDateTime = item.end.dateTime,
             service = service,
-            assisted = false
+            assisted = true
         )
     }
 
