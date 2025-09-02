@@ -12,7 +12,7 @@ data class CalendarEventDTO(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val service: Service? = null,
-    var assisted: Boolean = false
+    var assisted: Boolean = true
 )
 
 fun CalendarEventDTO.toCalendarEvent(): CalendarEvent {
