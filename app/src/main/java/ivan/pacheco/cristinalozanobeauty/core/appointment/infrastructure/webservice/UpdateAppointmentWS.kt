@@ -1,6 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice
 
-import io.reactivex.Single
+import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.UpdateAppointmentWebService
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toMap
@@ -15,12 +15,9 @@ class UpdateAppointmentWS: UpdateAppointmentWebService {
         const val CLIENT_ID = "clientId"
         const val APPOINTMENT_ID = "appointmentId"
         const val EVENT = "event"
-        const val SERVICE = "service"
-        const val ASSISTED = "assisted"
     }
 
-    override fun fetch(appointment: Appointment): Single<String> = Single.create { emitter ->
-
+    override fun fetch(appointment: Appointment): Completable = Completable.create { emitter ->
         val eventId = appointment.event?.id
         if (eventId.isNullOrBlank()) {
             emitter.onError(IllegalArgumentException(AppointmentNotFound()))
@@ -49,7 +46,7 @@ class UpdateAppointmentWS: UpdateAppointmentWebService {
                 val updates = mapOf(EVENT to appointment.event.toMap())
 
                 docRef.update(updates)
-                    .addOnSuccessListener { emitter.onSuccess(eventId) }
+                    .addOnSuccessListener { emitter.onComplete() }
                     .addOnFailureListener { emitter.onError(it) }
             }
             .addOnFailureListener { emitter.onError(it) }

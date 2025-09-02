@@ -9,6 +9,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Date
@@ -44,25 +45,33 @@ object DateUtils {
         }
     }
 
+    fun parseToZonedDateTime(dateTimeStr: String, zoneId: ZoneId): ZonedDateTime {
+        return try {
+            OffsetDateTime.parse(dateTimeStr).atZoneSameInstant(zoneId)
+        } catch (_: DateTimeParseException) {
+            LocalDateTime.parse(dateTimeStr, localDateTimeFormatter).atZone(zoneId)
+        }
+    }
+
     fun String.toLocalDate(): LocalDate {
         return try {
-            OffsetDateTime.parse(this).toLocalDate()
+            OffsetDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
         } catch (_: DateTimeParseException) {
-            LocalDateTime.parse(this).toLocalDate()
+            LocalDateTime.parse(this, dateFormatter).toLocalDate()
         }
     }
 
     fun String.toLocalTime(): LocalTime {
         return try {
-            OffsetDateTime.parse(this).toLocalTime()
+            OffsetDateTime.parse(this,DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
         } catch (_: DateTimeParseException) {
-            LocalDateTime.parse(this, localDateTimeFormatter).toLocalTime()
+            LocalDateTime.parse(this, dateFormatter).toLocalTime()
         }
     }
 
     fun String.toDate(): String {
         return try {
-            OffsetDateTime.parse(this).format(dateFormatter)
+            OffsetDateTime.parse(this,DateTimeFormatter.ISO_OFFSET_DATE_TIME).format(dateFormatter)
         } catch (_: DateTimeParseException) {
             LocalDateTime.parse(this, localDateTimeFormatter).format(dateFormatter)
         }
@@ -70,18 +79,14 @@ object DateUtils {
 
     fun String.toHour(): String {
         return try {
-            val odt = OffsetDateTime.parse(this)
-            odt.toLocalTime().format(timeFormatter)
+            OffsetDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime().format(timeFormatter)
         } catch (_: DateTimeParseException) {
             LocalDateTime.parse(this, localDateTimeFormatter).toLocalTime().format(timeFormatter)
         }
     }
 
     fun LocalDate.toFormattedString(): String = this.format(dateFormatter)
-
     fun LocalDate.toEpochMillisForDatePicker(): Long = this.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-
-    fun Long.toLocalDateFromDatePicker(zoneId: ZoneId = ZoneId.systemDefault()): LocalDate =
-        Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
+    fun Long.toLocalDateFromDatePicker(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
 
 }

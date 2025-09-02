@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class CalendarEventDTO(
@@ -11,15 +12,17 @@ data class CalendarEventDTO(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val service: Service? = null,
-    var assisted: Boolean = false
+    var assisted: Boolean = true
 )
 
 fun CalendarEventDTO.toCalendarEvent(): CalendarEvent {
+    val startDateTime = LocalDateTime.of(date, startTime)
+    val endDateTime = LocalDateTime.of(date, endTime)
     return CalendarEvent(
         id = id,
         summary = text,
-        startDateTime = "${date}T${startTime}",
-        endDateTime = "${date}T${endTime}",
+        startDateTime = startDateTime.toString(),
+        endDateTime = endDateTime.toString(),
         service = service,
         assisted = assisted
     )

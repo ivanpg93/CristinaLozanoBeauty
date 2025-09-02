@@ -8,6 +8,6 @@ interface AppointmentRepository {
     fun list(clientId: String): Single<List<Appointment>>
     fun find(eventId: String): Single<Appointment>
     fun create(appointment: Appointment, clientId: String): Completable
-    fun update(appointment: Appointment): Single<String>
+    fun update(appointment: Appointment): Completable
     fun delete(eventId: String): Completable
 }

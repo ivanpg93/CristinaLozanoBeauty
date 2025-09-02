@@ -11,6 +11,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.DeleteAppointmentUC
+import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.UpdateAppointmentUC
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import javax.inject.Inject
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppointmentHistoryListViewModel @Inject constructor(
     private val repository: AppointmentRepository,
+    private val updateAppointmentUC: UpdateAppointmentUC,
     private val deleteAppointmentUC: DeleteAppointmentUC,
     state: SavedStateHandle
 ): ViewModel() {
@@ -46,6 +48,20 @@ class AppointmentHistoryListViewModel @Inject constructor(
     }
 
     // Actions
+    fun actionUpdateAppointment(appointment: Appointment) {
+        appointment.event?.let { event ->
+            updateAppointmentUC.execute(event)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableCompletableObserver() {
+                    override fun onComplete() { loadData() }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_update }
+                })
+        }
+    }
+
     fun actionDeleteAppointment(appointment: Appointment) {
         appointment.event?.id?.let { eventId ->
             deleteAppointmentUC.execute(eventId)

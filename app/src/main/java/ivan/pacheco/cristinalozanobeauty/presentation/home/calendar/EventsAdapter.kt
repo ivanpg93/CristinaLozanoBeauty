@@ -51,7 +51,6 @@ class EventsAdapter(
                 binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_no_assisted_event))
                 binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.red)
             }
-            binding.ivAssisted.visibility = View.GONE // TODO Quitar cuando se gestione la asistencia correctamente
             binding.txtEventTime.text = "${calendarEventDTO.startTime} - ${calendarEventDTO.endTime}"
 
             binding.ivAssisted.setOnClickListener {

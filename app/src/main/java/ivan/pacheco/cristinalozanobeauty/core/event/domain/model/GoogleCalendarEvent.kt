@@ -6,7 +6,7 @@ data class GoogleCalendarEvent(
     val description: String?,
     val start: DateTimeData,
     val end: DateTimeData,
-    val assistance: String
+    val extendedProperties: ExtendedProperties?= null
 )
 
 data class DateTimeData(val dateTime: String)

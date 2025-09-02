@@ -3,7 +3,7 @@ package ivan.pacheco.cristinalozanobeauty.core.message.infrastructure.service
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -12,21 +12,27 @@ class WhatsAppMessageWorker(
     params: WorkerParameters
 ) : Worker(context, params) {
 
+    private companion object {
+        const val PHONE_NUMBER = "phoneNumber"
+        const val MESSAGE = "message"
+    }
+
     override fun doWork(): Result {
-        val phoneNumber = inputData.getString("phoneNumber") ?: return Result.failure()
-        val message = inputData.getString("message") ?: return Result.failure()
+        val phoneNumber = inputData.getString(PHONE_NUMBER) ?: return Result.failure()
+        val message = inputData.getString(MESSAGE) ?: return Result.failure()
 
         return try {
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://wa.me/$phoneNumber?text=${Uri.encode(message)}")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Necesario para ejecutarse en segundo plano
+                data = "https://wa.me/$phoneNumber?text=${Uri.encode(message)}".toUri()
+
+                // Need this for execute in background thread
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             applicationContext.startActivity(intent)
             Result.success()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(applicationContext, "Error al enviar mensaje", Toast.LENGTH_SHORT).show()
+        } catch (_: Exception) {
             Result.failure()
         }
     }
+
 }

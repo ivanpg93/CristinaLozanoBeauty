@@ -39,6 +39,7 @@ class AppointmentHistoryListFragment: Fragment() {
             onItemSelected = { appointment ->
                 // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
             },
+            onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
             onItemDeleted = { appointment ->
                 DialogUtils.createDialog(
                     requireContext(),
