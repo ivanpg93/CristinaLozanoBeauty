@@ -118,4 +118,10 @@
     <string name="calendar_event_form_error_update">No se ha podido modificar la cita</string>
     <string name="calendar_event_form_error_delete">No se ha podido eliminar la cita</string>
 
+    <!--Message-->
+    <string name="message_select_client">Selecciona una clienta</string>
+    <string name="message_appointment_not_found">No hay ninguna cita pendiente relacionada con esta clienta</string>
+    <string name="message_sending_reminder_error">Error al enviar el recordatorio</string>
+    <string name="message_reminder_appointment">Recordatorio de tu cita con Cristina Lozano Beauty: día %s a las %s.\nConsulta o cambia tu cita escribiéndonos a este Whatsapp \uD83D\uDE03</string>
+
 </resources>
