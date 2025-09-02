@@ -1,9 +1,12 @@
 package ivan.pacheco.cristinalozanobeauty.core.message.application.usecase
 
+import android.content.Context
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Completable
+import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.AppointmentNotFound
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
@@ -14,7 +17,8 @@ import javax.inject.Inject
 
 class SendMessageUC @Inject constructor(
     private val appointmentRepository: AppointmentRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    @ApplicationContext private val context: Context
 ) {
 
     private companion object {
@@ -42,7 +46,7 @@ class SendMessageUC @Inject constructor(
                         )
 
                         // Build message
-                        val message = "Hola ${client.firstName}, te recordamos tu cita para el $formattedDate a las $formattedTime"
+                        val message = context.getString(R.string.message_reminder_appointment, formattedDate, formattedTime)
 
                         // WorkManager data
                         val phoneNumber = client.phone.removePrefix("+")
