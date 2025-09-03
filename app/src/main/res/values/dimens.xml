@@ -13,6 +13,8 @@
     <!--Text-->
     <dimen name="toolbarTextSize">28sp</dimen>
     <dimen name="textSize">20sp</dimen>
+    <dimen name="labelTextSize">22sp</dimen>
+    <dimen name="placeholderTextSize">16sp</dimen>
 
     <!--RadioButton-->
     <dimen name="rbMargin">16dp</dimen>

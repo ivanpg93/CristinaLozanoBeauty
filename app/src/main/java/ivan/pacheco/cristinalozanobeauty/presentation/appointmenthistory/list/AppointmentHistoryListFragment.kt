@@ -35,7 +35,8 @@ class AppointmentHistoryListFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = AppointmentHistoryListAdapter(
+        // Past appointments
+        val madeAdapter = AppointmentHistoryListAdapter(
             onItemSelected = { appointment ->
                 // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
             },
@@ -48,10 +49,35 @@ class AppointmentHistoryListFragment: Fragment() {
                 ) { vm.actionDeleteAppointment(appointment) }
             }
         )
-        binding.rvAppointments.adapter = adapter
+        binding.rvMadeAppointments.adapter = madeAdapter
 
-        // Load colors
-        vm.getAppointmentListLD().observe(viewLifecycleOwner) { colors -> adapter.reload(colors) }
+        // Pending appointments
+        val pendingAdapter = AppointmentHistoryListAdapter(
+            onItemSelected = { appointment ->
+                // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
+            },
+            onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
+            onItemDeleted = { appointment ->
+                DialogUtils.createDialog(
+                    requireContext(),
+                    getString(R.string.dialog_delete_appointment_title),
+                    getString(R.string.dialog_delete_appointment_message)
+                ) { vm.actionDeleteAppointment(appointment) }
+            }
+        )
+        binding.rvPendingAppointments.adapter = pendingAdapter
+
+        // Load made appointments
+        vm.getMadeAppointmentListLD().observe(viewLifecycleOwner) { appointments ->
+            binding.txtMadeAppointmentsEmpty.visibility = if (appointments.isEmpty()) View.VISIBLE else View.GONE
+            madeAdapter.reload(appointments)
+        }
+
+        // Load pending appointments
+        vm.getPendingAppointmentListLD().observe(viewLifecycleOwner) { appointments ->
+            binding.txtPendingAppointmentsEmpty.visibility = if (appointments.isEmpty()) View.VISIBLE else View.GONE
+            pendingAdapter.reload(appointments)
+        }
 
         // Load client id
         vm.getClientIdLD().observe(viewLifecycleOwner) { clientId = it }

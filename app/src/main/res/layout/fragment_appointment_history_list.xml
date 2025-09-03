@@ -6,19 +6,77 @@
     android:layout_height="match_parent"
     android:padding="@dimen/padding">
 
+    <!--Pending appointments-->
     <LinearLayout
-        android:id="@+id/layout"
+        android:id="@+id/layout_pending"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_appointments"
+        <!--Label-->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/padding"
+            android:text="@string/appointment_history_list_pending"
+            android:textColor="@color/gold"
+            android:textSize="@dimen/labelTextSize" />
+
+        <!--Empty list-->
+        <TextView
+            android:id="@+id/txt_pending_appointments_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/separatorMargin"
+            android:text="@string/appointment_history_list_pending_empty"
+            android:textSize="@dimen/placeholderTextSize"
+            android:visibility="gone" />
+
+        <!--List-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_pending_appointments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_appointment_history" />
+
+    </LinearLayout>
+
+    <!--Made appointments-->
+    <LinearLayout
+        android:id="@+id/layout_made"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_pending">
+
+        <!--Label-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appointment_history_list_made"
+            android:textColor="@color/gold"
+            android:textSize="@dimen/labelTextSize" />
+
+        <!--Empty list-->
+        <TextView
+            android:id="@+id/txt_made_appointments_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/separatorMargin"
+            android:text="@string/appointment_history_list_made_empty"
+            android:textSize="@dimen/placeholderTextSize"
+            android:visibility="gone" />
+
+        <!--List-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_made_appointments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_appointment_history" />
 

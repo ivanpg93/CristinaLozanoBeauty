@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
@@ -29,7 +30,8 @@ class AppointmentHistoryListViewModel @Inject constructor(
     }
 
     // LiveData
-    private val appointmentListLD = MutableLiveData<List<Appointment>>()
+    private val madeAppointmentListLD = MutableLiveData<List<Appointment>>()
+    private val pendingAppointmentListLD = MutableLiveData<List<Appointment>>()
     private val clientIdLD = MutableLiveData<String>()
     private val isLoadingLD = MutableLiveData<Boolean>()
     private val errorLD = MutableLiveData<Int>()
@@ -38,7 +40,8 @@ class AppointmentHistoryListViewModel @Inject constructor(
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!
 
     // Getters
-    fun getAppointmentListLD(): LiveData<List<Appointment>> = appointmentListLD
+    fun getMadeAppointmentListLD(): LiveData<List<Appointment>> = madeAppointmentListLD
+    fun getPendingAppointmentListLD(): LiveData<List<Appointment>> = pendingAppointmentListLD
     fun getClientIdLD(): LiveData<String> = clientIdLD
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
@@ -77,13 +80,20 @@ class AppointmentHistoryListViewModel @Inject constructor(
     }
 
     fun loadData() {
-        repository.list(clientId)
-            .subscribeOn(Schedulers.io())
+        loadAppointments(repository.listPast(clientId)) { madeAppointmentListLD.value = it }
+        loadAppointments(repository.listPending(clientId)) { pendingAppointmentListLD.value = it }
+    }
+
+    private fun loadAppointments(
+        single: Single<List<Appointment>>,
+        onSuccess: (List<Appointment>) -> Unit
+    ) {
+        single.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableSingleObserver<List<Appointment>>(){
-                override fun onSuccess(appointmentList: List<Appointment>) { appointmentListLD.value = appointmentList }
+            .subscribe(object : DisposableSingleObserver<List<Appointment>>() {
+                override fun onSuccess(appointmentList: List<Appointment>) = onSuccess(appointmentList)
                 override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_list }
             })
     }

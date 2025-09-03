@@ -66,6 +66,10 @@
 
     <!--Appointment history list-->
     <string name="appointment_history_list_title">Historial de citas</string>
+    <string name="appointment_history_list_pending">Citas pendientes</string>
+    <string name="appointment_history_list_pending_empty">No hay citas pendientes</string>
+    <string name="appointment_history_list_made">Citas realizadas</string>
+    <string name="appointment_history_list_made_empty">No hay citas realizadas</string>
     <string name="appointment_history_list_error_list">No se han podido cargar las citas</string>
     <string name="appointment_history_list_error_update">No se ha podido modificar la cita</string>
     <string name="appointment_history_list_error_delete">No se ha podido eliminar la cita</string>

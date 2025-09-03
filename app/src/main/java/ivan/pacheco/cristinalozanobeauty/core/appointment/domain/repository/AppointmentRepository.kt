@@ -5,7 +5,8 @@ import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 
 interface AppointmentRepository {
-    fun list(clientId: String): Single<List<Appointment>>
+    fun listPending(clientId: String): Single<List<Appointment>>
+    fun listPast(clientId: String): Single<List<Appointment>>
     fun find(eventId: String): Single<Appointment>
     fun create(appointment: Appointment, clientId: String): Completable
     fun update(appointment: Appointment): Completable

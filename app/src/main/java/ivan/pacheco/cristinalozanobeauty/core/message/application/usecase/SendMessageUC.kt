@@ -6,7 +6,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Completable
+import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.AppointmentNotFound
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
@@ -24,10 +26,13 @@ class SendMessageUC @Inject constructor(
     private companion object {
         const val PHONE_NUMBER = "phoneNumber"
         const val MESSAGE = "message"
+        const val DATE_FORMAT = "%02d/%02d/%d"
+        const val TIME_FORMAT = "%02d:%02d"
     }
 
     fun execute(client: ClientListDTO): Completable {
-        return getNextAppointmentFromToday(client.id)
+        return appointmentRepository.listPending(client.id)
+            .map { list -> list.firstOrNull() ?: throw AppointmentNotFound() }
             .flatMapCompletable { nextAppointment ->
                 Completable.create { emitter ->
                     nextAppointment.event?.let { event ->
@@ -35,12 +40,12 @@ class SendMessageUC @Inject constructor(
 
                         // Format date time for message
                         val localDateTime = appointmentDateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
-                        val formattedDate = "%02d/%02d/%d".format(
+                        val formattedDate = DATE_FORMAT.format(
                             localDateTime.dayOfMonth,
                             localDateTime.monthValue,
                             localDateTime.year
                         )
-                        val formattedTime = "%02d:%02d".format(
+                        val formattedTime = TIME_FORMAT.format(
                             localDateTime.hour,
                             localDateTime.minute
                         )
@@ -66,18 +71,5 @@ class SendMessageUC @Inject constructor(
                 }
             }
     }
-
-    fun getNextAppointmentFromToday(clientId: String) =
-        appointmentRepository.list(clientId)
-            .map { list ->
-                val now = OffsetDateTime.now()
-                val futureAppointments = list.filter { appointment ->
-                    appointment.event?.startDateTime?.let { start ->
-                        val dateTime = OffsetDateTime.parse(start)
-                        !dateTime.isBefore(now)
-                    } ?: false
-                }
-                futureAppointments.firstOrNull() ?: throw AppointmentNotFound()
-            }
 
 }
