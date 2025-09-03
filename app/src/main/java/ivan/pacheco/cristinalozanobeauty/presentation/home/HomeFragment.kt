@@ -2,7 +2,6 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -35,6 +34,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.CalendarMonth
 import com.kizitonwose.calendar.core.DayPosition
@@ -71,7 +72,6 @@ import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -684,18 +684,20 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     }
 
     private fun showTimePicker(onTimeSelected: (hour: Int, minute: Int) -> Unit) {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
+        val now = LocalTime.now()
 
-        val dialog = TimePickerDialog(
-            requireContext(),
-            R.style.TimePickerGoldTheme,
-            { _, selectedHour, selectedMinute -> onTimeSelected(selectedHour, selectedMinute) },
-            hour, minute,
-            true
-        )
-        dialog.show()
+        val timePicker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(now.hour)
+            .setMinute(now.minute)
+            .setTheme(R.style.FormTimePicker)
+            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+            .build()
+
+        // Set selected time
+        timePicker.addOnPositiveButtonClickListener { onTimeSelected(timePicker.hour, timePicker.minute) }
+
+        timePicker.show(childFragmentManager, "")
     }
 
 }

@@ -106,12 +106,12 @@ class ClientDetailFragment: Fragment() {
                 .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
 
-            datePicker.show(childFragmentManager, "")
-
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
                 binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
             }
+
+            datePicker.show(childFragmentManager, "")
         }
 
         // Input nail disorder

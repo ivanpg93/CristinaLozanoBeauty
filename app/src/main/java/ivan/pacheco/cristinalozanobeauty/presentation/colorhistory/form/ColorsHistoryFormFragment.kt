@@ -68,12 +68,12 @@ class ColorsHistoryFormFragment: Fragment() {
                 .setInputMode(MaterialDatePicker.INPUT_MODE_TEXT)
                 .build()
 
-            datePicker.show(childFragmentManager, "")
-
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
                 binding.etDateText.setText(DateUtils.formatDate(selectedDate))
             }
+
+            datePicker.show(childFragmentManager, "")
         }
 
         // Input nail polish brand

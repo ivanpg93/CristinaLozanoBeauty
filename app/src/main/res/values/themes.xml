@@ -61,6 +61,20 @@
         <item name="android:visibility">gone</item>
     </style>
 
+    <!-- Client form time picker -->
+    <style name="FormTimePicker" parent="ThemeOverlay.Material3.MaterialTimePicker">
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/gold</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="materialTimePickerTitleStyle">@style/TimePickerTitle</item>
+    </style>
+
+    <style name="TimePickerTitle" parent="TextAppearance.Material3.MaterialTimePicker.Title">
+        <item name="android:textColor">@color/gold</item>
+        <item name="android:textSize">@dimen/placeholderTextSize</item>
+    </style>
+
     <!--Client form radio group-->
     <style name="FormRadioGroup">
         <item name="android:layout_width">wrap_content</item>
