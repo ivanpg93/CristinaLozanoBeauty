@@ -24,6 +24,6 @@
 
     <!--SearchBar-->
     <dimen name="sbPadding">8dp</dimen>
-    <dimen name="sbMarginTop">16dp</dimen>
+    <dimen name="sbMarginVertical">16dp</dimen>
 
 </resources>
