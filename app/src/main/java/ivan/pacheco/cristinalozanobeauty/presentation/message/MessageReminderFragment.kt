@@ -13,28 +13,37 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
-import ivan.pacheco.cristinalozanobeauty.databinding.FragmentMessageBinding
+import ivan.pacheco.cristinalozanobeauty.databinding.FragmentMessageReminderBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @AndroidEntryPoint
-class MessageFragment: Fragment() {
+class MessageReminderFragment: Fragment() {
 
-    private var _binding: FragmentMessageBinding? = null
+    private companion object {
+        const val DATE_TIME_FORMATTER_PATTERN = "EEEE dd/MM/yyyy"
+    }
+
+    private var _binding: FragmentMessageReminderBinding? = null
     private val binding get() = _binding!!
-    private val vm: MessageViewModel by viewModels()
+    private val vm: MessageReminderViewModel by viewModels()
     private var clientList: List<ClientListDTO> = listOf()
     private var selectedClient: ClientListDTO? = null
+    private var selectedDate: LocalDate = LocalDate.now().plusDays(1)
+    private val formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER_PATTERN, Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         super.onCreate(savedInstanceState)
-        _binding = FragmentMessageBinding.inflate(layoutInflater)
+        _binding = FragmentMessageReminderBinding.inflate(layoutInflater)
 
         // Hide keyboard
         hideAutomatically(binding.root, requireActivity())
@@ -45,6 +54,11 @@ class MessageFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val adapter = AppointmentClientListAdapter({ appointmentClient ->
+            vm.actionSendAppointmentReminder(appointmentClient)
+        })
+        binding.rvAppointments.adapter = adapter
+
         // Clients
         vm.getClientsLD().observe(viewLifecycleOwner) { clients -> clientList = clients }
 
@@ -53,6 +67,25 @@ class MessageFragment: Fragment() {
 
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
+
+        // Appointments
+        vm.getAppointmentClientListLD().observe(viewLifecycleOwner) { list ->
+            val formatted = selectedDate.format(formatter)
+            binding.txtSelectedDate.text = formatted.replaceFirstChar { it.uppercase() }
+            adapter.reload(list)
+        }
+
+        // Button previous day
+        binding.btnPreviousDay.setOnClickListener {
+            selectedDate = selectedDate.minusDays(1)
+            vm.loadAppointmentsForDate(selectedDate)
+        }
+
+        // Button next day
+        binding.btnNextDay.setOnClickListener {
+            selectedDate = selectedDate.plusDays(1)
+            vm.loadAppointmentsForDate(selectedDate)
+        }
 
         // Button send message
         binding.btnSendMessage.setOnClickListener { sendMessage(selectedClient) }
@@ -63,6 +96,9 @@ class MessageFragment: Fragment() {
             { selectedClient },
             { selectedClient = it }
         )
+
+        // Load appointments from tomorrow by default
+        vm.loadAppointmentsForDate(selectedDate)
     }
 
     override fun onDestroyView() {
@@ -81,7 +117,7 @@ class MessageFragment: Fragment() {
         }
 
         // Send message
-        vm.actionSendMessage(client)
+        vm.actionSendNextAppointmentReminder(client)
     }
 
     private fun setupClientSelector(
@@ -91,7 +127,7 @@ class MessageFragment: Fragment() {
     ) {
         editText.setOnClickListener {
             showClientChoiceDialog(clientList, getSelectedClient(), onSelected) { client ->
-                editText.setText("${client.firstName} ${client.lastName}")
+                editText.setText(String.format("%s %s", client.firstName, client.lastName))
             }
         }
     }

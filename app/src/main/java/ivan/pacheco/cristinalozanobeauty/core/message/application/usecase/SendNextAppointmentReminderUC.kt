@@ -6,9 +6,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Completable
-import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webservice.AppointmentNotFound
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
@@ -17,7 +15,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
-class SendMessageUC @Inject constructor(
+class SendNextAppointmentReminderUC @Inject constructor(
     private val appointmentRepository: AppointmentRepository,
     private val workManager: WorkManager,
     @ApplicationContext private val context: Context

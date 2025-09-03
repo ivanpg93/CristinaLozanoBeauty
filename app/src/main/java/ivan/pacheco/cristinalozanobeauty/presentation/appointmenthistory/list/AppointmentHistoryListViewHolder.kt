@@ -21,7 +21,8 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
         onItemUpdated: (Appointment) -> Unit,
         onItemDeleted: (Appointment) -> Unit
     ) {
-        binding.txtService.text = appointment.event?.service?.toDisplayName()
+        val event = appointment.event
+        binding.txtService.text = event?.service?.toDisplayName()
         if (appointment.event?.assisted == true){
             binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_assisted_event))
             binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.green_700)
@@ -29,10 +30,10 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
             binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_no_assisted_event))
             binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.red)
         }
-        binding.txtTime.text = "${appointment.event?.startDateTime?.toHour()} - ${appointment.event?.endDateTime?.toHour()}"
-        binding.txtDate.text = appointment.event?.startDateTime?.toDate().toString()
+        binding.txtTime.text = String.format("%s - %s", event?.startDateTime?.toHour(), event?.endDateTime?.toHour())
+        binding.txtDate.text = event?.startDateTime?.toDate().toString()
         binding.ivAssisted.setOnClickListener {
-            appointment.event?.let { event ->
+            event?.let { event ->
                 event.assisted = !event.assisted
                 onItemUpdated(appointment)
             }

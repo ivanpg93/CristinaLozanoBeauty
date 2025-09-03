@@ -2,7 +2,6 @@ package ivan.pacheco.cristinalozanobeauty.presentation.home.calendar
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -51,7 +50,7 @@ class EventsAdapter(
                 binding.ivAssisted.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_no_assisted_event))
                 binding.ivAssisted.imageTintList = ContextCompat.getColorStateList(context, R.color.red)
             }
-            binding.txtEventTime.text = "${calendarEventDTO.startTime} - ${calendarEventDTO.endTime}"
+            binding.txtEventTime.text = String.format("%s - %s", calendarEventDTO.startTime, calendarEventDTO.endTime)
 
             binding.ivAssisted.setOnClickListener {
                 calendarEventDTO.assisted = !calendarEventDTO.assisted

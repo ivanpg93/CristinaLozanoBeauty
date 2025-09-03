@@ -138,8 +138,8 @@
     <fragment
         android:id="@+id/messageFragment"
         android:label="@string/nav_bar_message"
-        android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageFragment"
-        tools:layout="@layout/fragment_message">
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageReminderFragment"
+        tools:layout="@layout/fragment_message_reminder">
     </fragment>
 
 </navigation>
