@@ -1,5 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,4 +27,11 @@ fun CalendarEventDTO.toCalendarEvent(): CalendarEvent {
         service = service,
         assisted = assisted
     )
+}
+
+fun CalendarEventDTO.toClientListDTO(): ClientListDTO {
+    val parts = text.split(" ")
+    val firstName = parts.getOrNull(0) ?: ""
+    val firstLastName = parts.getOrNull(1) ?: ""
+    return ClientListDTO(id, firstName, firstLastName, "")
 }
