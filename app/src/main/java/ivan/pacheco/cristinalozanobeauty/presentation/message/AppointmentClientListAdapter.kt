@@ -16,7 +16,7 @@ class AppointmentClientListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppointmentClientListViewHolder {
         return AppointmentClientListViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_appointment_resume, parent, false)
+                .inflate(R.layout.item_appointment_client, parent, false)
         )
     }
 

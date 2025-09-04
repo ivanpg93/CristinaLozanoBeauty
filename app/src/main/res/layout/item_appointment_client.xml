@@ -19,7 +19,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Nivelación" />
+        tools:text="Iván Pacheco González" />
 
     <!--Service-->
     <TextView
