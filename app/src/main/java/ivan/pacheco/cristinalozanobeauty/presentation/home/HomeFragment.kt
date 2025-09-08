@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
@@ -49,10 +48,12 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
+import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
+import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.CalendarEventListAdapter
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.EventsAdapter
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.getColorCompat
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisible
@@ -80,6 +81,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private companion object {
         const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
         const val TIME_FORMAT = "HH:mm"
+        const val LIMIT_MAX_EVENTS_FOR_CELL = 4
     }
 
     private var _binding: FragmentHomeBinding? = null
@@ -197,6 +199,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         // Error
         vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
 
+        // Retry Google Auth
         vm.getRecoverableExceptionLD().observe(viewLifecycleOwner) { exception ->
             exception.intent?.let { recoverableLauncher.launch(it) }
         }
@@ -204,12 +207,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         // Calendar
         applyInsets(binding)
 
+        // List of events of day
         binding.exThreeRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = eventsAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
         }
 
+        // Horizontal scroll for change month view
         binding.exThreeCalendar.monthScrollListener = { month ->
             binding.toolbar.title = titleFormatter.format(month.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
 
@@ -224,6 +229,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             vm.onDateSelected(selectedDate)
         }
 
+        // Setup calendar
         val daysOfWeek = daysOfWeek()
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(50)
@@ -234,6 +240,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             scrollToMonth(currentMonth)
         }
 
+        // Button dialog create event
         binding.btnCreateEvent.setOnClickListener { showEventDialog(selectedDate) }
     }
 
@@ -304,15 +311,24 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     }
 
     private fun configureBinders(daysOfWeek: List<DayOfWeek>) {
+        @SuppressLint("ClickableViewAccessibility")
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay // Will be set when this container is bound.
             val binding = CalendarDayBinding.bind(view)
+            val eventsAdapter = CalendarEventListAdapter().also { binding.rvEvents.adapter = it }
 
             init {
                 view.setOnClickListener {
                     if (day.position == DayPosition.MonthDate) {
                         selectDate(day.date)
                     }
+                }
+
+                // Propagate click to root of day cell
+                // False to continues to handle scrolling
+                binding.rvEvents.setOnTouchListener { _, event ->
+                    binding.root.performClick()
+                    false
                 }
             }
         }
@@ -321,50 +337,62 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             override fun create(view: View) = DayViewContainer(view)
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
-                val textView = container.binding.exThreeDayText
-                val dotView = container.binding.exThreeDotView
+                val dayOfMonth = container.binding.exThreeDayText
+                val rvAdapter = container.eventsAdapter
+                val extraEvents = container.binding.txtExtraEvents
 
-                textView.text = data.date.dayOfMonth.toString()
+                dayOfMonth.text = data.date.dayOfMonth.toString()
 
                 if (data.position == DayPosition.MonthDate) {
-                    textView.makeVisible()
+                    dayOfMonth.makeVisible()
+
+                    // Get events from that day
+                    val dayEvents = events[data.date] ?: emptyList()
+                    val eventsForDay = dayEvents.map { it.toClientListDTO() }
+
+                    // Show limit events
+                    rvAdapter.reload(eventsForDay.take(LIMIT_MAX_EVENTS_FOR_CELL))
+
+                    // Manage visibility of extra events
+                    val extraCount = eventsForDay.size - LIMIT_MAX_EVENTS_FOR_CELL
+                    extraEvents.text = if (extraCount > 0) "+$extraCount" else ""
+                    extraEvents.visibility = if (extraCount > 0) View.VISIBLE else View.GONE
+
                     when (data.date) {
-                        today -> {
-                            textView.setTextColor(
+                        selectedDate -> {
+                            dayOfMonth.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.white
                                 )
                             )
-                            textView.setBackgroundResource(R.drawable.calendar_today_background)
-                            dotView.makeInVisible()
+                            dayOfMonth.setBackgroundResource(R.drawable.calendar_selected_day_background)
                         }
 
-                        selectedDate -> {
-                            textView.setTextColor(
+                        today -> {
+                            dayOfMonth.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.white
                                 )
                             )
-                            textView.setBackgroundResource(R.drawable.calendar_selected_day_background)
-                            dotView.makeInVisible()
+                            dayOfMonth.setBackgroundResource(R.drawable.calendar_today_background)
                         }
 
                         else -> {
-                            textView.setTextColor(
+                            dayOfMonth.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.black
                                 )
                             )
-                            textView.background = null
-                            dotView.isVisible = events[data.date].orEmpty().isNotEmpty()
+                            dayOfMonth.background = null
                         }
                     }
                 } else {
-                    textView.makeInVisible()
-                    dotView.makeInVisible()
+                    dayOfMonth.makeInVisible()
+                    rvAdapter.reload(emptyList())
+                    extraEvents.makeInVisible()
                 }
             }
         }
@@ -373,8 +401,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             val legendLayout = CalendarHeaderBinding.bind(view).legendLayout.root
         }
 
-        binding.exThreeCalendar.monthHeaderBinder =
-            object : MonthHeaderFooterBinder<MonthViewContainer> {
+        binding.exThreeCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
                 override fun create(view: View) = MonthViewContainer(view)
                 override fun bind(container: MonthViewContainer, data: CalendarMonth) {
 

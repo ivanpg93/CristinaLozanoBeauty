@@ -1,26 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="2dp">
 
-    <TextView
-        android:id="@+id/exThreeDayText"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        tools:text="22" />
+        android:layout_height="wrap_content"
+        android:minHeight="120dp"
+        android:orientation="vertical">
 
-    <View
-        android:id="@+id/exThreeDotView"
-        android:layout_width="4.5dp"
-        android:layout_height="4.5dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@drawable/calendar_today_background" />
+        <!--Day of month-->
+        <TextView
+            android:id="@+id/exThreeDayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:minWidth="36dp"
+            android:minHeight="36dp"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            tools:text="22" />
+
+        <!--Events -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_calendar_event" />
+
+        <!--Number of extra events of day-->
+        <TextView
+            android:id="@+id/txt_extra_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="+2" />
+
+    </LinearLayout>
+
 </FrameLayout>
