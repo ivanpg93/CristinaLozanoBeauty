@@ -85,9 +85,10 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
+        android:indeterminate="true"
         android:visibility="gone"
+        app:indicatorColor="@color/gold"
         app:indicatorSize="50dp"
-        app:trackColor="@color/gold"
         app:trackThickness="4dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
