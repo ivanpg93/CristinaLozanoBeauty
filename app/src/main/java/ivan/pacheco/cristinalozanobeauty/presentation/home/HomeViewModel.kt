@@ -68,9 +68,12 @@ class HomeViewModel @Inject constructor(
 
     // Actions
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
-        val localDate = LocalDate.parse(LocalDate.now().toString())
-        val (startDate, endDate) = getMonthRange(localDate)
-        getAccessTokenRx(application.applicationContext, account)
+
+        // Get month range date from today
+        val (startDate, endDate) = getMonthRange(LocalDate.now())
+
+        // Get and store access token
+        getAccessToken(application.applicationContext, account)
             .flatMap { token -> eventRepository.getEventsForDate(startDate, endDate, token) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +91,7 @@ class HomeViewModel @Inject constructor(
             })
     }
 
-    fun onDateSelected(date: LocalDate) {
+    fun actionLoadEvents(date: LocalDate) {
         idToken?.let { token ->
             selectedDate = date
             val (startDate, endDate) = getMonthRange(selectedDate)
@@ -112,7 +115,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() { onDateSelected(selectedDate) }
+                    override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }
                 })
         }
@@ -126,7 +129,7 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() { onDateSelected(selectedDate) }
+                    override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_update }
                 })
         }
@@ -140,24 +143,26 @@ class HomeViewModel @Inject constructor(
                 .doOnSubscribe { isLoadingLD.value = true }
                 .doFinally { isLoadingLD.value = false }
                 .subscribe(object : DisposableCompletableObserver() {
-                    override fun onComplete() { onDateSelected(selectedDate) }
+                    override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
                 })
         }
     }
 
-    private fun getAccessTokenRx(context: Context, account: GoogleSignInAccount): Single<String> {
+    private fun getAccessToken(context: Context, account: GoogleSignInAccount): Single<String> {
         return Single.create { emitter: SingleEmitter<String> ->
             try {
                 account.account?.let { account ->
+
+                    // Get new token
                     val token = GoogleAuthUtil.getToken(context, account, SCOPE_OAUTH2)
                     idToken = token
 
+                    // Save token
                     viewModelScope.launch {
                         try {
                             SecureTokenDataStore.saveToken(context, token)
                         } catch (e: Exception) {
-                            // Log si falla el guardado, pero no cancelamos el Single
                             e.printStackTrace()
                         }
                     }
