@@ -226,7 +226,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             }
 
             selectDate(dateToSelect)
-            vm.onDateSelected(selectedDate)
+            vm.actionLoadEvents(selectedDate)
         }
 
         // Setup calendar
