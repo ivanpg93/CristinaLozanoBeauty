@@ -10,6 +10,8 @@ import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Completable
+import io.reactivex.CompletableEmitter
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -69,18 +71,17 @@ class HomeViewModel @Inject constructor(
     // Actions
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
 
-        // Get month range date from today
-        val (startDate, endDate) = getMonthRange(LocalDate.now())
-
         // Get and store access token
         getAccessToken(application.applicationContext, account)
-            .flatMap { token -> eventRepository.getEventsForDate(startDate, endDate, token) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
-                override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
+            .subscribe(object : DisposableCompletableObserver() {
+
+                // Load events from select date
+                override fun onComplete() { actionLoadEvents(selectedDate) }
+
                 override fun onError(e: Throwable) {
                     if (e is UserRecoverableAuthException) {
                         recoverableExceptionLD.value = e
@@ -149,8 +150,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getAccessToken(context: Context, account: GoogleSignInAccount): Single<String> {
-        return Single.create { emitter: SingleEmitter<String> ->
+    private fun getAccessToken(context: Context, account: GoogleSignInAccount): Completable {
+        return Completable.create { emitter: CompletableEmitter ->
             try {
                 account.account?.let { account ->
 
@@ -167,7 +168,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
 
-                    emitter.onSuccess(token)
+                    emitter.onComplete()
                 }
             } catch (e: Exception) { emitter.onError(e) }
         }.subscribeOn(Schedulers.io())
