@@ -119,9 +119,25 @@
         <item name="colorOnSurface">@color/black</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+    <!--Search bar-->
+    <style name="SearchBar" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginVertical">@dimen/sbMarginVertical</item>
+        <item name="boxStrokeColor">@color/gold</item>
+        <item name="hintTextColor">@color/gold</item>
+        <item name="endIconTint">@color/gold</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="endIconMode">clear_text</item>
+    </style>
+
+    <style name="SearchBarText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:hint">@string/client_list_search</item>
+        <item name="android:inputType">textCapWords</item>
+        <item name="android:textSize">@dimen/textSize</item>
+        <item name="android:paddingVertical">@dimen/sbPadding</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />

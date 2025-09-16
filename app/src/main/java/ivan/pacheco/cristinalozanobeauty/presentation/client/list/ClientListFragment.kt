@@ -15,6 +15,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
 
 @AndroidEntryPoint
 class ClientListFragment: Fragment() {
@@ -29,6 +30,9 @@ class ClientListFragment: Fragment() {
     ): View {
         super.onCreate(savedInstanceState)
         _binding = FragmentClientListBinding.inflate(layoutInflater)
+
+        // Hide keyboard
+        hideAutomatically(binding.root, requireActivity())
 
         return binding.root
     }
