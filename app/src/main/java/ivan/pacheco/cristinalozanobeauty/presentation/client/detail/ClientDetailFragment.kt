@@ -59,7 +59,9 @@ class ClientDetailFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // On back pressed
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) { showBackPressDialog() }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            saveChangesDialog(Destination.Back)
+        }
 
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
@@ -68,7 +70,7 @@ class ClientDetailFragment: Fragment() {
         vm.isLoadingLD().observe(viewLifecycleOwner) { isLoading -> showLoading(isLoading) }
 
         // Error
-        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error)}
+        vm.getErrorLD().observe(viewLifecycleOwner) { error -> showError(error) }
 
         // Client
         vm.getClientLD().observe(viewLifecycleOwner) { client ->
@@ -78,13 +80,13 @@ class ClientDetailFragment: Fragment() {
         }
 
         // Button colors history
-        binding.btnColorHistory.setOnClickListener { navigate(Destination.ColorHistoryList(clientId)) }
+        binding.btnColorHistory.setOnClickListener { saveChangesDialog(Destination.ColorHistoryList(clientId)) }
 
         // Button events history
-        binding.btnEventHistory.setOnClickListener { navigate(Destination.AppointmentHistoryList(clientId)) }
+        binding.btnEventHistory.setOnClickListener { saveChangesDialog(Destination.AppointmentHistoryList(clientId)) }
 
         // Button save client
-        binding.btnSave.setOnClickListener { saveAction() }
+        binding.btnSave.setOnClickListener { saveAction(Destination.Back) }
 
         // Input phone
         val prefix = getString(R.string.client_form_prefix_phone)
@@ -144,7 +146,7 @@ class ClientDetailFragment: Fragment() {
         _binding = null
     }
 
-    fun showBackPressDialog() {
+    fun saveChangesDialog(destination: Destination) {
         val context = requireContext()
         val dialog = AlertDialog.Builder(context)
             .setTitle(R.string.client_form_save_changes_title)
@@ -164,12 +166,12 @@ class ClientDetailFragment: Fragment() {
 
             positiveButton?.setOnClickListener {
                 dialog.dismiss()
-                saveAction()
+                saveAction(destination)
             }
 
             negativeButton?.setOnClickListener {
                 dialog.dismiss()
-                navigate(Destination.Back)
+                navigate(destination)
             }
         }
 
@@ -224,7 +226,7 @@ class ClientDetailFragment: Fragment() {
         return dateStr.takeIf { it.isNotBlank() }?.let { DateUtils.parseDate(it)?.time }
     }
 
-    private fun saveAction() {
+    private fun saveAction(destination: Destination) {
 
         // Hide keyboard
         hide(binding.btnSave)
@@ -270,7 +272,8 @@ class ClientDetailFragment: Fragment() {
             binding.etAllergyText.getTrimmedText(),
             binding.rbDiabetesYes.isChecked,
             binding.rbDiabetesNo.isChecked,
-            binding.etOthersText.getTrimmedText()
+            binding.etOthersText.getTrimmedText(),
+            destination
         )
     }
 

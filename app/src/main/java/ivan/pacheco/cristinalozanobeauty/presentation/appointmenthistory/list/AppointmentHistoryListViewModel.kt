@@ -15,6 +15,7 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.De
 import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.UpdateAppointmentUC
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +35,7 @@ class AppointmentHistoryListViewModel @Inject constructor(
     private val pendingAppointmentListLD = MutableLiveData<List<Appointment>>()
     private val clientIdLD = MutableLiveData<String>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
 
     // Use client id to retrieve client information
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!

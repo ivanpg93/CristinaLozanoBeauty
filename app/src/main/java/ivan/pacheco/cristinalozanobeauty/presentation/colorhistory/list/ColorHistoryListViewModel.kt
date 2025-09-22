@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +29,7 @@ class ColorHistoryListViewModel @Inject constructor(
     private val colorsLD = MutableLiveData<List<Color>>()
     private val clientIdLD = MutableLiveData<String>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
 
     // Use client id to retrieve client information
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!

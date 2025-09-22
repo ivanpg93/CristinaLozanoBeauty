@@ -27,6 +27,7 @@ import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEv
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -52,7 +53,7 @@ class HomeViewModel @Inject constructor(
 
     // LiveData
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
     private val eventsLD = MutableLiveData<List<CalendarEvent>>()
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val recoverableExceptionLD = MutableLiveData<UserRecoverableAuthException>()

@@ -14,6 +14,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
 
@@ -23,9 +24,9 @@ class ClientFormViewModel @Inject constructor(
 ): ViewModel(), Navigation {
 
     // LiveData
-    override val navigationLD = MutableLiveData<Destination>()
+    override val navigationLD = SingleLiveEvent<Destination>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
 
     // Getters
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD

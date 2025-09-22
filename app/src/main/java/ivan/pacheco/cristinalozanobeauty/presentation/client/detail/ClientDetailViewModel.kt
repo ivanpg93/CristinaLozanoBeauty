@@ -18,6 +18,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
 
@@ -33,10 +34,10 @@ class ClientDetailViewModel @Inject constructor(
     }
 
     // LiveData
-    override val navigationLD = MutableLiveData<Destination>()
+    override val navigationLD = SingleLiveEvent<Destination>()
     private val clientLD = MutableLiveData<Client>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
 
     // Use client id to retrieve client information
     private val clientId: String = state.getLiveData<String>(ARG_CLIENT_ID).value!!
@@ -65,7 +66,8 @@ class ClientDetailViewModel @Inject constructor(
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,
-        others: String
+        others: String,
+        destination: Destination
     ) {
         // Check mandatory fields before continue to create client
         if (!checkMandatoryFields(listOf(firstName, lastName, phone))) {
@@ -96,7 +98,7 @@ class ClientDetailViewModel @Inject constructor(
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
             .subscribe(object: DisposableCompletableObserver() {
-                override fun onComplete() { navigationLD.value = Destination.Back }
+                override fun onComplete() { navigationLD.value = destination }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
             })
     }

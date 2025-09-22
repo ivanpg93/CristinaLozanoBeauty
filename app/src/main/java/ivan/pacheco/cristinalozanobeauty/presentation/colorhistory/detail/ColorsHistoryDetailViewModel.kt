@@ -16,6 +16,7 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
 
@@ -32,10 +33,10 @@ class ColorsHistoryDetailViewModel @Inject constructor(
     }
 
     // LiveData
-    override val navigationLD = MutableLiveData<Destination>()
+    override val navigationLD = SingleLiveEvent<Destination>()
     private val colorLD = MutableLiveData<Color>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
 
     // Use client id to retrieve client information
     private val colorId: String = state.getLiveData<String>(ARG_ID).value!!

@@ -18,6 +18,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRep
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendAppointmentReminderUC
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendNextAppointmentReminderUC
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -31,7 +32,7 @@ class MessageReminderViewModel@Inject constructor(
 
     // LiveData
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val appointmentClientListLD = MutableLiveData<List<AppointmentClient>>()
 

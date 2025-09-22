@@ -17,6 +17,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.ActivityMainBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragment
 import ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -69,8 +70,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // Link ActionBar with Navigation
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         val topLevelDestinations = setOf(
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             if (currentFragment is ClientFormFragment) {
                 currentFragment.showBackPressDialog()
             } else if (currentFragment is ClientDetailFragment) {
-                currentFragment.showBackPressDialog()
+                currentFragment.showBackPressDialog(Destination.Back)
             } else {
                 if (!navController.popBackStack()) finish()
             }

@@ -14,6 +14,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.normalizeForSearch
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class ClientListViewModel @Inject constructor(
     // LiveData
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val isLoadingLD = MutableLiveData<Boolean>()
-    private val errorLD = MutableLiveData<Int>()
+    private val errorLD = SingleLiveEvent<Int>()
     private var allClients: List<ClientListDTO> = listOf()
     private val searchSubject = PublishSubject.create<String>()
     private val compositeDisposable = CompositeDisposable()
