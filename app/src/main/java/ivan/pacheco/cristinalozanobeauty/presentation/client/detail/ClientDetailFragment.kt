@@ -42,6 +42,7 @@ class ClientDetailFragment: Fragment() {
     private val selectedSkinDisorders = mutableSetOf<SkinDisorder>()
     private val selectedServices = mutableSetOf<Service>()
     private lateinit var clientId: String
+    private var originalClient: Client? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,6 +76,7 @@ class ClientDetailFragment: Fragment() {
         // Client
         vm.getClientLD().observe(viewLifecycleOwner) { client ->
             clientId = client.id
+            originalClient = client.copy()
             setActionBarTitle("${client.firstName} ${client.lastName}")
             loadData(client)
         }
@@ -147,6 +149,13 @@ class ClientDetailFragment: Fragment() {
     }
 
     fun saveChangesDialog(destination: Destination) {
+
+        // Navigate without save if form not changed
+        if (!hasFormChanged()) {
+            navigate(destination)
+            return
+        }
+
         val context = requireContext()
         val dialog = AlertDialog.Builder(context)
             .setTitle(R.string.client_form_save_changes_title)
@@ -225,6 +234,12 @@ class ClientDetailFragment: Fragment() {
     private fun getInitialDate(dateStr: String): Long? {
         return dateStr.takeIf { it.isNotBlank() }?.let { DateUtils.parseDate(it)?.time }
     }
+
+    private fun hasFormChanged(): Boolean {
+        val client = originalClient ?: return false
+        return client.isFormChanged()
+    }
+
 
     private fun saveAction(destination: Destination) {
 
@@ -368,6 +383,30 @@ class ClientDetailFragment: Fragment() {
             }
             else -> {} // Do nothing
         }
+    }
+
+    private fun Client.isFormChanged(): Boolean {
+        val fieldsToCompare = listOf(
+            firstName to binding.etNameText.getTrimmedText(),
+            lastName to binding.etLastNameText.getTrimmedText(),
+            phone to binding.etPhoneText.getTrimmedText(),
+            email to binding.etEmailText.getTrimmedText(),
+            birthday?.let { DateUtils.formatDate(it) } to binding.etBirthdayText.getTrimmedText(),
+            profession to binding.etProfessionText.getTrimmedText(),
+            town to binding.etTownText.getTrimmedText(),
+            allergy to binding.etAllergyText.getTrimmedText(),
+            others to binding.etOthersText.getTrimmedText(),
+            hasDiabetes to binding.rbDiabetesYes.isChecked,
+            hasPoorCoagulation to binding.rbPoorCoagulationYes.isChecked
+        )
+
+        val listsToCompare = listOf(
+            nailDisorderList.toSet() to selectedNailDisorders,
+            skinDisorderList.toSet() to selectedSkinDisorders,
+            serviceList.toSet() to selectedServices
+        )
+
+        return fieldsToCompare.any { it.first != it.second } || listsToCompare.any { it.first != it.second }
     }
 
 }
