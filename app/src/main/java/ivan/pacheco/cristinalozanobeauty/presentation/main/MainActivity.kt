@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             if (currentFragment is ClientFormFragment) {
                 currentFragment.showBackPressDialog()
             } else if (currentFragment is ClientDetailFragment) {
-                currentFragment.showBackPressDialog(Destination.Back)
+                currentFragment.saveChangesDialog(Destination.Back)
             } else {
                 if (!navController.popBackStack()) finish()
             }
