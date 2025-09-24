@@ -26,6 +26,7 @@
     <string name="client_list_error_list">No se han podido cargar las clientas</string>
     <string name="client_list_error_delete">No se ha podido eliminar la clienta</string>
     <string name="client_list_search">Buscar por nombre o teléfono</string>
+    <string name="client_list_hide_disabled">Ocultar clientas archivadas</string>
 
     <!--Client list dialog-->
     <string name="dialog_delete_client_title">Eliminar clienta</string>
@@ -60,6 +61,7 @@
     <string name="client_form_error_mandatory_fields">Rellena todos los campos obligatorios antes de continuar</string>
     <string name="client_form_error_create">No se ha podido registrar la clienta</string>
     <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
+    <string name="client_detail_action_disabled">Archivar clienta</string>
 
     <!--Client detail-->
     <string name="client_detail_title">Clienta</string>

@@ -1,6 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice
 
-import io.reactivex.Completable
+import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.toMap
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
@@ -12,11 +12,11 @@ class UpdateClientWS: UpdateClientWebService {
         const val CLIENTS = "clients"
     }
 
-    override fun fetch(client: Client): Completable = Completable.create { emitter ->
+    override fun fetch(client: Client): Single<Client> = Single.create { emitter ->
         Firestore.db.collection(CLIENTS)
             .document(client.id)
             .set(client.toMap())
-            .addOnSuccessListener { emitter.onComplete() }
+            .addOnSuccessListener { emitter.onSuccess(client) }
             .addOnFailureListener { error -> emitter.onError(error) }
     }
 

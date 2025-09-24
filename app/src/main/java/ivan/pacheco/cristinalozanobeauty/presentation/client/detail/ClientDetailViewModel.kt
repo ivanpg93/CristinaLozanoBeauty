@@ -67,6 +67,7 @@ class ClientDetailViewModel @Inject constructor(
         diabetes: Boolean,
         poorCoagulation: Boolean,
         others: String,
+        enabled: Boolean,
         destination: Destination
     ) {
         // Check mandatory fields before continue to create client
@@ -91,14 +92,18 @@ class ClientDetailViewModel @Inject constructor(
             allergy,
             diabetes,
             poorCoagulation,
-            others
+            others,
+            enabled
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
-            .subscribe(object: DisposableCompletableObserver() {
-                override fun onComplete() { navigationLD.value = destination }
+            .subscribe(object: DisposableSingleObserver<Client>() {
+                override fun onSuccess(client: Client) {
+                    clientLD.value = client
+                    navigationLD.value = destination
+                }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
             })
     }

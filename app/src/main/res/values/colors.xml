@@ -5,8 +5,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#999999</color>
+    <color name="light_gray">#ABABAB</color>
     <color name="gold">#A8815B</color>
-    <!--<color name="light_gold">#E1B788</color>-->
+    <color name="light_gold">#E1B788</color>
     <color name="red">#E33E20</color>
     <color name="green">#0BAB95</color>
     <color name="transparent">#00000000</color>

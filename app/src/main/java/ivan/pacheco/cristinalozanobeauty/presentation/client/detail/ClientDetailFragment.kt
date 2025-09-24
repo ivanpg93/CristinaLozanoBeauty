@@ -224,6 +224,8 @@ class ClientDetailFragment: Fragment() {
 
             rbPoorCoagulationYes.isChecked = client.hasPoorCoagulation
             rbPoorCoagulationNo.isChecked = !client.hasPoorCoagulation
+
+            switchActionDisabled.isChecked = !client.enabled
         }
     }
 
@@ -288,6 +290,7 @@ class ClientDetailFragment: Fragment() {
             binding.rbDiabetesYes.isChecked,
             binding.rbDiabetesNo.isChecked,
             binding.etOthersText.getTrimmedText(),
+            !binding.switchActionDisabled.isChecked,
             destination
         )
     }

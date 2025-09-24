@@ -57,7 +57,7 @@ class MessageReminderViewModel@Inject constructor(
                         .subscribeOn(Schedulers.io())
                         .map { appointments ->
 
-                            // Relacionar cada cita con su clienta
+                            // Relate each appointment to your client
                             appointments.map { appointment -> AppointmentClient(appointment, client) }
                         }
                 }

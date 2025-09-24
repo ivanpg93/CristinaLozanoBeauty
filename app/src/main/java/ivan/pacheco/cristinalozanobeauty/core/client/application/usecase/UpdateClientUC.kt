@@ -1,6 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.application.usecase
 
-import io.reactivex.Completable
+import io.reactivex.Single
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
@@ -9,7 +9,9 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRep
 import java.util.Date
 import javax.inject.Inject
 
-class UpdateClientUC @Inject constructor(private val repository: ClientRepository) {
+class UpdateClientUC @Inject constructor(
+    private val repository: ClientRepository
+) {
 
     fun execute(
         id: String,
@@ -26,8 +28,9 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,
-        others: String
-    ): Completable {
+        others: String,
+        enabled: Boolean
+    ): Single<Client> {
 
         // Build client
         val client = Client(
@@ -45,7 +48,8 @@ class UpdateClientUC @Inject constructor(private val repository: ClientRepositor
             allergy,
             diabetes,
             poorCoagulation,
-            others
+            others,
+            enabled = enabled
         )
 
         return repository.update(client)

@@ -60,7 +60,8 @@ data class Client(
     val hasDiabetes: Boolean = false,
     val hasPoorCoagulation: Boolean = false,
     val others: String = "",
-    val appointmentList: List<Appointment> = listOf()
+    val appointmentList: List<Appointment> = listOf(),
+    var enabled: Boolean = true
 )
 
 fun Client.toMap() = mapOf(
@@ -78,5 +79,6 @@ fun Client.toMap() = mapOf(
     "allergy" to allergy,
     "hasDiabetes" to hasDiabetes,
     "hasPoorCoagulation" to hasPoorCoagulation,
-    "others" to others
+    "others" to others,
+    "enabled" to enabled
 )

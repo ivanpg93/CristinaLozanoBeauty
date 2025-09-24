@@ -47,24 +47,25 @@ class ClientListViewModel @Inject constructor(
         loadData()
     }
 
-    fun actionDeleteClient(client: ClientListDTO) {
+    fun actionDeleteClient(client: ClientListDTO, filterEnabled: Boolean) {
         repository.delete(client)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
             .subscribe(object : DisposableCompletableObserver(){
-                override fun onComplete() { loadData() }
+                override fun onComplete() { loadData(filterEnabled = filterEnabled) }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_delete }
             })
     }
 
-    fun loadData(filter: String? = null) {
+    fun loadData(filter: String? = null, filterEnabled: Boolean = true) {
         if (!filter.isNullOrBlank()) {
             filterClients(filter)
             return
         }
-        repository.list()
+
+        repository.list(filterEnabled)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
@@ -98,7 +99,7 @@ class ClientListViewModel @Inject constructor(
                 .map { it.trim() }
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { query -> filterClients(query) }
+                .subscribe { query -> loadData(query) }
         )
     }
 

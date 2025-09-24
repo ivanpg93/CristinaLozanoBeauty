@@ -4,5 +4,6 @@ data class ClientListDTO(
     val id: String,
     val firstName: String,
     val lastName: String,
-    val phone: String
+    val phone: String,
+    var enabled: Boolean = true
 )
