@@ -45,6 +45,7 @@ class SendAppointmentReminderUC @Inject constructor(
             // Build message
             val message = context.getString(
                 R.string.message_reminder_appointment,
+                appointmentClient.client.firstName,
                 formattedDate,
                 formattedTime
             )

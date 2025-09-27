@@ -128,6 +128,6 @@
     <string name="message_select_client">Selecciona una clienta</string>
     <string name="message_appointment_not_found">No hay ninguna cita pendiente relacionada con esta clienta</string>
     <string name="message_sending_reminder_error">Error al enviar el recordatorio</string>
-    <string name="message_reminder_appointment">Recordatorio de tu cita con Cristina Lozano Beauty: día %s a las %s.\nConsulta o cambia tu cita escribiéndonos a este Whatsapp \uD83D\uDE03</string>
+    <string name="message_reminder_appointment">Hola %s!\nRecordatorio de tu cita con Cristina Lozano Beauty en estética e imatge: día %s a las %s.\n\nConsulta o cambia tu cita escribiéndonos a este Whatsapp \uD83D\uDE03</string>
 
 </resources>
