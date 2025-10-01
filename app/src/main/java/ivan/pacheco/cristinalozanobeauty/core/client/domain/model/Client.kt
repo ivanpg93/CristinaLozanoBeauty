@@ -5,8 +5,8 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointme
 import java.util.Date
 
 enum class NailDisorder {
-    LEUCONIQUIA,
     HEMATOMA,
+    LEUCONIQUIA,
     ONICOFAGIA,
     ONICOLISIS,
     ONICOMADESIS,
@@ -15,33 +15,35 @@ enum class NailDisorder {
     PADRASTRO,
     PARONIQUIA,
     PSORIASIS,
-    UÑAS_AMARILLENTAS,
     SURCO,
     TRAQUILONIQUIA,
+    UÑAS_AMARILLENTAS,
 }
 
 enum class SkinDisorder {
     CALLOS,
     DISHIDROSIS,
-    HIPERHIDROSIS,
     ESCEMAS,
+    HIPERHIDROSIS,
     PSORIASIS,
     QUERATOSIS_PALMAR,
+    SABAÑONES,
     VERRUGAS,
-    VITILIGO,
-    SABAÑONES
+    VITILIGO
 }
 
 enum class Service {
-    SEMIPERMANENTE,
-    NIVELACION,
     ACRILICO,
     ACRYGEL,
-    MANICURA_COMBINADA,
-    RETIRADA_DE_MATERIAL,
+    ARREGLO_DE_UÑA,
     ESMALTE_NORMAL,
+    MANICURA_COMBINADA,
+    NIVELACION,
+    PEDICURA_COMPLETA,
+    PEDICURA_JELLY,
     PEDICURA_SEMI,
-    PEDICURA_COMPLETA
+    RETIRADA_DE_MATERIAL,
+    SEMIPERMANENTE
 }
 
 data class Client(

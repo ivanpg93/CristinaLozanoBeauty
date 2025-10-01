@@ -4,25 +4,25 @@ import com.google.firebase.Timestamp
 import java.util.Date
 
 enum class NailPolishBrand {
-    NEONAIL,
-    SEMILAC,
-    LADYLACK,
-    RURO,
-    THUYA,
-    DNKA,
-    ILLUSION_BEAUTY,
-    PASSIONE_BEAUTY,
-    VICTORIA_VYNN,
-    JOIA,
-    GELFIX,
-    PALU,
-    ONYX,
-    GAIRRY,
-    GREENSTYLE,
     ABNAILS,
-    LYC,
     BEAUTILUX,
-    OTHER
+    DNKA,
+    GAIRRY,
+    GELFIX,
+    GREENSTYLE,
+    ILLUSION_BEAUTY,
+    JOIA,
+    LADYLACK,
+    LYC,
+    NEONAIL,
+    ONYX,
+    OTHER,
+    PALU,
+    PASSIONE_BEAUTY,
+    RURO,
+    SEMILAC,
+    THUYA,
+    VICTORIA_VYNN
 }
 
 data class Color(
