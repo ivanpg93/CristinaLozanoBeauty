@@ -272,8 +272,7 @@
                 android:id="@+id/btn_save"
                 style="@style/Button"
                 android:layout_marginVertical="@dimen/margin"
-                android:text="@string/client_form_action_save"
-                app:backgroundTint="@color/gold" />
+                android:text="@string/client_form_action_save" />
 
         </LinearLayout>
     </ScrollView>

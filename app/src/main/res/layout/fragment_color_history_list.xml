@@ -17,8 +17,7 @@
         <Button
             android:id="@+id/btn_add_color"
             style="@style/Button"
-            android:text="@string/color_history_list_add_color"
-            app:backgroundTint="@color/gold" />
+            android:text="@string/color_history_list_add_color" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_colors"

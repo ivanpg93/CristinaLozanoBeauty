@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!--Month Picker-->
+        <NumberPicker
+            android:id="@+id/npMonth"
+            style="@style/NumberPicker" />
+
+        <!--Year Picker-->
+        <NumberPicker
+            android:id="@+id/npYear"
+            style="@style/NumberPicker" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/buttonPadding"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!--Cancel button-->
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/gold"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textSize="@dimen/alertButonTextSize" />
+
+        <!--Accept button-->
+        <Button
+            android:id="@+id/btn_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/buttonPadding"
+            android:backgroundTint="@color/gold"
+            android:text="@string/accept"
+            android:textAllCaps="true"
+            android:textSize="@dimen/alertButonTextSize" />
+
+    </LinearLayout>
+
+</LinearLayout>

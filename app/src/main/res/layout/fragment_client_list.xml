@@ -17,8 +17,7 @@
         <Button
             android:id="@+id/btn_add_client"
             style="@style/Button"
-            android:text="@string/client_list_add_client"
-            app:backgroundTint="@color/gold" />
+            android:text="@string/client_list_add_client" />
 
         <!--Search bar-->
         <com.google.android.material.textfield.TextInputLayout style="@style/SearchBar">

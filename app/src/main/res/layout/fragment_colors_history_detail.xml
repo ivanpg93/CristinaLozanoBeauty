@@ -71,8 +71,7 @@
                 android:id="@+id/btn_save"
                 style="@style/Button"
                 android:layout_marginVertical="@dimen/margin"
-                android:text="@string/color_history_form_action_save"
-                app:backgroundTint="@color/gold" />
+                android:text="@string/color_history_form_action_save" />
 
         </LinearLayout>
     </ScrollView>

@@ -80,8 +80,7 @@
                 android:id="@+id/btn_send_message"
                 style="@style/Button"
                 android:layout_marginVertical="@dimen/margin"
-                android:text="@string/message_action_send"
-                app:backgroundTint="@color/gold" />
+                android:text="@string/message_action_send" />
 
         </LinearLayout>
     </ScrollView>

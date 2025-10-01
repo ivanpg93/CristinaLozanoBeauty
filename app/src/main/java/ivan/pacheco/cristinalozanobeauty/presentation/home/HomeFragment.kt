@@ -66,6 +66,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayN
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.MonthYearPickerDialog
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -206,6 +207,28 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
         // Calendar
         applyInsets(binding)
+        binding.toolbar.inflateMenu(R.menu.calendar_menu)
+
+        // Select month of year and load events for that month
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_select_date -> {
+                    val dialog = MonthYearPickerDialog(
+                        selectedDate.year,
+                        selectedDate.monthValue
+                    ) { year, month ->
+                        val localDate = LocalDate.of(year, month, 1)
+                        selectedDate = localDate
+                        binding.exThreeCalendar.scrollToDate(selectedDate)
+                        selectDate(selectedDate)
+                        vm.actionLoadEvents(selectedDate)
+                    }
+                    dialog.show(childFragmentManager, "")
+                    true
+                }
+                else -> false
+            }
+        }
 
         // List of events of day
         binding.exThreeRv.apply {
@@ -219,10 +242,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             binding.toolbar.title = titleFormatter.format(month.yearMonth).replaceFirstChar { letter -> letter.titlecase() }
 
             // Select current day for current month or first day of month
-            val dateToSelect = if (month.yearMonth .year == today.year && month.yearMonth.month == today.month) {
-                today
-            } else {
-                month.yearMonth.atDay(1)
+            val dateToSelect = when {
+                selectedDate.year == month.yearMonth.year && selectedDate.month == month.yearMonth.month -> selectedDate
+                month.yearMonth == YearMonth.from(today) -> today
+                else -> month.yearMonth.atDay(1)
             }
 
             selectDate(dateToSelect)
@@ -232,8 +255,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         // Setup calendar
         val daysOfWeek = daysOfWeek()
         val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(50)
-        val endMonth = currentMonth.plusMonths(50)
+        val startMonth = currentMonth.minusMonths(60)
+        val endMonth = currentMonth.plusMonths(60)
         configureBinders(daysOfWeek)
         binding.exThreeCalendar.apply {
             setup(startMonth, endMonth, daysOfWeek.first())

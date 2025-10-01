@@ -15,6 +15,7 @@
     <dimen name="textSize">20sp</dimen>
     <dimen name="labelTextSize">22sp</dimen>
     <dimen name="placeholderTextSize">16sp</dimen>
+    <dimen name="alertButonTextSize">12sp</dimen>
 
     <!--RadioButton-->
     <dimen name="rbMargin">16dp</dimen>
