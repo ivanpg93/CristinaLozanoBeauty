@@ -2,7 +2,7 @@
  <p>APP Android para el negocio de <a href="https://www.instagram.com/cristinalozano_beauty/">Cristina Lozano Beauty</a> </p>
  <br>
  <p>
-  <img src="https://github.com/user-attachments/assets/cbe1aa59-c932-4f7d-8683-8f671948ba0d"/>
+  <img src="https://github.com/user-attachments/assets/cbe1aa59-c932-4f7d-8683-8f671948ba0d" />
  </p>
 
  # Tecnologías y librerías utilizadas
