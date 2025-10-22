@@ -47,7 +47,7 @@ class ClientListFragment: Fragment() {
                     requireContext(),
                     getString(R.string.dialog_delete_client_title),
                     getString(R.string.dialog_delete_client_message)
-                ) { vm.actionDeleteClient(client, binding.switchShowDisabled.isChecked) }
+                ) { vm.actionDeleteClient(client) }
             }
         )
         binding.rvClients.adapter = adapter
@@ -67,7 +67,13 @@ class ClientListFragment: Fragment() {
         // Search clients listener
         binding.etSearch.addTextChangedListener { vm.onSearchQueryChanged(it.toString()) }
 
-        binding.switchShowDisabled.setOnClickListener { vm.loadData(filterEnabled = binding.switchShowDisabled.isChecked) }
+        // Switch listener
+        binding.switchShowDisabled.setOnCheckedChangeListener { _, isChecked -> vm.onEnabledFilterChanged(isChecked) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.loadData()
     }
 
     override fun onDestroyView() {

@@ -20,16 +20,16 @@ class ClientDataRepository @Inject constructor(
     private val deleteWS: DeleteClientWebService
 ): ClientRepository {
 
-    override fun list(filterEnabled: Boolean): Single<List<ClientListDTO>> {
+    override fun list(): Single<List<ClientListDTO>> {
         return listWS.fetch()
             .map { clientList ->
-                (if (filterEnabled) clientList.filter { it.enabled } else clientList)
-                    .map { client ->
+                    clientList.map { client ->
                         ClientListDTO(
                             client.id,
                             client.firstName,
                             client.lastName,
-                            client.phone
+                            client.phone,
+                            client.enabled
                         )
                     }.sortedBy { it.firstName }
             }

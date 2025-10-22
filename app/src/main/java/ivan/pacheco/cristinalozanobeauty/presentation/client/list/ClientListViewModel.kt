@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
@@ -23,12 +24,17 @@ class ClientListViewModel @Inject constructor(
     private val repository: ClientRepository
 ): ViewModel() {
 
+    private companion object {
+        const val DELAYS_QUERY = 300L
+    }
+
     // LiveData
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val isLoadingLD = MutableLiveData<Boolean>()
     private val errorLD = SingleLiveEvent<Int>()
     private var allClients: List<ClientListDTO> = listOf()
-    private val searchSubject = PublishSubject.create<String>()
+    private val searchSubject = BehaviorSubject.createDefault("")
+    private val enabledFilterSubject = BehaviorSubject.createDefault(true)
     private val compositeDisposable = CompositeDisposable()
 
     // Getters
@@ -36,71 +42,82 @@ class ClientListViewModel @Inject constructor(
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
 
+    // Actions
+    init {
+        observeFilters()
+    }
+
     override fun onCleared() {
         compositeDisposable.clear()
         super.onCleared()
     }
 
-    // Actions
-    init {
-        observeSearch()
-        loadData()
+    fun onSearchQueryChanged(query: String) { searchSubject.onNext(query) }
+    fun onEnabledFilterChanged(enabled: Boolean) { enabledFilterSubject.onNext(enabled) }
+
+    fun loadData() {
+        repository.list()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { isLoadingLD.value = true }
+            .doFinally { isLoadingLD.value = false }
+            .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
+                override fun onSuccess(clientList: List<ClientListDTO>) {
+                    allClients = clientList
+                    // Al cambiar allClients, force applyFilters con los valores actuales de BehaviorSubjects
+                    applyFilters(searchSubject.value ?: "", enabledFilterSubject.value ?: true)
+                }
+
+                override fun onError(e: Throwable) {
+                    errorLD.value = R.string.client_list_error_list
+                }
+            })
     }
 
-    fun actionDeleteClient(client: ClientListDTO, filterEnabled: Boolean) {
+    fun actionDeleteClient(client: ClientListDTO) {
         repository.delete(client)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoadingLD.value = true }
             .doFinally { isLoadingLD.value = false }
             .subscribe(object : DisposableCompletableObserver(){
-                override fun onComplete() { loadData(filterEnabled = filterEnabled) }
+                override fun onComplete() { loadData() }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_delete }
             })
     }
 
-    fun loadData(filter: String? = null, filterEnabled: Boolean = true) {
-        if (!filter.isNullOrBlank()) {
-            filterClients(filter)
-            return
-        }
-
-        repository.list(filterEnabled)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>(){
-                override fun onSuccess(clientList: List<ClientListDTO>) {
-                    allClients = clientList
-                    clientsLD.value = clientList
-                }
-                override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_list }
-            })
-    }
-
-    fun onSearchQueryChanged(query: String) {
-        searchSubject.onNext(query)
-    }
-
-    private fun filterClients(filter: String) {
-        val normalizedFilter = filter.trim().normalizeForSearch()
-        clientsLD.value = allClients.filter { client ->
-            client.firstName.normalizeForSearch().contains(normalizedFilter) ||
-            client.lastName.normalizeForSearch().contains(normalizedFilter) ||
-            client.phone.contains(normalizedFilter)
-        }
-    }
-
-    private fun observeSearch() {
+    private fun observeFilters() {
         compositeDisposable.add(
-            searchSubject
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .map { it.trim() }
-                .distinctUntilChanged()
+            Observable.combineLatest(
+                    searchSubject
+                        .debounce(DELAYS_QUERY, TimeUnit.MILLISECONDS)
+                        .map { it.trim() }
+                        .distinctUntilChanged()
+                        .startWith(searchSubject),
+                    enabledFilterSubject.distinctUntilChanged()
+                        .startWith(enabledFilterSubject)
+            ) { query, enabled -> Pair(query, enabled) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { query -> loadData(query) }
+                .subscribe { (query, enabled) ->
+                    applyFilters(query, enabled)
+                }
         )
+    }
+
+    /**
+     * Filter clients by query and enabled filter
+     */
+    private fun applyFilters(query: String, filterEnabled: Boolean) {
+        var filtered = allClients.filter { it.enabled == filterEnabled }
+        if (query.isNotBlank()) {
+            val normalized = query.trim().normalizeForSearch()
+            filtered = filtered.filter { client ->
+                client.firstName.normalizeForSearch().contains(normalized) ||
+                        client.lastName.normalizeForSearch().contains(normalized) ||
+                        client.phone.contains(normalized)
+            }
+        }
+        clientsLD.value = filtered
     }
 
 }
