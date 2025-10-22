@@ -601,7 +601,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                             endTime = endTime.toLocalTime(),
                             service = selectedService,
                         )
-                        vm.actionCreateEvent(newEvent, selectedClient!!) // TODO
+                        selectedClient?.let { selectedClient ->
+                            vm.actionCreateEvent(newEvent, selectedClient)
+                        }
                     }
                     dialog.dismiss()
                 } catch (_: Exception) { showAlert(R.string.calendar_event_form_error_time) }

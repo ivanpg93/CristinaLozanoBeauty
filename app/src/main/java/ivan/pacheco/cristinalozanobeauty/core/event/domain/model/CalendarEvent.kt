@@ -32,6 +32,13 @@ fun CalendarEvent.toMap() = mapOf(
     "description" to description,
     "startDateTime" to startDateTime,
     "endDateTime" to endDateTime,
-    "service" to service?.name,
+    "service" to service?.toSafeName(),
     "assisted" to assisted
 )
+
+// TODO: Remove when migration completed
+fun Service.toSafeName(): String = when (this) {
+    Service.ACRILICO -> Service.RELLENO_ACRILICO.name
+    Service.ACRYGEL -> Service.RELLENO_ACRYGEL.name
+    else -> this.name
+}

@@ -42,6 +42,9 @@ enum class Service {
     PEDICURA_COMPLETA,
     PEDICURA_JELLY,
     PEDICURA_SEMI,
+    PRIMERA_PUESTA,
+    RELLENO_ACRILICO,
+    RELLENO_ACRYGEL,
     RETIRADA_DE_MATERIAL,
     SEMIPERMANENTE
 }
@@ -77,10 +80,17 @@ fun Client.toMap() = mapOf(
     "town" to town,
     "nailDisorderList" to nailDisorderList.map { it.name },
     "skinDisorderList" to skinDisorderList.map { it.name },
-    "serviceList" to serviceList.map { it.name },
+    "serviceList" to serviceList.map { it.toSafeName() },
     "allergy" to allergy,
     "hasDiabetes" to hasDiabetes,
     "hasPoorCoagulation" to hasPoorCoagulation,
     "others" to others,
     "enabled" to enabled
 )
+
+// TODO: Remove when migration completed
+fun Service.toSafeName(): String = when (this) {
+    Service.ACRILICO -> Service.RELLENO_ACRILICO.name
+    Service.ACRYGEL -> Service.RELLENO_ACRYGEL.name
+    else -> this.name
+}
