@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -60,6 +62,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMil
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateFromDatePicker
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.normalizeForSearch
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
@@ -423,27 +426,27 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         }
 
         binding.exThreeCalendar.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-                override fun create(view: View) = MonthViewContainer(view)
-                override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
 
-                    // Setup each header day text if we have not done that already.
-                    if (container.legendLayout.tag == null) {
-                        container.legendLayout.tag = true
-                        container.legendLayout.children.map { it as TextView }
-                            .forEachIndexed { index, tv ->
-                                tv.text = daysOfWeek[index]
-                                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                                    .replaceFirstChar { it.uppercase() }
-                                tv.setTextColor(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.black
-                                    )
+                // Setup each header day text if we have not done that already.
+                if (container.legendLayout.tag == null) {
+                    container.legendLayout.tag = true
+                    container.legendLayout.children.map { it as TextView }
+                        .forEachIndexed { index, tv ->
+                            tv.text = daysOfWeek[index]
+                                .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                .replaceFirstChar { it.uppercase() }
+                            tv.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.black
                                 )
-                            }
-                    }
+                            )
+                        }
                 }
             }
+        }
     }
 
     private fun applyInsets(binding: FragmentHomeBinding) {
@@ -510,7 +513,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             { selectedClient = it }
         )
 
-        // Input nail polish brand
+        // Input select service
         setupSingleChoiceInput(
             serviceInput,
             R.string.dialog_calendar_event_select_service,
@@ -629,23 +632,81 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         onSelected: (ClientListDTO) -> Unit,
         onDisplayText: (String) -> Unit
     ) {
+        val inflater = LayoutInflater.from(requireContext())
+        val view = inflater.inflate(R.layout.dialog_client_searchable, null)
+
+        val searchEditText = view.findViewById<EditText>(R.id.searchEditText)
+        val listView = view.findViewById<ListView>(R.id.clientListView)
+
+        // Client list sorted by name
         val sortedClients = clients.sortedBy { it.firstName + it.lastName }
-        val clientNames = sortedClients.map { "${it.firstName} ${it.lastName}" }.toTypedArray()
-        val selectedIndex = sortedClients.indexOfFirst { it.id == selectedClient?.id }
-        var tempSelectedIndex = selectedIndex
+
+        // List representing what is currently displayed on screen
+        val displayedClients = sortedClients.toMutableList()
+
+        // Create client list
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_client_choice,
+            displayedClients.map { "${it.firstName} ${it.lastName}" }
+        )
+        listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_SINGLE
+
+        // Select current client if exists
+        val selectedIndexInSorted = sortedClients.indexOfFirst { it.id == selectedClient?.id }
+        if (selectedIndexInSorted >= 0) {
+            listView.setItemChecked(selectedIndexInSorted, true)
+        }
+
+        // Real-time filtering: updating displayedClients + adapter
+        searchEditText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s?.toString().orEmpty().trim()
+                displayedClients.clear()
+                if (query.isEmpty()) {
+                    displayedClients.addAll(sortedClients)
+                } else {
+                    val normalized = query.trim().normalizeForSearch()
+                    displayedClients.addAll(
+                        sortedClients.filter { client ->
+                            val fullName = "${client.firstName} ${client.lastName}"
+                            fullName.normalizeForSearch().contains(normalized) ||
+                                    client.phone.contains(normalized)
+                        }
+                    )
+                }
+
+                // Update adapter
+                adapter.clear()
+                adapter.addAll(displayedClients.map { "${it.firstName} ${it.lastName}" })
+                adapter.notifyDataSetChanged()
+
+                // Reset item selected
+                listView.clearChoices()
+
+                // If previously selected client is still in new list, select it again
+                selectedClient?.let { sel ->
+                    val newIndex = displayedClients.indexOfFirst { it.id == sel.id }
+                    if (newIndex >= 0) listView.setItemChecked(newIndex, true)
+                }
+            }
+
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_calendar_event_select_client))
-            .setSingleChoiceItems(clientNames, selectedIndex) { _, index ->
-                tempSelectedIndex = index
-            }
-            .setPositiveButton(getString(R.string.accept)) { dialog, _ ->
-                tempSelectedIndex.takeIf { it >= 0 }?.let { i ->
-                    val client = sortedClients[i]
+            .setView(view)
+            .setPositiveButton(getString(R.string.accept)) { dialogInterface, _ ->
+                val checkedPosition = listView.checkedItemPosition
+                if (checkedPosition >= 0 && checkedPosition < displayedClients.size) {
+                    val client = displayedClients[checkedPosition]
                     onSelected(client)
                     onDisplayText("${client.firstName} ${client.lastName}")
                 }
-                dialog.dismiss()
+                dialogInterface.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
             .create()
@@ -693,9 +754,9 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val options = enumValues
             .map {
                 it to it.name
-                .replace("_", " ")
-                .lowercase()
-                .replaceFirstChar { c -> c.titlecase() }
+                    .replace("_", " ")
+                    .lowercase()
+                    .replaceFirstChar { c -> c.titlecase() }
             }
             .sortedBy { it.second }
 

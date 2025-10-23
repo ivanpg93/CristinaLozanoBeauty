@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="@dimen/separatorMargin"
+    android:id="@+id/dialog_client">
+
+    <!--Searcher-->
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/client_list_search"
+        android:imeOptions="actionDone"
+        android:inputType="text" />
+
+    <!--Client list-->
+    <ListView
+        android:id="@+id/clientListView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:paddingHorizontal="4dp"
+        android:choiceMode="singleChoice"
+        android:dividerHeight="1dp"
+        android:divider="?android:attr/listDivider" />
+
+</LinearLayout>
