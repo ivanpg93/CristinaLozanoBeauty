@@ -138,4 +138,20 @@ object Firestore {
         println("🎉 Migración de serviceList completada.")
     }
 
+    suspend fun migrateRemoveServiceListFromClients() {
+        val clientsRef = db.collection(CLIENTS)
+        val snapshot = clientsRef.get().await()
+
+        for (document in snapshot.documents) {
+            if (document.contains("serviceList")) {
+                document.reference.update("serviceList", FieldValue.delete()).await()
+                println("🗑️ Eliminado campo 'serviceList' en cliente ${document.id}")
+            } else {
+                println("↩️ Cliente ${document.id} no tiene 'serviceList'")
+            }
+        }
+
+        println("🎉 Migración completada: campo 'serviceList' eliminado en todas las clientas.")
+    }
+
 }

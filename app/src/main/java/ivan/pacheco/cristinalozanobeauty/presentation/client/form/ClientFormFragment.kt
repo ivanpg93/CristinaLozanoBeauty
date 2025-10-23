@@ -16,7 +16,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientFormBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
@@ -37,7 +36,6 @@ class ClientFormFragment: Fragment() {
     private val vm: ClientFormViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<Client.NailDisorder>()
     private val selectedSkinDisorders = mutableSetOf<Client.SkinDisorder>()
-    private val selectedServices = mutableSetOf<Appointment.Service>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,14 +110,6 @@ class ClientFormFragment: Fragment() {
             R.string.client_form_select_skin_disorder,
             Client.SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
-        )
-
-        // Input service
-        setupMultiChoiceInput(
-            binding.etServiceText,
-            R.string.client_form_select_service,
-            Appointment.Service.entries.toTypedArray(),
-            selectedServices
         )
     }
 
@@ -210,7 +200,6 @@ class ClientFormFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            selectedServices.toList(),
             binding.etAllergyText.getTrimmedText(),
             hasDiabetes,
             hasPoorCoagulation,

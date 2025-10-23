@@ -17,7 +17,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
@@ -38,7 +37,6 @@ class ClientDetailFragment: Fragment() {
     private val vm: ClientDetailViewModel by viewModels()
     private val selectedNailDisorders = mutableSetOf<Client.NailDisorder>()
     private val selectedSkinDisorders = mutableSetOf<Client.SkinDisorder>()
-    private val selectedServices = mutableSetOf<Appointment.Service>()
     private lateinit var clientId: String
     private var originalClient: Client? = null
 
@@ -131,14 +129,6 @@ class ClientDetailFragment: Fragment() {
             Client.SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
         )
-
-        // Input service
-        setupMultiChoiceInput(
-            binding.etServiceText,
-            R.string.client_form_select_service,
-            Appointment.Service.entries.toTypedArray(),
-            selectedServices
-        )
     }
 
     override fun onDestroyView() {
@@ -209,11 +199,6 @@ class ClientDetailFragment: Fragment() {
             selectedSkinDisorders.addAll(client.skinDisorderList)
             etSkinDisorderText.setText(selectedSkinDisorders.formatSelection())
 
-            // Update selectedServices list
-            selectedServices.clear()
-            selectedServices.addAll(client.serviceList)
-            etServiceText.setText(selectedServices.formatSelection())
-
             etAllergyText.setText(client.allergy)
             etOthersText.setText(client.others)
 
@@ -283,7 +268,6 @@ class ClientDetailFragment: Fragment() {
             binding.etTownText.getTrimmedText(),
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
-            selectedServices.toList(),
             binding.etAllergyText.getTrimmedText(),
             binding.rbDiabetesYes.isChecked,
             binding.rbDiabetesNo.isChecked,
@@ -403,8 +387,7 @@ class ClientDetailFragment: Fragment() {
 
         val listsToCompare = listOf(
             nailDisorderList.toSet() to selectedNailDisorders,
-            skinDisorderList.toSet() to selectedSkinDisorders,
-            serviceList.toSet() to selectedServices
+            skinDisorderList.toSet() to selectedSkinDisorders
         )
 
         return fieldsToCompare.any { it.first != it.second } || listsToCompare.any { it.first != it.second }
