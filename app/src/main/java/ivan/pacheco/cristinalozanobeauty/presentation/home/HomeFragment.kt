@@ -45,11 +45,9 @@ import com.kizitonwose.calendar.view.ViewContainer
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.BuildConfig
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toClientListDTO
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toDTO
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarDayBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.CalendarHeaderBinding
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentHomeBinding
@@ -184,7 +182,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             // Group events by date
             eventList.groupBy { it.startDateTime.toLocalDate() }
                 .forEach { (date, eventsForDate) ->
-                    events[date] = eventsForDate.map { it.toDTO() }
+                    events[date] = eventsForDate.map { it.mapToDTO() }
                 }
 
             binding.exThreeCalendar.notifyCalendarChanged()
@@ -371,7 +369,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
                     // Get events from that day
                     val dayEvents = events[data.date] ?: emptyList()
-                    val eventsForDay = dayEvents.map { it.toClientListDTO() }
+                    val eventsForDay = dayEvents.map { it.mapToClientListDTO() }
 
                     // Show limit events
                     rvAdapter.reload(eventsForDay.take(LIMIT_MAX_EVENTS_FOR_CELL))
@@ -471,7 +469,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
         val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
-        var selectedService: Service? = null
+        var selectedService: Appointment.Service? = null
 
         var currentDate = event?.date ?: selectedDate
         dateInput.setText(currentDate.toFormattedString())
@@ -516,7 +514,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         setupSingleChoiceInput(
             serviceInput,
             R.string.dialog_calendar_event_select_service,
-            Service.entries.toTypedArray(),
+            Appointment.Service.entries.toTypedArray(),
             { selectedService }
         ) { selectedService = it }
 

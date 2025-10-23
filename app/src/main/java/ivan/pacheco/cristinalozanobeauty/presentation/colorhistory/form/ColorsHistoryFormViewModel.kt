@@ -10,7 +10,7 @@ import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.CreateColorsHistoryUC
-import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
@@ -41,7 +41,7 @@ class ColorsHistoryFormViewModel @Inject constructor(
 
     // Actions
     fun actionSave(
-        brand: NailPolishBrand,
+        brand: Color.NailPolishBrand,
         reference: String,
         date: Date?
     ) {

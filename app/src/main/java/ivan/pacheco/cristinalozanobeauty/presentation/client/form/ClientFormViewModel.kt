@@ -8,10 +8,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.CreateClientUC
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
@@ -41,9 +40,9 @@ class ClientFormViewModel @Inject constructor(
         birthdate: Date?,
         profession: String,
         town: String,
-        nailDisorderList: List<NailDisorder>,
-        skinDisorderList: List<SkinDisorder>,
-        serviceList: List<Service>,
+        nailDisorderList: List<Client.NailDisorder>,
+        skinDisorderList: List<Client.SkinDisorder>,
+        serviceList: List<Appointment.Service>,
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,

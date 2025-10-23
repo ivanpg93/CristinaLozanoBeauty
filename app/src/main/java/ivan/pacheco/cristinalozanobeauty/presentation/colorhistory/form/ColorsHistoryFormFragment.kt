@@ -14,7 +14,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
-import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
+import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorsHistoryFormBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
@@ -30,7 +30,7 @@ class ColorsHistoryFormFragment: Fragment() {
     private var _binding: FragmentColorsHistoryFormBinding? = null
     private val binding get() = _binding!!
     private val vm: ColorsHistoryFormViewModel by viewModels()
-    private var selectedNailPolishBrand: NailPolishBrand? = null
+    private var selectedNailPolishBrand: Color.NailPolishBrand? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,7 +80,7 @@ class ColorsHistoryFormFragment: Fragment() {
         setupSingleChoiceInput(
             binding.etBrandText,
             R.string.color_history_form_select_nail_polish_brand,
-            NailPolishBrand.entries.toTypedArray(),
+            Color.NailPolishBrand.entries.toTypedArray(),
             { selectedNailPolishBrand }
         ) { selectedNailPolishBrand = it }
     }

@@ -17,10 +17,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
@@ -38,9 +36,9 @@ class ClientDetailFragment: Fragment() {
     private var _binding: FragmentClientDetailBinding? = null
     private val binding get() = _binding!!
     private val vm: ClientDetailViewModel by viewModels()
-    private val selectedNailDisorders = mutableSetOf<NailDisorder>()
-    private val selectedSkinDisorders = mutableSetOf<SkinDisorder>()
-    private val selectedServices = mutableSetOf<Service>()
+    private val selectedNailDisorders = mutableSetOf<Client.NailDisorder>()
+    private val selectedSkinDisorders = mutableSetOf<Client.SkinDisorder>()
+    private val selectedServices = mutableSetOf<Appointment.Service>()
     private lateinit var clientId: String
     private var originalClient: Client? = null
 
@@ -122,7 +120,7 @@ class ClientDetailFragment: Fragment() {
         setupMultiChoiceInput(
             binding.etNailDisorderText,
             R.string.client_form_select_nail_disorder,
-            NailDisorder.entries.toTypedArray(),
+            Client.NailDisorder.entries.toTypedArray(),
             selectedNailDisorders
         )
 
@@ -130,7 +128,7 @@ class ClientDetailFragment: Fragment() {
         setupMultiChoiceInput(
             binding.etSkinDisorderText,
             R.string.client_form_select_skin_disorder,
-            SkinDisorder.entries.toTypedArray(),
+            Client.SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
         )
 
@@ -138,7 +136,7 @@ class ClientDetailFragment: Fragment() {
         setupMultiChoiceInput(
             binding.etServiceText,
             R.string.client_form_select_service,
-            Service.entries.toTypedArray(),
+            Appointment.Service.entries.toTypedArray(),
             selectedServices
         )
     }

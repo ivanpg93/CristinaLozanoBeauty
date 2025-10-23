@@ -1,7 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -12,26 +12,28 @@ data class CalendarEventDTO(
     val date: LocalDate,
     val startTime: LocalTime,
     val endTime: LocalTime,
-    val service: Service? = null,
+    val service: Appointment.Service? = null,
     var assisted: Boolean = true
-)
+) {
 
-fun CalendarEventDTO.toCalendarEvent(): CalendarEvent {
-    val startDateTime = LocalDateTime.of(date, startTime)
-    val endDateTime = LocalDateTime.of(date, endTime)
-    return CalendarEvent(
-        id = id,
-        summary = text,
-        startDateTime = startDateTime.toString(),
-        endDateTime = endDateTime.toString(),
-        service = service,
-        assisted = assisted
-    )
-}
+    fun mapToCalendarEvent(): CalendarEvent {
+        val startDateTime = LocalDateTime.of(date, startTime)
+        val endDateTime = LocalDateTime.of(date, endTime)
+        return CalendarEvent(
+            id = id,
+            summary = text,
+            startDateTime = startDateTime.toString(),
+            endDateTime = endDateTime.toString(),
+            service = service,
+            assisted = assisted
+        )
+    }
 
-fun CalendarEventDTO.toClientListDTO(): ClientListDTO {
-    val parts = text.split(" ")
-    val firstName = parts.getOrNull(0) ?: ""
-    val firstLastName = parts.getOrNull(1) ?: ""
-    return ClientListDTO(id, firstName, firstLastName, "")
+    fun mapToClientListDTO(): ClientListDTO {
+        val parts = text.split(" ")
+        val firstName = parts.getOrNull(0) ?: ""
+        val firstLastName = parts.getOrNull(1) ?: ""
+        return ClientListDTO(id, firstName, firstLastName, "")
+    }
+
 }

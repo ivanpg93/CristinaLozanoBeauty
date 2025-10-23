@@ -2,7 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.EventDateTime
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.ExtendedProperties
@@ -149,7 +149,7 @@ class EventDataRepository @Inject constructor(
             runBlocking { googleCalendarApi.getEvent("$BEARER $token", eventId) }
         }
 
-    private fun buildExtendedProperties(service: Service?, assisted: Boolean): ExtendedProperties =
+    private fun buildExtendedProperties(service: Appointment.Service?, assisted: Boolean): ExtendedProperties =
         ExtendedProperties(
             private = mapOf(
                 SERVICE to (service?.name ?: ""),
@@ -157,9 +157,9 @@ class EventDataRepository @Inject constructor(
             )
         )
 
-    private fun parseExtendedProperties(props: ExtendedProperties?): Pair<Service?, Boolean> {
+    private fun parseExtendedProperties(props: ExtendedProperties?): Pair<Appointment.Service?, Boolean> {
         if (props?.private.isNullOrEmpty()) return null to false
-        val service = props.private[SERVICE]?.let { runCatching { Service.valueOf(it) }.getOrNull() }
+        val service = props.private[SERVICE]?.let { runCatching { Appointment.Service.valueOf(it) }.getOrNull() }
         val assisted = props.private[ASSISTED]?.toBoolean() ?: true
         return service to assisted
     }
@@ -179,7 +179,7 @@ class EventDataRepository @Inject constructor(
         }
 
         // Old format (only service without assisted)
-        val service = runCatching { Service.valueOf(item.description ?: "") }.getOrNull()
+        val service = runCatching { Appointment.Service.valueOf(item.description ?: "") }.getOrNull()
 
         return CalendarEvent(
             id = item.id,

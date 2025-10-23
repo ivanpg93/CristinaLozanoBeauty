@@ -1,10 +1,8 @@
 package ivan.pacheco.cristinalozanobeauty.core.client.application.usecase
 
 import io.reactivex.Single
+import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.NailDisorder
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Service
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.SkinDisorder
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import java.util.Date
 import javax.inject.Inject
@@ -22,9 +20,9 @@ class UpdateClientUC @Inject constructor(
         birthdate: Date?,
         profession: String,
         town: String,
-        nailDisorderList: List<NailDisorder>,
-        skinDisorderList: List<SkinDisorder>,
-        serviceList: List<Service>,
+        nailDisorderList: List<Client.NailDisorder>,
+        skinDisorderList: List<Client.SkinDisorder>,
+        serviceList: List<Appointment.Service>,
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,

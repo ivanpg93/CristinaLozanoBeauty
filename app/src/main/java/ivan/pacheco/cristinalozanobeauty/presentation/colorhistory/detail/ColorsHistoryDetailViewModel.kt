@@ -12,7 +12,6 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.UpdateColorsHistoryUC
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
-import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.NailPolishBrand
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
@@ -53,7 +52,7 @@ class ColorsHistoryDetailViewModel @Inject constructor(
 
     // Actions
     fun actionUpdateColor(
-        brand: NailPolishBrand,
+        brand: Color.NailPolishBrand,
         reference: String,
         date: Date?
     ) {

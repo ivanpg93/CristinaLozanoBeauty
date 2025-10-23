@@ -3,7 +3,6 @@ package ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webser
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.UpdateAppointmentWebService
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toMap
 import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
 class UpdateAppointmentWS: UpdateAppointmentWebService {

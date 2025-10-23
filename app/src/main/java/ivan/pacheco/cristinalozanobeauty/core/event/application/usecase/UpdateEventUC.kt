@@ -3,7 +3,6 @@ package ivan.pacheco.cristinalozanobeauty.core.event.application.usecase
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
-import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.toCalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import javax.inject.Inject
 
@@ -18,7 +17,7 @@ class UpdateEventUC @Inject constructor(
     ): Completable {
 
         // Map calendar event
-        val calendarEvent = calendarEventDTO.toCalendarEvent()
+        val calendarEvent = calendarEventDTO.mapToCalendarEvent()
 
         // Update calendar event
         return eventRepository.updateEvent(calendarEvent, token)

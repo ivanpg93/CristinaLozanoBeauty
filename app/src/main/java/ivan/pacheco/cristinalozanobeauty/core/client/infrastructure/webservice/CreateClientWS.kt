@@ -2,7 +2,6 @@ package ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.webservice
 
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
-import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.toMap
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
 import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 
