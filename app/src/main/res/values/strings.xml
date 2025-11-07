@@ -109,7 +109,7 @@
     <!--Calendar event-->
     <string name="dialog_calendar_event_title">Nueva cita</string>
     <string name="dialog_calendar_event_action_save">Guardar</string>
-    <string name="dialog_calendar_event_delete_message">Quieres borrar esta cita?</string>
+    <string name="dialog_calendar_event_delete_message">Quieres eliminar la cita?</string>
     <string name="dialog_calendar_event_action_delete">Eliminar</string>
     <string name="dialog_calendar_event_select_client">Selecciona una clienta</string>
     <string name="dialog_calendar_event_select_service">Selecciona un servicio</string>

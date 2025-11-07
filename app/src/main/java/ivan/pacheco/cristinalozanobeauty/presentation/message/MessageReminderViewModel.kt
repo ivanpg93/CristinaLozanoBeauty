@@ -38,7 +38,6 @@ class MessageReminderViewModel@Inject constructor(
 
     // Getters
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
-
     fun getErrorLD(): LiveData<Int> = errorLD
     fun getClientsLD(): LiveData<List<ClientListDTO>> = clientsLD
     fun getAppointmentClientListLD(): LiveData<List<AppointmentClient>> = appointmentClientListLD

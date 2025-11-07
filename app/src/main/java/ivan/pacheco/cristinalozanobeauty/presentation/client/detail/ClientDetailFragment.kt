@@ -145,6 +145,7 @@ class ClientDetailFragment: Fragment() {
             return
         }
 
+        // Create dialog
         val dialog = DialogUtils.createDialog(
             requireContext(),
             getString(R.string.client_form_save_changes_title),
@@ -154,11 +155,11 @@ class ClientDetailFragment: Fragment() {
         // Customize listener for buttons
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
-                dialog.dismiss()
                 navigate(destination)
             }
         }
 
+        // Show dialog
         dialog.show()
     }
 

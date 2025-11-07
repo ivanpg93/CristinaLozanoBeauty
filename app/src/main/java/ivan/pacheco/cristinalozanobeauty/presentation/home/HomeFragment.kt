@@ -62,6 +62,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMil
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateFromDatePicker
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.normalizeForSearch
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
@@ -97,28 +98,22 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         onClick = { event -> showEventDialog(selectedDate, event) },
         assistedAction = { event -> vm.actionUpdateEvent(event) },
         deleteAction = { event ->
-            val context = requireContext()
-            val dialog = AlertDialog.Builder(context)
-                .setMessage(R.string.dialog_calendar_event_delete_message)
-                .setNegativeButton(getString(R.string.cancel), null)
-                .setPositiveButton(getString(R.string.dialog_calendar_event_action_delete), null)
-                .create()
 
+            // Create dialog
+            val dialog = DialogUtils.createDialog(
+                requireContext(),
+                getString(R.string.dialog_calendar_event_delete_message),
+                String.format("%s - %s", event.text, event.startTime)
+            ) { vm.actionDeleteEvent(event.id) }
+
+            // Customize listener for buttons
             dialog.setOnShowListener {
-
-                // Customize color for buttons
-                val goldColor = ContextCompat.getColor(context, R.color.gold)
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(goldColor)
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(goldColor)
-
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                    dialog.dismiss()
-                    vm.actionDeleteEvent(event.id)
-                }
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
                     dialog.dismiss()
                 }
             }
+
+            // Show dialog
             dialog.show()
         }
     )
