@@ -25,6 +25,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,6 +63,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMil
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateFromDatePicker
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.normalizeForSearch
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
@@ -69,6 +71,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAl
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.MonthYearPickerDialog
+import ivan.pacheco.cristinalozanobeauty.shared.remote.Firestore
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -95,6 +98,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private val titleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     private val eventsAdapter = EventsAdapter(
+        onDetailClick = { event ->
+            Firestore.db.collection("eventsIndex") // TODO: Clean architecture
+                .document(event.id)
+                .get()
+                .addOnSuccessListener { indexDoc ->
+                    indexDoc.getString("clientId")?.let { clientId ->
+                        navigate(Destination.ClientDetail(clientId))
+                    }
+                }
+        },
         onClick = { event -> showEventDialog(selectedDate, event) },
         assistedAction = { event -> vm.actionUpdateEvent(event) },
         deleteAction = { event ->
@@ -804,6 +817,19 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         timePicker.addOnPositiveButtonClickListener { onTimeSelected(timePicker.hour, timePicker.minute) }
 
         timePicker.show(childFragmentManager, "")
+    }
+
+    private fun navigate(destination: Destination) {
+        when (destination) {
+            is Destination.ClientDetail -> {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionClientListFragmentToClientDetailFragment(
+                        destination.clientId
+                    )
+                )
+            }
+            else -> {} // Do nothing
+        }
     }
 
 }

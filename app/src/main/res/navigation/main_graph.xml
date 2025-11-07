@@ -12,15 +12,10 @@
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.home.HomeFragment"
         tools:layout="@layout/fragment_home">
 
-        <!--Nav to client list-->
+        <!--Nav to client detail-->
         <action
-            android:id="@+id/action_homeFragment_to_clientListFragment"
-            app:destination="@id/clientListFragment" />
-
-        <!--Nav to message-->
-        <action
-            android:id="@+id/action_homeFragment_to_messageFragment"
-            app:destination="@id/messageFragment" />
+            android:id="@+id/action_clientListFragment_to_clientDetailFragment"
+            app:destination="@id/clientDetailFragment" />
     </fragment>
 
     <!--Client list-->
