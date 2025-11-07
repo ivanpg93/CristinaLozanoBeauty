@@ -18,6 +18,7 @@ data class Client(
     val allergy: String = "",
     val hasDiabetes: Boolean = false,
     val hasPoorCoagulation: Boolean = false,
+    val frequency: Int = 0,
     val others: String = "",
     val appointmentList: List<Appointment> = listOf(),
     var enabled: Boolean = true
@@ -65,6 +66,7 @@ data class Client(
         "allergy" to allergy,
         "hasDiabetes" to hasDiabetes,
         "hasPoorCoagulation" to hasPoorCoagulation,
+        "frequency" to frequency,
         "others" to others,
         "enabled" to enabled
     )

@@ -47,6 +47,7 @@
     <string name="client_form_service">Servicios</string>
     <string name="client_form_allergy">Alergias</string>
     <string name="client_form_others">Otros</string>
+    <string name="client_form_frequency">Frecuencia de retoque (nº semanas)</string>
     <string name="client_form_action_save">Guardar</string>
     <string name="client_form_select_nail_disorder">Selecciona una alteración en las uñas</string>
     <string name="client_form_select_skin_disorder">Selecciona una alteración en la piel</string>
@@ -110,7 +111,6 @@
     <string name="dialog_calendar_event_title">Nueva cita</string>
     <string name="dialog_calendar_event_action_save">Guardar</string>
     <string name="dialog_calendar_event_delete_message">Quieres eliminar la cita?</string>
-    <string name="dialog_calendar_event_action_delete">Eliminar</string>
     <string name="dialog_calendar_event_select_client">Selecciona una clienta</string>
     <string name="dialog_calendar_event_select_service">Selecciona un servicio</string>
     <string name="dialog_calendar_event_clients">Clienta</string>

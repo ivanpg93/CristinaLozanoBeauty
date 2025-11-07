@@ -45,7 +45,8 @@ class ClientFormViewModel @Inject constructor(
         allergy: String,
         diabetes: Boolean,
         poorCoagulation: Boolean,
-        others: String
+        others: String,
+        frequency: Int
     ) {
         // Check mandatory fields before continue to create client
         if (!checkMandatoryFields(listOf(firstName, lastName, phone))) {
@@ -67,7 +68,8 @@ class ClientFormViewModel @Inject constructor(
             allergy,
             diabetes,
             poorCoagulation,
-            others
+            others,
+            frequency
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

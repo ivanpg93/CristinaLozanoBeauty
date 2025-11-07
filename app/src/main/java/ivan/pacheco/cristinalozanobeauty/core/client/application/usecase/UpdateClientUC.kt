@@ -25,6 +25,7 @@ class UpdateClientUC @Inject constructor(
         diabetes: Boolean,
         poorCoagulation: Boolean,
         others: String,
+        frequency: Int,
         enabled: Boolean
     ): Single<Client> {
 
@@ -43,6 +44,7 @@ class UpdateClientUC @Inject constructor(
             allergy,
             diabetes,
             poorCoagulation,
+            frequency,
             others,
             enabled = enabled
         )

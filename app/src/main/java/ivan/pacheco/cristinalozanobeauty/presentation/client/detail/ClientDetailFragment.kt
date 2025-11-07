@@ -189,6 +189,7 @@ class ClientDetailFragment: Fragment() {
 
             etAllergyText.setText(client.allergy)
             etOthersText.setText(client.others)
+            etFrequencyText.setText(client.frequency.toString())
 
             rbDiabetesYes.isChecked = client.hasDiabetes
             rbDiabetesNo.isChecked = !client.hasDiabetes
@@ -259,6 +260,7 @@ class ClientDetailFragment: Fragment() {
             hasDiabetes,
             hasPoorCoagulation,
             binding.etOthersText.getTrimmedText(),
+            binding.etFrequencyText.getTrimmedText().toInt(),
             !binding.switchActionDisabled.isChecked,
             destination
         )

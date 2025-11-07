@@ -170,6 +170,21 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!--Frequency-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/et_frequency"
+                style="@style/Form"
+                android:hint="@string/client_form_frequency"
+                app:boxStrokeColor="@color/gold"
+                app:hintTextColor="@color/gold">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_frequency_text"
+                    style="@style/FormText"
+                    android:inputType="number"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!--Others-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/et_others"

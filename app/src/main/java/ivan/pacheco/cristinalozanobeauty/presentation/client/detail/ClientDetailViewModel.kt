@@ -63,6 +63,7 @@ class ClientDetailViewModel @Inject constructor(
         diabetes: Boolean,
         poorCoagulation: Boolean,
         others: String,
+        frequency: Int,
         enabled: Boolean,
         destination: Destination
     ) {
@@ -88,6 +89,7 @@ class ClientDetailViewModel @Inject constructor(
             diabetes,
             poorCoagulation,
             others,
+            frequency,
             enabled
         )
             .subscribeOn(Schedulers.io())

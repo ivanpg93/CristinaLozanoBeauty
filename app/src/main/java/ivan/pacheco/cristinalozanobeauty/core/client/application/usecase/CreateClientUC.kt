@@ -21,7 +21,8 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
         allergy: String,
         hasDiabetes: Boolean,
         hasPoorCoagulation: Boolean,
-        others: String
+        others: String,
+        frequency: Int
     ): Completable {
 
         // Build client. Id will set from Firebase
@@ -39,6 +40,7 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
             allergy,
             hasDiabetes,
             hasPoorCoagulation,
+            frequency,
             others
         )
 
