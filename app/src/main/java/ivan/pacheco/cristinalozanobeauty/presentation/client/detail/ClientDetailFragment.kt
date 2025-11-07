@@ -21,6 +21,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
@@ -144,29 +145,15 @@ class ClientDetailFragment: Fragment() {
             return
         }
 
-        val context = requireContext()
-        val dialog = AlertDialog.Builder(context)
-            .setTitle(R.string.client_form_save_changes_title)
-            .setMessage(R.string.client_form_save_changes)
-            .setNegativeButton(getString(R.string.cancel), null)
-            .setPositiveButton(getString(R.string.dialog_calendar_event_action_save), null)
-            .create()
+        val dialog = DialogUtils.createDialog(
+            requireContext(),
+            getString(R.string.client_form_save_changes_title),
+            getString(R.string.client_form_save_changes)
+        ) { saveAction(destination) }
 
-        // Customize color for buttons
+        // Customize listener for buttons
         dialog.setOnShowListener {
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-
-            val goldColor = ContextCompat.getColor(context, R.color.gold)
-            positiveButton?.setTextColor(goldColor)
-            negativeButton?.setTextColor(goldColor)
-
-            positiveButton?.setOnClickListener {
-                dialog.dismiss()
-                saveAction(destination)
-            }
-
-            negativeButton?.setOnClickListener {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
                 dialog.dismiss()
                 navigate(destination)
             }
@@ -194,7 +181,7 @@ class ClientDetailFragment: Fragment() {
             selectedNailDisorders.addAll(client.nailDisorderList)
             etNailDisorderText.setText(selectedNailDisorders.formatSelection())
 
-            // Update selectedNailDisorders list
+            // Update selectedSkinDisorders list
             selectedSkinDisorders.clear()
             selectedSkinDisorders.addAll(client.skinDisorderList)
             etSkinDisorderText.setText(selectedSkinDisorders.formatSelection())
@@ -224,7 +211,6 @@ class ClientDetailFragment: Fragment() {
         val client = originalClient ?: return false
         return client.isFormChanged()
     }
-
 
     private fun saveAction(destination: Destination) {
 
@@ -269,8 +255,8 @@ class ClientDetailFragment: Fragment() {
             selectedNailDisorders.toList(),
             selectedSkinDisorders.toList(),
             binding.etAllergyText.getTrimmedText(),
-            binding.rbDiabetesYes.isChecked,
-            binding.rbDiabetesNo.isChecked,
+            hasDiabetes,
+            hasPoorCoagulation,
             binding.etOthersText.getTrimmedText(),
             !binding.switchActionDisabled.isChecked,
             destination
