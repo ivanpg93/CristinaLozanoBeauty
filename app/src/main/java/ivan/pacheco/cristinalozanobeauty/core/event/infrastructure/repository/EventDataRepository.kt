@@ -47,7 +47,7 @@ class EventDataRepository @Inject constructor(
 
             // Filter events only with end date time
             response.items
-                .filter { it.end?.dateTime != null }
+                .filter { it.end?.dateTime != null && it.creator?.self == true }
                 .map { item -> parseEvent(item) }
         }
     }
