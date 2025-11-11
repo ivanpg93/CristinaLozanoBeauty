@@ -481,6 +481,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
         val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
         var selectedService: Appointment.Service? = null
+        var oldClient: ClientListDTO? = null
 
         var currentDate = event?.date ?: selectedDate
         dateInput.setText(currentDate.toFormattedString())
@@ -534,14 +535,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             startTimeInput.setText(event.startTime.toString())
             endTimeInput.setText(event.endTime.toString())
 
-            selectedClient = clientList.find { client ->
+            // Identify selected original client
+            oldClient = clientList.find { client ->
                 "${client.firstName} ${client.lastName}" == event.text.substringBefore(" - ")
             }
-            clientInput.setText(listOfNotNull(selectedClient?.firstName, selectedClient?.lastName).joinToString(" "))
+            selectedClient = oldClient
+            clientInput.setText(oldClient?.let { "${it.firstName} ${it.lastName}" })
 
-            // Temporarily block TODO
-            clientInput.isEnabled = false
-
+            // Identify selected service
             selectedService = event.service
             serviceInput.setText(event.service?.toDisplayName())
         }
@@ -592,16 +593,43 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                         return@setOnClickListener
                     }
 
+                    // Check if event exists for update or create it
                     if (event != null) {
-                        val updatedEvent = event.copy(
-                            text = "$clientName - ${selectedService.toDisplayName()}",
-                            date = currentDate,
-                            startTime = LocalTime.parse(startTimeInput.text.toString(), formatter),
-                            endTime = LocalTime.parse(endTimeInput.text.toString(), formatter),
-                            service = selectedService
-                        )
-                        vm.actionUpdateEvent(updatedEvent)
+                        if (oldClient?.id != selectedClient?.id) {
+
+                            // Delete event related to old client
+                            vm.actionDeleteEvent(event.id)
+
+                            // Create event related to new selected client
+                            val newEvent = CalendarEventDTO(
+                                id = "",
+                                text = title,
+                                date = currentDate,
+                                startTime = startTime.toLocalTime(),
+                                endTime = endTime.toLocalTime(),
+                                service = selectedService,
+                            )
+                            selectedClient?.let { selectedClient ->
+                                vm.actionCreateEvent(newEvent, selectedClient)
+                            }
+                        } else {
+
+                            // Update event if selected client has not changed
+                            val updatedEvent = event.copy(
+                                text = "$clientName - ${selectedService.toDisplayName()}",
+                                date = currentDate,
+                                startTime = LocalTime.parse(
+                                    startTimeInput.text.toString(),
+                                    formatter
+                                ),
+                                endTime = LocalTime.parse(endTimeInput.text.toString(), formatter),
+                                service = selectedService
+                            )
+                            vm.actionUpdateEvent(updatedEvent)
+                        }
                     } else {
+
+                        // Create new event if not exists
                         val newEvent = CalendarEventDTO(
                             id = "",
                             text = title,
