@@ -87,7 +87,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private companion object {
         const val SCOPE_GOOGLE_CALENDAR = "https://www.googleapis.com/auth/calendar"
         const val TIME_FORMAT = "HH:mm"
-        const val LIMIT_MAX_EVENTS_FOR_CELL = 4
+        const val LIMIT_MAX_EVENTS_FOR_CELL = 5
     }
 
     private var _binding: FragmentHomeBinding? = null
