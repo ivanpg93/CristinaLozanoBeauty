@@ -39,11 +39,16 @@ class ColorHistoryListFragment: Fragment() {
         val adapter = ColorHistoryListAdapter(
             onItemSelected = { color -> navigate(Destination.ColorHistoryDetail(clientId, color.id)) },
             onItemDeleted = { color ->
-                DialogUtils.createDialog(
+                val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_color_title),
                     getString(R.string.dialog_delete_color_message)
                 ) { vm.actionDeleteColor(color) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             }
         )
         binding.rvColors.adapter = adapter

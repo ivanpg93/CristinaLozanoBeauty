@@ -113,7 +113,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         deleteAction = { event ->
 
             // Create dialog
-            val dialog = DialogUtils.createDialog(
+            val (dialog, applyColors) = DialogUtils.createDialog(
                 requireContext(),
                 getString(R.string.dialog_calendar_event_delete_message),
                 String.format("%s - %s", event.text, event.startTime)
@@ -121,8 +121,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
             // Customize listener for buttons
             dialog.setOnShowListener {
+
+                // Colors for buttons
+                applyColors()
+
+                // Positive action
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     dialog.dismiss()
+                    vm.actionDeleteEvent(event.id)
                 }
             }
 

@@ -43,11 +43,16 @@ class ClientListFragment: Fragment() {
         val adapter = ClientListAdapter(
             onItemSelected = { client -> navigate(Destination.ClientDetail(client.id)) },
             onItemDeleted = { client ->
-                DialogUtils.createDialog(
+                val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_client_title),
                     getString(R.string.dialog_delete_client_message)
                 ) { vm.actionDeleteClient(client) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             }
         )
         binding.rvClients.adapter = adapter

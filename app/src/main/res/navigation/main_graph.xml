@@ -18,6 +18,14 @@
             app:destination="@id/clientDetailFragment" />
     </fragment>
 
+    <!--Message reminder-->
+    <fragment
+        android:id="@+id/messageReminderFragment"
+        android:label="@string/nav_bar_message_reminder"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageReminderFragment"
+        tools:layout="@layout/fragment_message_reminder">
+    </fragment>
+
     <!--Client list-->
     <fragment
         android:id="@+id/clientListFragment"
@@ -127,14 +135,6 @@
         <argument
             android:name="clientId"
             app:argType="string" />
-    </fragment>
-
-    <!--Message-->
-    <fragment
-        android:id="@+id/messageReminderFragment"
-        android:label="@string/nav_bar_message_reminder"
-        android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageReminderFragment"
-        tools:layout="@layout/fragment_message_reminder">
     </fragment>
 
 </navigation>

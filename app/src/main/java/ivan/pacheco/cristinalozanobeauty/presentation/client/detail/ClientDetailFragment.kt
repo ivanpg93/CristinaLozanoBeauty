@@ -146,7 +146,7 @@ class ClientDetailFragment: Fragment() {
         }
 
         // Create dialog
-        val dialog = DialogUtils.createDialog(
+        val (dialog, applyColors) = DialogUtils.createDialog(
             requireContext(),
             getString(R.string.client_form_save_changes_title),
             getString(R.string.client_form_save_changes)
@@ -154,7 +154,13 @@ class ClientDetailFragment: Fragment() {
 
         // Customize listener for buttons
         dialog.setOnShowListener {
+
+            // Colors for buttons
+            applyColors()
+
+            // Cancel action
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                dialog.dismiss()
                 navigate(destination)
             }
         }

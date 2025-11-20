@@ -13,7 +13,9 @@ object DialogUtils {
         message: String,
         color: Int = ContextCompat.getColor(context, R.color.gold),
         action: () -> Unit
-    ): AlertDialog {
+    ): Pair<AlertDialog, () -> Unit> {
+
+        // Build dialog
         val dialog = AlertDialog.Builder(context)
             .setTitle(title)
             .setMessage(message)
@@ -22,13 +24,12 @@ object DialogUtils {
             .create()
 
         // Set color of buttons
-        dialog.setOnShowListener {
+        val applyColors: () -> Unit = {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(color)
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(color)
         }
 
-        dialog.show()
-        return dialog
+        return dialog to applyColors
     }
 
     fun showSuccess(

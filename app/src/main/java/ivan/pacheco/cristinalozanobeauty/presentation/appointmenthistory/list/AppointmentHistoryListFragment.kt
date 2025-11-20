@@ -42,11 +42,16 @@ class AppointmentHistoryListFragment: Fragment() {
             },
             onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
             onItemDeleted = { appointment ->
-                DialogUtils.createDialog(
+                val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_appointment_title),
                     getString(R.string.dialog_delete_appointment_message)
                 ) { vm.actionDeleteAppointment(appointment) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             }
         )
         binding.rvMadeAppointments.adapter = madeAdapter
@@ -58,11 +63,16 @@ class AppointmentHistoryListFragment: Fragment() {
             },
             onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
             onItemDeleted = { appointment ->
-                DialogUtils.createDialog(
+                val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_appointment_title),
                     getString(R.string.dialog_delete_appointment_message)
                 ) { vm.actionDeleteAppointment(appointment) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             }
         )
         binding.rvPendingAppointments.adapter = pendingAdapter
