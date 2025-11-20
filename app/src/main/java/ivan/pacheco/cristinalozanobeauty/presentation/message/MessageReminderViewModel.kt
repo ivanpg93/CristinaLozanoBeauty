@@ -16,10 +16,12 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.webserv
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendAppointmentReminderUC
+import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendBirthdayReminderUC
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendNextAppointmentReminderUC
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +29,8 @@ class MessageReminderViewModel@Inject constructor(
     private val clientRepository: ClientRepository,
     private val appointmentRepository: AppointmentRepository,
     private val sendNextAppointmentReminderUC: SendNextAppointmentReminderUC,
-    private val sendAppointmentReminderUC: SendAppointmentReminderUC
+    private val sendAppointmentReminderUC: SendAppointmentReminderUC,
+    private val sendBirthdayReminderUC: SendBirthdayReminderUC
 ): ViewModel() {
 
     // LiveData
@@ -35,12 +38,14 @@ class MessageReminderViewModel@Inject constructor(
     private val errorLD = SingleLiveEvent<Int>()
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val appointmentClientListLD = MutableLiveData<List<AppointmentClient>>()
+    private val clientBirthdayListLD = MutableLiveData<List<ClientListDTO>>()
 
     // Getters
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
     fun getClientsLD(): LiveData<List<ClientListDTO>> = clientsLD
     fun getAppointmentClientListLD(): LiveData<List<AppointmentClient>> = appointmentClientListLD
+    fun getClientBirthdayListLD(): LiveData<List<ClientListDTO>> = clientBirthdayListLD
 
     init {
         loadClients()
@@ -69,7 +74,36 @@ class MessageReminderViewModel@Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableSingleObserver<List<AppointmentClient>>() {
                 override fun onSuccess(appointments: List<AppointmentClient>) { appointmentClientListLD.value = appointments }
-                override fun onError(e: Throwable) { errorLD.value = R.string.message_appointment_not_found }
+                override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_appointment_not_found }
+            })
+    }
+
+    fun loadBirthdaysForDate(date: LocalDate) {
+        clientRepository.list()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
+                override fun onSuccess(clients: List<ClientListDTO>) {
+                    clientBirthdayListLD.value = clients.filter { client ->
+                        val birthdayLocalDate = client.birthday
+                            ?.toInstant()
+                            ?.atZone(ZoneId.systemDefault())
+                            ?.toLocalDate()
+                        birthdayLocalDate?.dayOfMonth == date.dayOfMonth &&
+                                birthdayLocalDate.month == date.month
+                    }
+                }
+                override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_appointment_not_found }
+            })
+    }
+
+    fun actionSendBirthdayReminder(client: ClientListDTO) {
+        sendBirthdayReminderUC.execute(client)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableCompletableObserver() {
+                override fun onComplete() {} // Do nothing
+                override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_sending_reminder_error }
             })
     }
 
@@ -79,7 +113,7 @@ class MessageReminderViewModel@Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableCompletableObserver() {
                 override fun onComplete() {} // Do nothing
-                override fun onError(e: Throwable) { errorLD.value = R.string.message_sending_reminder_error }
+                override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_sending_reminder_error }
             })
     }
 
@@ -91,8 +125,8 @@ class MessageReminderViewModel@Inject constructor(
                 override fun onComplete() {} // Do nothing
                 override fun onError(e: Throwable) {
                     when(e) {
-                        is AppointmentNotFound -> errorLD.value = R.string.message_appointment_not_found
-                        else -> errorLD.value = R.string.message_sending_reminder_error
+                        is AppointmentNotFound -> errorLD.value = R.string.message_reminder_appointment_not_found
+                        else -> errorLD.value = R.string.message_reminder_sending_reminder_error
                     }
                 }
             })

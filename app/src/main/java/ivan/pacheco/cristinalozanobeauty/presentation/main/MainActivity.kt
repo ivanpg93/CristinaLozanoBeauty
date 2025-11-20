@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         val topLevelDestinations = setOf(
             R.id.homeFragment,
             R.id.clientListFragment,
-            R.id.messageFragment
+            R.id.messageReminderFragment
         )
 
         val appBarConfiguration = AppBarConfiguration(topLevelDestinations)

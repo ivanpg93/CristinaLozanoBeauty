@@ -2,7 +2,7 @@
     <string name="app_name">Cristina Lozano Beauty</string>
     <string name="nav_bar_home">Inicio</string>
     <string name="nav_bar_client">Clientas</string>
-    <string name="nav_bar_message">Mensajes</string>
+    <string name="nav_bar_message_reminder">Recordatorios</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="error">Error</string>
@@ -10,12 +10,6 @@
     <string name="information">Información</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-
-    <!--Message-->
-    <string name="message_label_name">Nombre:</string>
-    <string name="message_label_phone">Teléfono:</string>
-    <string name="message_label_appointment_time">Hora de la visita:</string>
-    <string name="message_action_send">Enviar</string>
 
     <!--Home-->
     <string name="home_events">Eventos</string>
@@ -124,10 +118,14 @@
     <string name="calendar_event_form_error_update">No se ha podido modificar la cita</string>
     <string name="calendar_event_form_error_delete">No se ha podido eliminar la cita</string>
 
-    <!--Message-->
-    <string name="message_select_client">Selecciona una clienta</string>
-    <string name="message_appointment_not_found">No hay ninguna cita pendiente relacionada con esta clienta</string>
-    <string name="message_sending_reminder_error">Error al enviar el recordatorio</string>
-    <string name="message_reminder_appointment">Hola %s!\nRecordatorio de tu cita con Cristina Lozano Beauty en estética e imatge: día %s a las %s.\n\nConsulta o cambia tu cita escribiéndonos a este Whatsapp \uD83D\uDE03</string>
+    <!--Message reminder-->
+    <string name="message_reminder_label_birthday">Cumpleaños</string>
+    <string name="message_reminder_action_send">Enviar</string>
+    <string name="message_reminder_select_client">Selecciona una clienta</string>
+    <string name="message_reminder_appointment_not_found">No hay ninguna cita pendiente relacionada con esta clienta</string>
+    <string name="message_reminder_sending_reminder_error">Error al enviar el recordatorio</string>
+    <string name="message_reminder_sending_birthday_greeting_error">Error al enviar la felicitación de cumpleaños</string>
+    <string name="message_reminder_appointment_message">Hola %s!\nRecordatorio de tu cita con Cristina Lozano Beauty en estética e imatge: día %s a las %s.\n\nConsulta o cambia tu cita escribiéndonos a este Whatsapp \uD83D\uDE03</string>
+    <string name="message_reminder_birthday_message">Hola %s!\nDesde Cristina Lozano Beauty queremos felicitarte por tu cumpleaños\n¡Muchas felicidades! \uD83D\uDE03</string>
 
 </resources>

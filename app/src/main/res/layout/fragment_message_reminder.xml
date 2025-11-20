@@ -67,7 +67,7 @@
                     android:src="@drawable/ic_navigation_back" />
             </LinearLayout>
 
-            <!--List-->
+            <!--Client list-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_appointments"
                 android:layout_width="match_parent"
@@ -80,7 +80,22 @@
                 android:id="@+id/btn_send_message"
                 style="@style/Button"
                 android:layout_marginVertical="@dimen/margin"
-                android:text="@string/message_action_send" />
+                android:text="@string/message_reminder_action_send" />
+
+            <TextView
+                style="@style/FormText"
+                android:layout_marginBottom="@dimen/sbMarginVertical"
+                android:text="@string/message_reminder_label_birthday"
+                android:textColor="@color/gold"
+                android:textSize="22sp" />
+
+            <!--Client birthday list-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_birthdays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_client_birthday" />
 
         </LinearLayout>
     </ScrollView>

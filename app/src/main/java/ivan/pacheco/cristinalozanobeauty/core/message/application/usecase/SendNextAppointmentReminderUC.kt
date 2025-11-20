@@ -49,7 +49,7 @@ class SendNextAppointmentReminderUC @Inject constructor(
                         )
 
                         // Build message
-                        val message = context.getString(R.string.message_reminder_appointment, formattedDate, formattedTime)
+                        val message = context.getString(R.string.message_reminder_appointment_message, formattedDate, formattedTime)
 
                         // WorkManager data
                         val phoneNumber = client.phone.removePrefix("+")

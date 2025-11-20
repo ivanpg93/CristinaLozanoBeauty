@@ -29,6 +29,7 @@ class ClientDataRepository @Inject constructor(
                             client.firstName,
                             client.lastName,
                             client.phone,
+                            client.birthday,
                             client.enabled
                         )
                     }.sortedBy { it.firstName }

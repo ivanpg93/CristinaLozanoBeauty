@@ -54,10 +54,20 @@ class MessageReminderFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = AppointmentClientListAdapter({ appointmentClient ->
+        // Selected date
+        applySelectedDate(selectedDate)
+
+        // Appointments
+        val appointmentAdapter = AppointmentClientListAdapter({ appointmentClient ->
             vm.actionSendAppointmentReminder(appointmentClient)
         })
-        binding.rvAppointments.adapter = adapter
+        binding.rvAppointments.adapter = appointmentAdapter
+
+        // Clients
+        val birthdayAdapter = ClientBirthdayListAdapter({ clientBirthday ->
+            vm.actionSendBirthdayReminder(clientBirthday)
+        })
+        binding.rvBirthdays.adapter = birthdayAdapter
 
         // Clients
         vm.getClientsLD().observe(viewLifecycleOwner) { clients -> clientList = clients }
@@ -70,21 +80,28 @@ class MessageReminderFragment: Fragment() {
 
         // Appointments
         vm.getAppointmentClientListLD().observe(viewLifecycleOwner) { list ->
-            val formatted = selectedDate.format(formatter)
-            binding.txtSelectedDate.text = formatted.replaceFirstChar { it.uppercase() }
-            adapter.reload(list)
+            appointmentAdapter.reload(list)
+        }
+
+        // Birthdays
+        vm.getClientBirthdayListLD().observe(viewLifecycleOwner) { clientBirthdays ->
+            birthdayAdapter.reload(clientBirthdays)
         }
 
         // Button previous day
         binding.btnPreviousDay.setOnClickListener {
             selectedDate = selectedDate.minusDays(1)
+            applySelectedDate(selectedDate)
             vm.loadAppointmentsForDate(selectedDate)
+            vm.loadBirthdaysForDate(selectedDate)
         }
 
         // Button next day
         binding.btnNextDay.setOnClickListener {
             selectedDate = selectedDate.plusDays(1)
+            applySelectedDate(selectedDate)
             vm.loadAppointmentsForDate(selectedDate)
+            vm.loadBirthdaysForDate(selectedDate)
         }
 
         // Button send message
@@ -97,13 +114,19 @@ class MessageReminderFragment: Fragment() {
             { selectedClient = it }
         )
 
-        // Load appointments from tomorrow by default
+        // Load appointments and birthdays from tomorrow by default
         vm.loadAppointmentsForDate(selectedDate)
+        vm.loadBirthdaysForDate(selectedDate)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun applySelectedDate(date: LocalDate) {
+        val formatted = selectedDate.format(formatter)
+        binding.txtSelectedDate.text = formatted.replaceFirstChar { it.uppercase() }
     }
 
     private fun sendMessage(client: ClientListDTO?) {
@@ -112,7 +135,7 @@ class MessageReminderFragment: Fragment() {
         hide(binding.btnSendMessage)
 
         if (client == null) {
-            showError(requireContext(), getString(R.string.message_select_client))
+            showError(requireContext(), getString(R.string.message_reminder_select_client))
             return
         }
 

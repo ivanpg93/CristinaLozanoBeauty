@@ -131,8 +131,8 @@
 
     <!--Message-->
     <fragment
-        android:id="@+id/messageFragment"
-        android:label="@string/nav_bar_message"
+        android:id="@+id/messageReminderFragment"
+        android:label="@string/nav_bar_message_reminder"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.message.MessageReminderFragment"
         tools:layout="@layout/fragment_message_reminder">
     </fragment>

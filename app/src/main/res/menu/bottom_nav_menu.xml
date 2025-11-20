@@ -11,8 +11,8 @@
         android:title="@string/nav_bar_client" />
 
     <item
-        android:id="@+id/messageFragment"
-        android:icon="@drawable/ic_message_selector"
-        android:title="@string/nav_bar_message" />
+        android:id="@+id/messageReminderFragment"
+        android:icon="@drawable/ic_message_reminder_selector"
+        android:title="@string/nav_bar_message_reminder" />
 
 </menu>
