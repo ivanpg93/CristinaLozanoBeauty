@@ -84,6 +84,11 @@ class MainActivity : AppCompatActivity() {
 
         // Set fragments label as toolbar title
         navController.addOnDestinationChangedListener { _: NavController?, destination: NavDestination, _: Bundle? ->
+            val menuItem = binding.bottomNavigation.menu.findItem(destination.id)
+            if (menuItem != null) {
+                binding.bottomNavigation.selectedItemId = menuItem.itemId
+            }
+
             if (destination.id == R.id.homeFragment) {
                 toolbar.title = getString(R.string.app_name)
             } else {
