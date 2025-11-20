@@ -204,7 +204,7 @@ class ClientFormFragment: Fragment() {
             hasDiabetes,
             hasPoorCoagulation,
             binding.etOthersText.getTrimmedText(),
-            binding.etFrequencyText.getTrimmedText().toInt(),
+            binding.etFrequencyText.getTrimmedText().toIntOrNull() ?: 0,
         )
     }
 
