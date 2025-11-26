@@ -78,7 +78,7 @@ class MessageReminderViewModel@Inject constructor(
             })
     }
 
-    fun loadBirthdaysForDate(date: LocalDate) {
+    fun loadBirthdaysForDate(date: LocalDate = LocalDate.now()) {
         clientRepository.list()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

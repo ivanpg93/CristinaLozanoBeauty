@@ -93,7 +93,6 @@ class MessageReminderFragment: Fragment() {
             selectedDate = selectedDate.minusDays(1)
             applySelectedDate(selectedDate)
             vm.loadAppointmentsForDate(selectedDate)
-            vm.loadBirthdaysForDate(selectedDate)
         }
 
         // Button next day
@@ -101,7 +100,6 @@ class MessageReminderFragment: Fragment() {
             selectedDate = selectedDate.plusDays(1)
             applySelectedDate(selectedDate)
             vm.loadAppointmentsForDate(selectedDate)
-            vm.loadBirthdaysForDate(selectedDate)
         }
 
         // Button send message
@@ -114,9 +112,10 @@ class MessageReminderFragment: Fragment() {
             { selectedClient = it }
         )
 
-        // Load appointments and birthdays from tomorrow by default
+        // Load appointments from tomorrow by default
         vm.loadAppointmentsForDate(selectedDate)
-        vm.loadBirthdaysForDate(selectedDate)
+
+        vm.loadBirthdaysForDate()
     }
 
     override fun onDestroyView() {
