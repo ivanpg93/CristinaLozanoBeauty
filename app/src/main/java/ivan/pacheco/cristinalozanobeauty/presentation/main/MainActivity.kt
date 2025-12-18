@@ -1,11 +1,17 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.main
 
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.view.View
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
@@ -30,22 +36,41 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // BottomNavigation
+            binding.bottomNavigation.updatePadding(systemBars.bottom)
+
+            insets
+        }
+
+        WindowCompat.getInsetsController(window, binding.root)
+            .isAppearanceLightStatusBars = false
+
         // Load toolbar
         loadToolbar()
+
+        // Load bottom navigation
+        loadBottomNavBar()
 
         // Navigate back or close app if are on any of home screens
         onBackPressedDispatcher.addCallback(this) {
             if (!navController.popBackStack()) finish()
         }
 
-        // Load bottom navigation
-        loadBottomNavBar()
-
         // Customize status bar color
-        window.statusBarColor = ContextCompat.getColor(this, R.color.gold)
+        if (SDK_INT < Build.VERSION_CODES.R) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.gold)
+        }
     }
 
     override fun onDestroy() {
