@@ -24,7 +24,7 @@
 
     <!--Client list dialog-->
     <string name="dialog_delete_client_title">Eliminar clienta</string>
-    <string name="dialog_delete_client_message">¿Quieres eliminar la clienta?</string>
+    <string name="dialog_delete_client_message">¿Quieres eliminar la clienta %s?</string>
 
     <!--Client form-->
     <string name="client_form_title">Nueva clienta</string>
@@ -72,8 +72,7 @@
     <string name="appointment_history_list_error_delete">No se ha podido eliminar la cita</string>
 
     <!--Appointment history list dialog-->
-    <string name="dialog_delete_appointment_title">Eliminar cita</string>
-    <string name="dialog_delete_appointment_message">¿Quieres eliminar la cita?</string>
+    <string name="dialog_delete_appointment_title">¿Quieres eliminar la cita?</string>
 
     <!--Color history list-->
     <string name="color_history_list_title">Historial de colores</string>
@@ -82,8 +81,7 @@
     <string name="color_history_list_error_delete">No se ha podido eliminar el color</string>
 
     <!--Color history list dialog-->
-    <string name="dialog_delete_color_title">Eliminar color</string>
-    <string name="dialog_delete_color_message">¿Quieres eliminar el color?</string>
+    <string name="dialog_delete_color_title">¿Quieres eliminar el color?</string>
 
     <!--Color history form-->
     <string name="color_history_form_title">Nuevo color</string>

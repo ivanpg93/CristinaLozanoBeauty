@@ -12,6 +12,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentColorHistoryListBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 
@@ -42,7 +43,7 @@ class ColorHistoryListFragment: Fragment() {
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_color_title),
-                    getString(R.string.dialog_delete_color_message)
+                    String.format("%s - %s", color.brand?.toDisplayName(), color.reference)
                 ) { vm.actionDeleteColor(color) }
 
                 // Colors for buttons

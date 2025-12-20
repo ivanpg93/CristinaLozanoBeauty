@@ -1,10 +1,12 @@
 package ivan.pacheco.cristinalozanobeauty.di
 
-import android.app.Application
+import android.content.Context
 import androidx.work.WorkManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ivan.pacheco.cristinalozanobeauty.shared.remote.API
 import ivan.pacheco.cristinalozanobeauty.shared.remote.GoogleCalendarApi
@@ -19,8 +21,8 @@ object ServiceModule {
 
     @Singleton
     @Provides
-    fun providesWorkManager(application: Application): WorkManager =
-        WorkManager.getInstance(application)
+    fun providesWorkManager(@ApplicationContext context: Context): WorkManager =
+        WorkManager.getInstance(context)
 
     @Singleton
     @Provides
@@ -35,5 +37,10 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideGoogleCalendarApi(retrofit: Retrofit): GoogleCalendarApi = retrofit.create(GoogleCalendarApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics =
+        FirebaseAnalytics.getInstance(context)
 
 }

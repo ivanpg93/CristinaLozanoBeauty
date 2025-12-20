@@ -3,10 +3,15 @@ package ivan.pacheco.cristinalozanobeauty.core.client.application.usecase
 import io.reactivex.Completable
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
+import ivan.pacheco.cristinalozanobeauty.shared.analytics.domain.model.AnalyticsEvent
+import ivan.pacheco.cristinalozanobeauty.shared.analytics.domain.repository.AnalyticsRepository
 import java.util.Date
 import javax.inject.Inject
 
-class CreateClientUC @Inject constructor(private val repository: ClientRepository) {
+class CreateClientUC @Inject constructor(
+    private val repository: ClientRepository,
+    private val analyticsRepository: AnalyticsRepository
+) {
 
     fun execute(
         firstName: String,
@@ -44,7 +49,9 @@ class CreateClientUC @Inject constructor(private val repository: ClientRepositor
             others
         )
 
-        return repository.create(client)
+        return repository.create(client).doOnComplete {
+            analyticsRepository.logEvent(AnalyticsEvent.ClientCreated(client))
+        }
     }
 
 }

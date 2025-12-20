@@ -1,5 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.di
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,6 +28,8 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.UpdateColo
 import ivan.pacheco.cristinalozanobeauty.core.color.infrastructure.repository.ColorsHistoryDataRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import ivan.pacheco.cristinalozanobeauty.core.event.infrastructure.repository.EventDataRepository
+import ivan.pacheco.cristinalozanobeauty.shared.analytics.domain.repository.AnalyticsRepository
+import ivan.pacheco.cristinalozanobeauty.shared.analytics.infrastructure.AnalyticsDataRepository
 import ivan.pacheco.cristinalozanobeauty.shared.remote.GoogleCalendarApi
 import javax.inject.Singleton
 
@@ -67,7 +70,14 @@ object RepositoryModule {
         findWS: FindAppointmentWebService,
         createWS: CreateAppointmentWebService,
         updateWS: UpdateAppointmentWebService,
-        deleteWS: DeleteAppointmentWebService
-    ): AppointmentRepository = AppointmentDataRepository(listWS, findWS, createWS, updateWS, deleteWS)
+        deleteWS: DeleteAppointmentWebService,
+        analyticsRepository: AnalyticsRepository
+    ): AppointmentRepository = AppointmentDataRepository(listWS, findWS, createWS, updateWS, deleteWS, analyticsRepository)
+
+    @Provides
+    @Singleton
+    fun provideAnalyticsRepository(
+        firebaseAnalytics: FirebaseAnalytics
+    ): AnalyticsRepository = AnalyticsDataRepository(firebaseAnalytics)
 
 }

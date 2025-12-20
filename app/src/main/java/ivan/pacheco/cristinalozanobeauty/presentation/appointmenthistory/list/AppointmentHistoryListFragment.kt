@@ -9,8 +9,11 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentAppointmentHistoryListBinding
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toHour
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.toDisplayName
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 
@@ -45,7 +48,11 @@ class AppointmentHistoryListFragment: Fragment() {
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_appointment_title),
-                    getString(R.string.dialog_delete_appointment_message)
+                    String.format("%s - %s - %s",
+                        appointment.event?.service?.toDisplayName(),
+                        appointment.event?.startDateTime?.toHour(),
+                        appointment.event?.startDateTime?.toDate()
+                    )
                 ) { vm.actionDeleteAppointment(appointment) }
 
                 // Colors for buttons
@@ -66,7 +73,11 @@ class AppointmentHistoryListFragment: Fragment() {
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_appointment_title),
-                    getString(R.string.dialog_delete_appointment_message)
+                    String.format("%s - %s - %s",
+                        appointment.event?.service?.toDisplayName(),
+                        appointment.event?.startDateTime?.toHour(),
+                        appointment.event?.startDateTime?.toDate()
+                    )
                 ) { vm.actionDeleteAppointment(appointment) }
 
                 // Colors for buttons

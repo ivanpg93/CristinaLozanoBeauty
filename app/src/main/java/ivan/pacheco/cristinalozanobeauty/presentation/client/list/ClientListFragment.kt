@@ -46,7 +46,10 @@ class ClientListFragment: Fragment() {
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_delete_client_title),
-                    getString(R.string.dialog_delete_client_message)
+                    getString(
+                        R.string.dialog_delete_client_message,
+                        "${client.firstName} ${client.lastName}"
+                    )
                 ) { vm.actionDeleteClient(client) }
 
                 // Colors for buttons
