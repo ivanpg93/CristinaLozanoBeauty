@@ -101,7 +101,7 @@ class ClientDetailViewModel @Inject constructor(
                     clientLD.value = client
                     navigationLD.value = destination
                 }
-                override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }
+                override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_update }
             })
     }
 

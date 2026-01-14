@@ -9,6 +9,7 @@ sealed class Destination {
     data object ClientList : Destination()
     data class ClientDetail(val clientId: String) : Destination()
     data object ClientForm : Destination()
+    data class PdfSign(val clientId: String) : Destination()
     data object Message : Destination()
     data class ColorHistoryList(val clientId: String) : Destination()
     data class ColorHistoryDetail(val clientId: String, val colorId: String) : Destination()

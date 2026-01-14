@@ -304,6 +304,15 @@
                 app:thumbTint="@color/switch_thumb_tint"
                 app:trackTint="@color/switch_track_tint"/>
 
+            <!--Signin document-->
+            <TextView
+                android:id="@+id/txt_pdf_sign"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aceptar consentimiento menor de edad"
+                android:textSize="@dimen/textSize" />
+
             <!--Button save-->
             <Button
                 android:id="@+id/btn_save"

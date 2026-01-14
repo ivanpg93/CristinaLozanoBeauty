@@ -48,18 +48,31 @@
     <string name="client_form_select_service">Selecciona un servicio a realizar</string>
     <string name="client_form_has_diabetes">¿Tiene diabetes?</string>
     <string name="client_form_has_poor_coagulation">¿Tiene mala coagulación?</string>
+    <string name="client_form_accept_terms">He leído y acepto los <b>términos y condiciones</b></string>
+    <string name="terms_and_conditions">términos y condiciones</string>
     <string name="client_form_save_changes_title">Guardar cambios</string>
     <string name="client_form_save_changes">¿Quieres guardar los cambios antes de salir?</string>
 
     <!--Client form error-->
     <string name="client_form_error_phone">Introduce un teléfono correcto</string>
     <string name="client_form_error_mandatory_fields">Rellena todos los campos obligatorios antes de continuar</string>
+    <string name="client_form_error_accept_terms">Debes aceptar los términos y condiciones antes de continuar</string>
     <string name="client_form_error_create">No se ha podido registrar la clienta</string>
-    <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
-    <string name="client_detail_action_disabled">Archivar clienta</string>
 
     <!--Client detail-->
     <string name="client_detail_title">Clienta</string>
+    <string name="client_detail_action_disabled">Archivar clienta</string>
+    <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
+    <string name="client_detail_error_update">No se ha podido actualizar los datos de la clienta</string>
+
+    <!--Pdf sign-->
+    <string name="pdf_sign_title">Documento de consentimiento</string>
+    <string name="pdf_sign_client">Clienta</string>
+    <string name="pdf_sign_date">Fecha</string>
+    <string name="pdf_sign_signature">Firma</string>
+    <string name="pdf_sign_action_clear">Limpiar</string>
+    <string name="pdf_sign_action_sign">Firmar</string>
+    <string name="pdf_sign_mandatory_signature">La firma es obligatoria</string>
 
     <!--Appointment history list-->
     <string name="appointment_history_list_title">Historial de citas</string>

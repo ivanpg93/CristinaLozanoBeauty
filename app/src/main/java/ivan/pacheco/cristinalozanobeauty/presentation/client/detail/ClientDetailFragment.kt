@@ -1,6 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.client.detail
 
 import android.content.res.ColorStateList
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,6 +62,9 @@ class ClientDetailFragment: Fragment() {
             saveChangesDialog(Destination.Back)
         }
 
+        // Add underline text
+        binding.txtPdfSign.paintFlags = binding.txtPdfSign.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
 
@@ -83,6 +87,9 @@ class ClientDetailFragment: Fragment() {
 
         // Button events history
         binding.btnEventHistory.setOnClickListener { saveChangesDialog(Destination.AppointmentHistoryList(clientId)) }
+
+        // PDF sign
+        binding.txtPdfSign.setOnClickListener { navigate(Destination.PdfSign(clientId)) }
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction(Destination.Back) }
@@ -357,6 +364,13 @@ class ClientDetailFragment: Fragment() {
             is Destination.AppointmentHistoryList -> {
                 findNavController().navigate(
                     ClientDetailFragmentDirections.actionClientDetailFragmentToAppointmentHistoryListFragment(
+                        destination.clientId
+                    )
+                )
+            }
+            is Destination.PdfSign -> {
+                findNavController().navigate(
+                    ClientDetailFragmentDirections.actionClientDetailFragmentToPdfSignFragment(
                         destination.clientId
                     )
                 )

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--PDF Preview-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/pdf_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!--SignaturePad-->
+        <com.github.gcacace.signaturepad.views.SignaturePad
+            android:id="@+id/signature_pad"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/white" />
+
+        <!--Actions-->
+        <LinearLayout
+            android:id="@+id/pdf_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/buttonPadding"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_clear"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:text="@string/pdf_sign_action_clear" />
+
+            <Button
+                android:id="@+id/btn_sign"
+                style="@style/Button"
+                android:layout_width="wrap_content"
+                android:text="@string/pdf_sign_action_sign" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

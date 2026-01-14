@@ -21,7 +21,8 @@ data class Client(
     val frequency: Int = 0,
     val others: String = "",
     val appointmentList: List<Appointment> = listOf(),
-    var enabled: Boolean = true
+    var enabled: Boolean = true,
+    val minorUrlDocument: String = ""
 ) {
 
     enum class NailDisorder {
@@ -68,7 +69,8 @@ data class Client(
         "hasPoorCoagulation" to hasPoorCoagulation,
         "frequency" to frequency,
         "others" to others,
-        "enabled" to enabled
+        "enabled" to enabled,
+        "minorUrlDocument" to minorUrlDocument
     )
 
 }

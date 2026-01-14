@@ -2,6 +2,11 @@ package ivan.pacheco.cristinalozanobeauty.presentation.client.form
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +27,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.openUrl
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
@@ -30,6 +36,10 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 
 @AndroidEntryPoint
 class ClientFormFragment: Fragment() {
+
+    private companion object {
+        const val POLICY_URL = "https://policies.google.com/terms?hl=es" // TODO: Replace with real URL
+    }
 
     private var _binding: FragmentClientFormBinding? = null
     private val binding get() = _binding!!
@@ -111,6 +121,8 @@ class ClientFormFragment: Fragment() {
             Client.SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
         )
+
+        setupTermsAndConditionsLink()
     }
 
     override fun onDestroyView() {
@@ -186,6 +198,12 @@ class ClientFormFragment: Fragment() {
         // Check mandatory fields
         if (hasDiabetes == null || hasPoorCoagulation == null) {
             showAlert(R.string.client_form_error_mandatory_fields)
+            return
+        }
+
+        // Check terms
+        if (!binding.cbAcceptTerms.isChecked) {
+            showAlert(R.string.client_form_error_accept_terms)
             return
         }
 
@@ -274,6 +292,35 @@ class ClientFormFragment: Fragment() {
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
+    }
+
+    private fun setupTermsAndConditionsLink() {
+        val fullText = getString(R.string.client_form_accept_terms)
+        val clickablePart = getString(R.string.terms_and_conditions)
+
+        val spannable = SpannableString(fullText)
+
+        val start = fullText.indexOf(clickablePart)
+        val end = start + clickablePart.length
+
+        if (start >= 0) {
+            spannable.setSpan(
+                object: ClickableSpan() {
+                    override fun onClick(widget: View) { openUrl(POLICY_URL) }
+                    override fun updateDrawState(ds: TextPaint) {
+                        super.updateDrawState(ds)
+                        ds.isUnderlineText = true
+                        ds.color = ContextCompat.getColor(requireContext(), R.color.gold)
+                    }
+                },
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        binding.cbAcceptTerms.text = spannable
+        binding.cbAcceptTerms.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun navigate(destination: Destination) {

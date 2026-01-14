@@ -60,6 +60,11 @@
         <action
             android:id="@+id/action_clientDetailFragment_to_appointmentHistoryListFragment"
             app:destination="@id/appointmentHistoryListFragment" />
+
+        <!--Nav to pdf sign-->
+        <action
+            android:id="@+id/action_clientDetailFragment_to_pdfSignFragment"
+            app:destination="@id/pdfSignFragment" />
     </fragment>
 
     <!--Add client-->
@@ -68,6 +73,17 @@
         android:label="@string/client_form_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment"
         tools:layout="@layout/fragment_client_form">
+    </fragment>
+
+    <!--PDF Sign-->
+    <fragment
+        android:id="@+id/pdfSignFragment"
+        android:name="ivan.pacheco.cristinalozanobeauty.presentation.pdf.PdfSignFragment"
+        android:label="Firmar documento">
+
+        <argument
+            android:name="clientId"
+            app:argType="string" />
     </fragment>
 
     <!--Appointment history list-->
