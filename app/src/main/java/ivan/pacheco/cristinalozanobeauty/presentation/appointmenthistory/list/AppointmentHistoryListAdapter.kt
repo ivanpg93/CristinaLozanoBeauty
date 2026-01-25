@@ -8,7 +8,6 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 
 class AppointmentHistoryListAdapter(
-    private val onItemSelected: (Appointment) -> Unit,
     private val onItemUpdated: (Appointment) -> Unit,
     private val onItemDeleted: (Appointment) -> Unit
 ) : RecyclerView.Adapter<AppointmentHistoryListViewHolder>() {
@@ -23,7 +22,7 @@ class AppointmentHistoryListAdapter(
     }
 
     override fun onBindViewHolder(holder: AppointmentHistoryListViewHolder, position: Int) {
-        holder.bind(appointmentHistoryList[position], onItemSelected, onItemUpdated, onItemDeleted)
+        holder.bind(appointmentHistoryList[position], onItemUpdated, onItemDeleted)
     }
 
     override fun getItemCount(): Int = appointmentHistoryList.size

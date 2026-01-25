@@ -40,10 +40,23 @@ class AppointmentHistoryListFragment: Fragment() {
 
         // Past appointments
         val madeAdapter = AppointmentHistoryListAdapter(
-            onItemSelected = { appointment ->
-                // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
+            onItemUpdated = { appointment ->
+                val (dialog, applyColors) = DialogUtils.createDialog(
+                    requireContext(),
+                    getString(R.string.dialog_update_attendance_appointment_title),
+                    String.format(
+                        "%s - %s - %s",
+                        appointment.event?.service?.toDisplayName(),
+                        appointment.event?.startDateTime?.toHour(),
+                        appointment.event?.startDateTime?.toDate()
+                    )
+                ) { vm.actionUpdateAppointment(appointment) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             },
-            onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
             onItemDeleted = { appointment ->
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
@@ -65,10 +78,23 @@ class AppointmentHistoryListFragment: Fragment() {
 
         // Pending appointments
         val pendingAdapter = AppointmentHistoryListAdapter(
-            onItemSelected = { appointment ->
-                // TODO: navigate(Destination.ColorHistoryDetail(clientId, appointment.id))
+            onItemUpdated = { appointment ->
+                val (dialog, applyColors) = DialogUtils.createDialog(
+                    requireContext(),
+                    getString(R.string.dialog_update_attendance_appointment_title),
+                    String.format(
+                        "%s - %s - %s",
+                        appointment.event?.service?.toDisplayName(),
+                        appointment.event?.startDateTime?.toHour(),
+                        appointment.event?.startDateTime?.toDate()
+                    )
+                ) { vm.actionUpdateAppointment(appointment) }
+
+                // Colors for buttons
+                dialog.setOnShowListener { applyColors() }
+
+                dialog.show()
             },
-            onItemUpdated = { appointment -> vm.actionUpdateAppointment(appointment) },
             onItemDeleted = { appointment ->
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),

@@ -85,6 +85,7 @@
     <string name="appointment_history_list_error_delete">No se ha podido eliminar la cita</string>
 
     <!--Appointment history list dialog-->
+    <string name="dialog_update_attendance_appointment_title">¿Quieres actualizar la asistencia de la cita?</string>
     <string name="dialog_delete_appointment_title">¿Quieres eliminar la cita?</string>
 
     <!--Color history list-->

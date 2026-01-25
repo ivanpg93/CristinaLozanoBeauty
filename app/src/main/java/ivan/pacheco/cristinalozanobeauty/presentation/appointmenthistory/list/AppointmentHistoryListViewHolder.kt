@@ -17,7 +17,6 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
 
     fun bind(
         appointment: Appointment,
-        onItemSelected: (Appointment) -> Unit,
         onItemUpdated: (Appointment) -> Unit,
         onItemDeleted: (Appointment) -> Unit
     ) {
@@ -39,7 +38,6 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
             }
         }
         binding.btnDelete.setOnClickListener { onItemDeleted(appointment) }
-        binding.root.setOnClickListener { onItemSelected(appointment) }
     }
 
 }
