@@ -45,10 +45,11 @@ class EventDataRepository @Inject constructor(
                 )
             }
 
-            // Filter events only with end date time
+            // Filter events only with end date time that have been completed
             response.items
                 .filter { it.end?.dateTime != null && it.creator?.self == true }
                 .map { item -> parseEvent(item) }
+                .filter { it.assisted }
         }
     }
 
