@@ -11,7 +11,7 @@ data class CalendarEvent(
     val startDateTime: String = "",
     val endDateTime: String = "",
     val service: Appointment.Service? = null,
-    var assisted: Boolean = true
+    val assisted: Boolean = true
 ) {
 
     fun mapToDTO(): CalendarEventDTO {

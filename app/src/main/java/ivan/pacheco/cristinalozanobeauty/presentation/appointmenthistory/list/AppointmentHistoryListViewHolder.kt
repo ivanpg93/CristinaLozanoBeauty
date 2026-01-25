@@ -31,12 +31,8 @@ class AppointmentHistoryListViewHolder(view: View) : RecyclerView.ViewHolder(vie
         }
         binding.txtTime.text = String.format("%s - %s", event?.startDateTime?.toHour(), event?.endDateTime?.toHour())
         binding.txtDate.text = event?.startDateTime?.toDate().toString()
-        binding.ivAssisted.setOnClickListener {
-            event?.let { event ->
-                event.assisted = !event.assisted
-                onItemUpdated(appointment)
-            }
-        }
+
+        binding.ivAssisted.setOnClickListener { onItemUpdated(appointment) }
         binding.btnDelete.setOnClickListener { onItemDeleted(appointment) }
     }
 

@@ -109,7 +109,21 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 }
         },
         onClick = { event -> showEventDialog(selectedDate, event) },
-        assistedAction = { event -> vm.actionUpdateEvent(event) },
+        assistedAction = { event ->
+            val (dialog, applyColors) = DialogUtils.createDialog(
+                requireContext(),
+                getString(R.string.dialog_update_attendance_appointment_title),
+                String.format("%s - %s", event.text, event.startTime)
+            ) {
+                val updatedEvent = event.copy(assisted = !event.assisted)
+                vm.actionUpdateEvent(updatedEvent)
+            }
+
+            // Colors for buttons
+            dialog.setOnShowListener { applyColors() }
+
+            dialog.show()
+        },
         deleteAction = { event ->
 
             // Create dialog

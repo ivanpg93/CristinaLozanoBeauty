@@ -41,16 +41,22 @@ class AppointmentHistoryListFragment: Fragment() {
         // Past appointments
         val madeAdapter = AppointmentHistoryListAdapter(
             onItemUpdated = { appointment ->
+                val event = appointment.event ?: return@AppointmentHistoryListAdapter
+
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_update_attendance_appointment_title),
                     String.format(
                         "%s - %s - %s",
-                        appointment.event?.service?.toDisplayName(),
-                        appointment.event?.startDateTime?.toHour(),
-                        appointment.event?.startDateTime?.toDate()
+                        event.service?.toDisplayName(),
+                        event.startDateTime.toHour(),
+                        event.startDateTime.toDate()
                     )
-                ) { vm.actionUpdateAppointment(appointment) }
+                ) {
+                    val updatedEvent = event.copy(assisted = !event.assisted)
+                    val updatedAppointment = appointment.copy(event = updatedEvent)
+                    vm.actionUpdateAppointment(updatedAppointment)
+                }
 
                 // Colors for buttons
                 dialog.setOnShowListener { applyColors() }
@@ -79,16 +85,22 @@ class AppointmentHistoryListFragment: Fragment() {
         // Pending appointments
         val pendingAdapter = AppointmentHistoryListAdapter(
             onItemUpdated = { appointment ->
+                val event = appointment.event ?: return@AppointmentHistoryListAdapter
+
                 val (dialog, applyColors) = DialogUtils.createDialog(
                     requireContext(),
                     getString(R.string.dialog_update_attendance_appointment_title),
                     String.format(
                         "%s - %s - %s",
-                        appointment.event?.service?.toDisplayName(),
-                        appointment.event?.startDateTime?.toHour(),
-                        appointment.event?.startDateTime?.toDate()
+                        event.service?.toDisplayName(),
+                        event.startDateTime.toHour(),
+                        event.startDateTime.toDate()
                     )
-                ) { vm.actionUpdateAppointment(appointment) }
+                ) {
+                    val updatedEvent = event.copy(assisted = !event.assisted)
+                    val updatedAppointment = appointment.copy(event = updatedEvent)
+                    vm.actionUpdateAppointment(updatedAppointment)
+                }
 
                 // Colors for buttons
                 dialog.setOnShowListener { applyColors() }
@@ -146,12 +158,6 @@ class AppointmentHistoryListFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun navigate(destination: Destination) {
-        when (destination) {
-            else -> {} // Do nothing
-        }
     }
 
 }

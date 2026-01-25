@@ -47,12 +47,7 @@ class EventsAdapter(
 
             binding.txtEventTime.text = String.format("%s - %s", calendarEventDTO.startTime, calendarEventDTO.endTime)
 
-            binding.ivAssisted.setOnClickListener {
-                calendarEventDTO.assisted = !calendarEventDTO.assisted
-                assistedAction(calendarEventDTO)
-                notifyItemChanged(bindingAdapterPosition)
-            }
-
+            binding.ivAssisted.setOnClickListener { assistedAction(calendarEventDTO) }
             binding.txtEventTitle.setOnClickListener { onDetailClick(calendarEventDTO) }
             binding.txtEventTime.setOnClickListener { onClick(calendarEventDTO) }
             binding.btnDelete.setOnClickListener { deleteAction(calendarEventDTO) }
