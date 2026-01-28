@@ -27,7 +27,8 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.openUrl
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.getPdfFromAssets
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.openPdf
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
@@ -38,7 +39,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAu
 class ClientFormFragment: Fragment() {
 
     private companion object {
-        const val POLICY_URL = "https://policies.google.com/terms?hl=es" // TODO: Replace with real URL
+        const val PRIVACY_POLICY_FILE = "privacy_policy.pdf"
     }
 
     private var _binding: FragmentClientFormBinding? = null
@@ -306,7 +307,7 @@ class ClientFormFragment: Fragment() {
         if (start >= 0) {
             spannable.setSpan(
                 object: ClickableSpan() {
-                    override fun onClick(widget: View) { openUrl(POLICY_URL) }
+                    override fun onClick(widget: View) { openPdf(requireContext().getPdfFromAssets(PRIVACY_POLICY_FILE)) }// openPrivacyPolicy() }
                     override fun updateDrawState(ds: TextPaint) {
                         super.updateDrawState(ds)
                         ds.isUnderlineText = true

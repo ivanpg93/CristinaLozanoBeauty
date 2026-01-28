@@ -8,6 +8,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,12 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentPdfSignBinding
-import ivan.pacheco.cristinalozanobeauty.presentation.client.detail.ClientDetailFragmentDirections
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.openPdf
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import java.io.File
-import java.io.OutputStream
 
 @AndroidEntryPoint
 class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
@@ -48,7 +47,7 @@ class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
 
             val pfd: ParcelFileDescriptor? = if (hasSignedPdf) {
                 try {
-                    val uri = android.net.Uri.parse(client.minorUrlDocument)
+                    val uri = client.minorUrlDocument.toUri()
                     requireContext().contentResolver.openFileDescriptor(uri, "r")
                 } catch (e: Exception) {
                     e.printStackTrace()

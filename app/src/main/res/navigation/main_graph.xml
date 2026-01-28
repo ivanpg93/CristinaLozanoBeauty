@@ -72,8 +72,7 @@
         android:id="@+id/clientFormFragment"
         android:label="@string/client_form_title"
         android:name="ivan.pacheco.cristinalozanobeauty.presentation.client.form.ClientFormFragment"
-        tools:layout="@layout/fragment_client_form">
-    </fragment>
+        tools:layout="@layout/fragment_client_form" />
 
     <!--PDF Sign-->
     <fragment

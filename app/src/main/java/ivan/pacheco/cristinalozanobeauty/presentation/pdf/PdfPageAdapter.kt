@@ -1,11 +1,11 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.pdf
 
-import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.graphics.createBitmap
 import androidx.recyclerview.widget.RecyclerView
 import ivan.pacheco.cristinalozanobeauty.R
 
@@ -23,12 +23,7 @@ class PdfPageAdapter(
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         val page = renderer.openPage(position)
-
-        val bitmap = Bitmap.createBitmap(
-            page.width,
-            page.height,
-            Bitmap.Config.ARGB_8888
-        )
+        val bitmap = createBitmap(page.width, page.height)
 
         page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         page.close()
@@ -38,11 +33,6 @@ class PdfPageAdapter(
 
     class PageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.imagePage)
-    }
-
-    fun updateRenderer(newRenderer: PdfRenderer) {
-        renderer = newRenderer
-        notifyDataSetChanged()
     }
 
 }
