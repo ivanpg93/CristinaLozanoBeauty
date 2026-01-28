@@ -2,6 +2,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.pdf
 
 import android.content.ContentValues
 import android.graphics.pdf.PdfRenderer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.ParcelFileDescriptor
@@ -25,6 +26,10 @@ import java.io.File
 @AndroidEntryPoint
 class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
 
+    private companion object {
+        const val APPLICATION_PDF = "application/pdf"
+    }
+
     private lateinit var renderer: PdfRenderer
     private lateinit var parcelFileDescriptor: ParcelFileDescriptor
     private val args: PdfSignFragmentArgs by navArgs()
@@ -33,46 +38,25 @@ class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val binding = FragmentPdfSignBinding.bind(view)
-        vm.actionLoadClient(args.clientId)
-
         val pdfGenerator = PdfGenerator(requireContext())
+
+
+        vm.actionLoadClient(args.clientId)
 
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
 
+        // Client
         vm.getClientLD().observe(viewLifecycleOwner) { client ->
-            val hasSignedPdf = client.minorUrlDocument.isNotBlank()
-            binding.signaturePad.visibility = if (hasSignedPdf) View.GONE else View.VISIBLE
-            binding.pdfActions.visibility = if (hasSignedPdf) View.GONE else View.VISIBLE
-
-            val pfd: ParcelFileDescriptor? = if (hasSignedPdf) {
-                try {
-                    val uri = client.minorUrlDocument.toUri()
-                    requireContext().contentResolver.openFileDescriptor(uri, "r")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }
-            } else {
-                basePdf = pdfGenerator.generateUnsignedPdf(client)
-                ParcelFileDescriptor.open(basePdf, ParcelFileDescriptor.MODE_READ_ONLY)
-            }
-
-            pfd?.let {
-                renderPdfFromPfd(binding, it)
-            } ?: run {
-                Toast.makeText(
-                    requireContext(),
-                    "No se pudo cargar el PDF",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            basePdf = pdfGenerator.generateUnsignedPdf(client)
+            val pfd = ParcelFileDescriptor.open(basePdf, ParcelFileDescriptor.MODE_READ_ONLY)
+            renderPdfFromPfd(binding, pfd)
         }
 
-        binding.btnClear.setOnClickListener {
-            binding.signaturePad.clear()
-        }
+        // Clear signature
+        binding.btnClear.setOnClickListener { binding.signaturePad.clear() }
 
+        // Sign document
         binding.btnSign.setOnClickListener {
             if (binding.signaturePad.isEmpty) {
                 showAlert(R.string.pdf_sign_mandatory_signature)
@@ -84,26 +68,17 @@ class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
                 binding.signaturePad.signatureBitmap
             )
 
-            val pdfUri = savePdfToDocuments(signedPdf)
+            val pdfUri = Uri.fromFile(signedPdf)
+            vm.actionSaveSignedPdf(args.clientId, pdfUri)
 
-            if (pdfUri != null) {
-                vm.actionSaveSignedPdf(args.clientId, pdfUri)
-
-                openPdf(signedPdf)
-                findNavController().popBackStack()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Error al guardar PDF",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            openPdf(signedPdf)
+            findNavController().popBackStack()
         }
     }
 
     override fun onDestroyView() {
-        renderer.close()
-        parcelFileDescriptor.close()
+        if (::renderer.isInitialized) { renderer.close() }
+        if (::parcelFileDescriptor.isInitialized) { parcelFileDescriptor.close() }
         super.onDestroyView()
     }
 
@@ -117,29 +92,6 @@ class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
         binding.pdfView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = PdfPageAdapter(renderer)
-        }
-    }
-
-    private fun savePdfToDocuments(file: File): String? {
-        return try {
-            val resolver = requireContext().contentResolver
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-                put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS)
-            }
-
-            val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
-
-            uri?.let {
-                resolver.openOutputStream(it)?.use { out ->
-                    file.inputStream().copyTo(out)
-                }
-                it.toString()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 

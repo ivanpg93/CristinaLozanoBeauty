@@ -1,5 +1,6 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.pdf
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientDocumentRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PdfSignViewModel @Inject constructor(
-    private val clientRepository: ClientRepository
+    private val clientRepository: ClientRepository,
+    private val documentRepository: ClientDocumentRepository
 ): ViewModel(), Navigation {
 
     override val navigationLD = SingleLiveEvent<Destination>()
@@ -41,17 +44,21 @@ class PdfSignViewModel @Inject constructor(
             })
     }
 
-    fun actionSaveSignedPdf(
-        clientId: String,
-        pdfUri: String
-    ) {
-        clientRepository.find(clientId)
+    fun actionSaveSignedPdf(clientId: String, pdfUri: Uri) {
+        documentRepository.uploadMinorConsent(clientId, pdfUri)
             .subscribeOn(Schedulers.io())
-            .flatMap { client ->
-                clientRepository.update(client.copy(minorUrlDocument = pdfUri))
+            .flatMap { storagePath ->
+                clientRepository.find(clientId)
+                    .flatMap { client ->
+                        clientRepository.update(
+                            client.copy(minorUrlDocument = storagePath)
+                        )
+                    }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object: DisposableSingleObserver<Client>() {
+            .doOnSubscribe { isLoadingLD.value = true }
+            .doFinally { isLoadingLD.value = false }
+            .subscribe(object : DisposableSingleObserver<Client>() {
                 override fun onSuccess(client: Client) { navigationLD.value = Destination.Back }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_find }
             })

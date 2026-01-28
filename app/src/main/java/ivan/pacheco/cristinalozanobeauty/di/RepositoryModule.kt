@@ -12,6 +12,7 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.Find
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.ListAppointmentWebService
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.webservice.UpdateAppointmentWebService
 import ivan.pacheco.cristinalozanobeauty.core.appointment.infrastructure.repository.AppointmentDataRepository
+import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientDocumentRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.CreateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.DeleteClientWebService
@@ -19,6 +20,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.FindClien
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.ListClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.webservice.UpdateClientWebService
 import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDataRepository
+import ivan.pacheco.cristinalozanobeauty.core.client.infrastructure.repository.ClientDocumentDataRepository
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.CreateColorHistoryWebService
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.webservice.DeleteColorHistoryWebService
@@ -46,6 +48,11 @@ object RepositoryModule {
         updateWS: UpdateClientWebService,
         deleteWS: DeleteClientWebService
     ): ClientRepository = ClientDataRepository(listWS, findWS, createWS, updateWS, deleteWS)
+
+    @Singleton
+    @Provides
+    fun providesClientDocumentRepository(): ClientDocumentRepository = ClientDocumentDataRepository()
+
 
     @Singleton
     @Provides

@@ -25,11 +25,13 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.isCorrectMobilePhone
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.openPdf
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAlert
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showError
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
+import kotlin.toString
 
 @AndroidEntryPoint
 class ClientDetailFragment: Fragment() {
@@ -82,6 +84,15 @@ class ClientDetailFragment: Fragment() {
             loadData(client)
         }
 
+        // Minor document signed
+        vm.getDocumentPathLD().observe(viewLifecycleOwner) { uri ->
+            if (!uri.isNullOrBlank()) {
+                openPdf(uri)
+            } else {
+                navigate(Destination.PdfSign(clientId))
+            }
+        }
+
         // Button colors history
         binding.btnColorHistory.setOnClickListener { saveChangesDialog(Destination.ColorHistoryList(clientId)) }
 
@@ -89,7 +100,7 @@ class ClientDetailFragment: Fragment() {
         binding.btnEventHistory.setOnClickListener { saveChangesDialog(Destination.AppointmentHistoryList(clientId)) }
 
         // PDF sign
-        binding.txtPdfSign.setOnClickListener { navigate(Destination.PdfSign(clientId)) }
+        binding.txtPdfSign.setOnClickListener { vm.actionLoadMinorConsentDocument(clientId) }
 
         // Button save client
         binding.btnSave.setOnClickListener { saveAction(Destination.Back) }

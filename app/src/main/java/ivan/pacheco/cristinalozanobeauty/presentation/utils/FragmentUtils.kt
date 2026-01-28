@@ -3,6 +3,7 @@ package ivan.pacheco.cristinalozanobeauty.presentation.utils
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import ivan.pacheco.cristinalozanobeauty.presentation.main.MainActivity
 import java.io.File
@@ -27,12 +28,18 @@ object FragmentUtils {
             "${requireContext().packageName}$PROVIDER",
             file
         )
-
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, APPLICATION_PDF)
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
+        startActivity(intent)
+    }
 
+    fun Fragment.openPdf(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(url.toUri(), APPLICATION_PDF)
+            flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
+        }
         startActivity(intent)
     }
 
@@ -49,7 +56,6 @@ object FragmentUtils {
                 input.copyTo(output)
             }
         }
-
         return outFile
     }
 
