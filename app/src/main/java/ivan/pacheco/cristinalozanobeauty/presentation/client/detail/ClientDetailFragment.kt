@@ -21,6 +21,7 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
@@ -31,7 +32,6 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showEr
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hide
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.KeyboardUtils.hideAutomatically
-import kotlin.toString
 
 @AndroidEntryPoint
 class ClientDetailFragment: Fragment() {
@@ -43,6 +43,7 @@ class ClientDetailFragment: Fragment() {
     private val selectedSkinDisorders = mutableSetOf<Client.SkinDisorder>()
     private lateinit var clientId: String
     private var originalClient: Client? = null
+    private var minorConsentPath: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,25 +86,7 @@ class ClientDetailFragment: Fragment() {
         }
 
         // Minor document signed
-        vm.getDocumentPathLD().observe(viewLifecycleOwner) { uri ->
-            if (!uri.isNullOrBlank()) {
-                openPdf(uri)
-            } else {
-                navigate(Destination.PdfSign(clientId))
-            }
-        }
-
-        // Button colors history
-        binding.btnColorHistory.setOnClickListener { saveChangesDialog(Destination.ColorHistoryList(clientId)) }
-
-        // Button events history
-        binding.btnEventHistory.setOnClickListener { saveChangesDialog(Destination.AppointmentHistoryList(clientId)) }
-
-        // PDF sign
-        binding.txtPdfSign.setOnClickListener { vm.actionLoadMinorConsentDocument(clientId) }
-
-        // Button save client
-        binding.btnSave.setOnClickListener { saveAction(Destination.Back) }
+        vm.getDocumentPathLD().observe(viewLifecycleOwner) { uri -> manageMinorConsentDocument(uri) }
 
         // Input phone
         val prefix = getString(R.string.client_form_prefix_phone)
@@ -128,6 +111,7 @@ class ClientDetailFragment: Fragment() {
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
                 binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
+                binding.layoutMinorConsent.visibility = if (checkIsAdult()) View.GONE else View.VISIBLE
             }
 
             datePicker.show(childFragmentManager, "")
@@ -148,6 +132,41 @@ class ClientDetailFragment: Fragment() {
             Client.SkinDisorder.entries.toTypedArray(),
             selectedSkinDisorders
         )
+
+        // Button colors history
+        binding.btnColorHistory.setOnClickListener { saveChangesDialog(Destination.ColorHistoryList(clientId)) }
+
+        // Button events history
+        binding.btnEventHistory.setOnClickListener { saveChangesDialog(Destination.AppointmentHistoryList(clientId)) }
+
+        // PDF sign
+        binding.txtPdfSign.setOnClickListener {
+            minorConsentPath?.takeIf { it.isNotBlank() }?.let { uri ->
+                openPdf(uri)
+            } ?: navigate(Destination.PdfSign(clientId))
+        }
+
+        // Button delete minor consent document
+        binding.btnDelete.setOnClickListener {
+            val (dialog, applyColors) = DialogUtils.createDialog(
+                requireContext(),
+                getString(R.string.client_detail_delete_minor_consent_title),
+                getString(R.string.client_detail_delete_minor_consent)
+            ) { vm.actionDeleteMinorConsentDocument(clientId) }
+
+            // Colors for buttons
+            dialog.setOnShowListener { applyColors() }
+
+            dialog.show()
+        }
+
+        // Button save client
+        binding.btnSave.setOnClickListener { saveAction(Destination.Back) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.actionLoadMinorConsentDocument()
     }
 
     override fun onDestroyView() {
@@ -225,9 +244,19 @@ class ClientDetailFragment: Fragment() {
         }
     }
 
+    private fun manageMinorConsentDocument(uri: String) {
+        minorConsentPath = uri
+        binding.layoutMinorConsent.visibility = if (checkIsAdult()) View.GONE else View.VISIBLE
+        binding.btnDelete.visibility = if (uri.isBlank()) View.GONE else View.VISIBLE
+        binding.txtPdfSign.text = if (uri.isBlank()) {
+            getString(R.string.client_detail_sign_minor_consent)
+        } else {
+            getString(R.string.client_detail_open_minor_consent)
+        }
+    }
+
     /**
-     * If there is value, it is displayed.
-     * If not, get date from 18 years ago is displayed
+     * If there is value, it is displayed otherwise return current day
      */
     private fun getInitialDate(dateStr: String): Long? {
         return dateStr.takeIf { it.isNotBlank() }?.let { DateUtils.parseDate(it)?.time }
@@ -269,6 +298,12 @@ class ClientDetailFragment: Fragment() {
             return
         }
 
+        // Check minor consent signed for children
+        if (!checkIsAdult() && minorConsentPath.isNullOrBlank()) {
+            showAlert(R.string.client_detail_error_sign_minor_consent)
+            return
+        }
+
         // Update client action
         vm.actionUpdateClient(
             binding.etNameText.getTrimmedText(),
@@ -286,6 +321,7 @@ class ClientDetailFragment: Fragment() {
             binding.etOthersText.getTrimmedText(),
             binding.etFrequencyText.getTrimmedText().toInt(),
             !binding.switchActionDisabled.isChecked,
+            minorConsentPath ?: "",
             destination
         )
     }
@@ -313,6 +349,12 @@ class ClientDetailFragment: Fragment() {
                 editText.setText(selected.formatSelection())
             }
         }
+    }
+
+    private fun checkIsAdult(): Boolean {
+        val dateStr = binding.etBirthdayText.getTrimmedText()
+        if (dateStr.isBlank()) return true
+        return runCatching { DateUtils.isAdult(dateStr.toLocalDate()) }.getOrElse { true }
     }
 
     private fun List<Enum<*>>.formatSelection(): String {

@@ -45,7 +45,6 @@
             android:paddingHorizontal="4dp"
             android:paddingBottom="4dp"
             android:src="@drawable/ic_delete"
-            android:textColor="@color/black"
             app:tint="@color/gold" />
 
     </LinearLayout>

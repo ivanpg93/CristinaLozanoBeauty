@@ -26,7 +26,8 @@ class UpdateClientUC @Inject constructor(
         poorCoagulation: Boolean,
         others: String,
         frequency: Int,
-        enabled: Boolean
+        enabled: Boolean,
+        minorConsentPath: String
     ): Single<Client> {
 
         // Build client
@@ -46,7 +47,8 @@ class UpdateClientUC @Inject constructor(
             poorCoagulation,
             frequency,
             others,
-            enabled = enabled
+            enabled = enabled,
+            minorUrlDocument = minorConsentPath
         )
 
         return repository.update(client)

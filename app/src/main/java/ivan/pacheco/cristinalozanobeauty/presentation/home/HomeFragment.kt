@@ -61,7 +61,7 @@ import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeInVisibl
 import ivan.pacheco.cristinalozanobeauty.presentation.home.calendar.makeVisible
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toEpochMillisForDatePicker
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toFormattedString
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateTime
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateFromDatePicker
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
@@ -211,7 +211,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             events.clear()
 
             // Group events by date
-            eventList.groupBy { it.startDateTime.toLocalDate() }
+            eventList.groupBy { it.startDateTime.toLocalDateTime() }
                 .forEach { (date, eventsForDate) ->
                     events[date] = eventsForDate.map { it.mapToDTO() }
                 }

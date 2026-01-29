@@ -24,6 +24,7 @@ object DateUtils {
     private val localDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT)
+    private const val ADULT_AGE = 18
 
     fun formatDate(timestamp: Long, pattern: String = DATE_FORMAT): String {
         val sdf = SimpleDateFormat(pattern, Locale.getDefault())
@@ -55,6 +56,14 @@ object DateUtils {
 
     fun String.toLocalDate(): LocalDate {
         return try {
+            LocalDate.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        } catch (_: DateTimeParseException) {
+            LocalDate.parse(this, dateFormatter)
+        }
+    }
+
+    fun String.toLocalDateTime(): LocalDate {
+        return try {
             OffsetDateTime.parse(this, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
         } catch (_: DateTimeParseException) {
             LocalDateTime.parse(this, dateFormatter).toLocalDate()
@@ -84,6 +93,9 @@ object DateUtils {
             LocalDateTime.parse(this, localDateTimeFormatter).toLocalTime().format(timeFormatter)
         }
     }
+
+    fun isAdult(birthDate: LocalDate, today: LocalDate = LocalDate.now()): Boolean =
+        birthDate.plusYears(ADULT_AGE.toLong()) <= today
 
     fun LocalDate.toFormattedString(): String = this.format(dateFormatter)
     fun LocalDate.toEpochMillisForDatePicker(): Long = this.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()

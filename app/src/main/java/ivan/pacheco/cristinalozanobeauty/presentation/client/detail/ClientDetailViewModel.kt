@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
@@ -68,6 +69,7 @@ class ClientDetailViewModel @Inject constructor(
         others: String,
         frequency: Int,
         enabled: Boolean,
+        minorConsentPath: String,
         destination: Destination
     ) {
         // Check mandatory fields before continue to create client
@@ -93,7 +95,8 @@ class ClientDetailViewModel @Inject constructor(
             poorCoagulation,
             others,
             frequency,
-            enabled
+            enabled,
+            minorConsentPath
         )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -108,7 +111,26 @@ class ClientDetailViewModel @Inject constructor(
             })
     }
 
-    fun actionLoadMinorConsentDocument(clientId: String) {
+    fun actionDeleteMinorConsentDocument(clientId: String) {
+        clientLD.value?.let { client ->
+            val updatedClient = client.copy(minorUrlDocument = "")
+            documentRepository.deleteMinorConsent(clientId)
+                .andThen(repository.update(updatedClient).ignoreElement())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe(object : DisposableCompletableObserver() {
+                    override fun onComplete() {
+                        documentPathLD.value = ""
+                        clientLD.value = updatedClient
+                    }
+                    override fun onError(e: Throwable) { errorLD.value = R.string.pdf_sign_error_delete_document }
+                })
+        }
+    }
+
+    fun actionLoadMinorConsentDocument() {
         documentRepository.getMinorConsentUrl(clientId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

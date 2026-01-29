@@ -1,19 +1,15 @@
 package ivan.pacheco.cristinalozanobeauty.presentation.pdf
 
-import android.content.ContentValues
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.ParcelFileDescriptor
-import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
-import androidx.core.net.toUri
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ivan.pacheco.cristinalozanobeauty.R
@@ -24,24 +20,26 @@ import ivan.pacheco.cristinalozanobeauty.presentation.utils.FragmentUtils.showAl
 import java.io.File
 
 @AndroidEntryPoint
-class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
+class PdfSignFragment: Fragment() {
 
-    private companion object {
-        const val APPLICATION_PDF = "application/pdf"
-    }
-
+    private var _binding: FragmentPdfSignBinding? = null
+    private val binding get() = _binding!!
+    private val vm: PdfSignViewModel by viewModels()
+    private lateinit var pdfGenerator: PdfGenerator
     private lateinit var renderer: PdfRenderer
     private lateinit var parcelFileDescriptor: ParcelFileDescriptor
-    private val args: PdfSignFragmentArgs by navArgs()
-    private val vm: PdfSignViewModel by viewModels()
     private lateinit var basePdf: File
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPdfSignBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val binding = FragmentPdfSignBinding.bind(view)
-        val pdfGenerator = PdfGenerator(requireContext())
-
-
-        vm.actionLoadClient(args.clientId)
+        pdfGenerator = PdfGenerator(requireContext())
 
         // Navigation
         vm.navigationLD.observe(viewLifecycleOwner) { destination -> navigate(destination) }
@@ -57,29 +55,30 @@ class PdfSignFragment : Fragment(R.layout.fragment_pdf_sign) {
         binding.btnClear.setOnClickListener { binding.signaturePad.clear() }
 
         // Sign document
-        binding.btnSign.setOnClickListener {
-            if (binding.signaturePad.isEmpty) {
-                showAlert(R.string.pdf_sign_mandatory_signature)
-                return@setOnClickListener
-            }
-
-            val signedPdf = pdfGenerator.generateSignedPdf(
-                basePdf,
-                binding.signaturePad.signatureBitmap
-            )
-
-            val pdfUri = Uri.fromFile(signedPdf)
-            vm.actionSaveSignedPdf(args.clientId, pdfUri)
-
-            openPdf(signedPdf)
-            findNavController().popBackStack()
-        }
+        binding.btnSign.setOnClickListener { signDocument() }
     }
 
     override fun onDestroyView() {
         if (::renderer.isInitialized) { renderer.close() }
         if (::parcelFileDescriptor.isInitialized) { parcelFileDescriptor.close() }
         super.onDestroyView()
+    }
+
+    private fun signDocument() {
+        if (binding.signaturePad.isEmpty) {
+            showAlert(R.string.pdf_sign_mandatory_signature)
+            return
+        }
+
+        val signedPdf = pdfGenerator.generateSignedPdf(
+            basePdf,
+            binding.signaturePad.signatureBitmap
+        )
+
+        val pdfUri = Uri.fromFile(signedPdf)
+        vm.actionSaveSignedPdf(pdfUri)
+
+        openPdf(signedPdf)
     }
 
     private fun renderPdfFromPfd(

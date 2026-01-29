@@ -1,7 +1,7 @@
 package ivan.pacheco.cristinalozanobeauty.core.event.domain.model
 
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateTime
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalTime
 
 data class CalendarEvent(
@@ -18,7 +18,7 @@ data class CalendarEvent(
         return CalendarEventDTO(
             id = id,
             text = summary,
-            date = startDateTime.toLocalDate(),
+            date = startDateTime.toLocalDateTime(),
             startTime = startDateTime.toLocalTime(),
             endTime = endDateTime.toLocalTime(),
             service = service,

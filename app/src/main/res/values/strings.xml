@@ -62,6 +62,11 @@
     <!--Client detail-->
     <string name="client_detail_title">Clienta</string>
     <string name="client_detail_action_disabled">Archivar clienta</string>
+    <string name="client_detail_sign_minor_consent">Firmar documento de consentimiento de menores</string>
+    <string name="client_detail_open_minor_consent">Abrir documento de consentimiento de menores</string>
+    <string name="client_detail_delete_minor_consent_title">Eliminar documento</string>
+    <string name="client_detail_delete_minor_consent">¿Quieres eliminar el documento de consentimiento de menores?</string>
+    <string name="client_detail_error_sign_minor_consent">Debes firmar el documento de consentimiento de menores</string>
     <string name="client_detail_error_find">No se ha podido cargar los datos de la clienta</string>
     <string name="client_detail_error_update">No se ha podido actualizar los datos de la clienta</string>
 
@@ -73,6 +78,11 @@
     <string name="pdf_sign_action_clear">Limpiar</string>
     <string name="pdf_sign_action_sign">Firmar</string>
     <string name="pdf_sign_mandatory_signature">La firma es obligatoria</string>
+    <string name="pdf_sign_error_save_document">No se ha podido guardar el documento</string>
+    <string name="pdf_sign_error_delete_document">No se ha podido borrar el documento</string>
+
+    <!--Signature pad-->
+    <string name="signature_pad_title">La firma es obligatoria</string>
 
     <!--Appointment history list-->
     <string name="appointment_history_list_title">Historial de citas</string>

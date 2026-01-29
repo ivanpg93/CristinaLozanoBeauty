@@ -18,7 +18,7 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRep
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendAppointmentReminderUC
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendBirthdayReminderUC
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendNextAppointmentReminderUC
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateTime
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.time.LocalDate
 import java.time.ZoneId
@@ -67,7 +67,7 @@ class MessageReminderViewModel@Inject constructor(
                 }
                 Single.zip(singles) { results ->
                     results.flatMap { it as List<AppointmentClient> }
-                        .filter { it.appointment.event?.startDateTime?.toLocalDate() == date }
+                        .filter { it.appointment.event?.startDateTime?.toLocalDateTime() == date }
                         .sortedBy { it.appointment.event?.startDateTime }
                 }
             }
