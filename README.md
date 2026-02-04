@@ -13,14 +13,22 @@
  <p>· Componentes UI creados con <b>MATERIAL</b>.</p>
  
  # Servicios que ofrece
- <p>· Login a través de Google para sincronizar las citas del calendario.</p>
- <p>· Gestión de clientas (CRUD).</p>
- <p>· Historial de citas y esmaltes utilizados (colores).</p>
- <p>· Gestión de citas sincronizadas con Google Calendar.</p>
+ <p>· Login a través de <b>GOOGLE</b> para sincronizar los eventos del calendario.</p>
+ <p>· Gestión de citas sincronizadas con <b>GOOGLE CALENDAR</b>.</p>
+ <p>· Gestión de clientas (CRUD) remoto con <b>FIREBASE FIRESTORE</b>.</p>
  <p>· Recordatorios de las citas a las clientas a través de mensajería por Whatsapp.</p>
+ <p>· Historial de citas y esmaltes utilizados (colores).</p>
+ <p>· Firma de documento PDF y almacenamiento remoto con <b>FIREBASE STORAGE</b>.</p>
 
  # Diseño de la APP
  <p>Aquí se muestran algunas de las pantallas de la APP.</p>
  <p>
-   #TODO<img src="https://play-lh.googleusercontent.com/_jAUADX7p2NvgNIzlHyHVR4cekfz14EJzvEKiRKjYWLC251spsIJu86A_AudJghPYXQ=w526-h296-rw"/>
+  <img src="images/homeFragment.png" width="250"/>
+  <img src="images/homeFragment2.png" width="250"/>
+  <img src="images/clientListFragment.png" width="250"/>
+  <img src="images/clientDetailFragment.png" width="250"/>
+  <img src="images/clientDetailFragment2.png" width="250"/>
+  <img src="images/colorHistoryFragment.png" width="250"/>
+  <img src="images/appointmentHistoryFragment.png" width="250"/>
+  <img src="images/messageFragment.png" width="250"/>
  </p>
