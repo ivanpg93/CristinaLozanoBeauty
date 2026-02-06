@@ -9,9 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Completable
 import io.reactivex.CompletableEmitter
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
@@ -25,7 +28,11 @@ import ivan.pacheco.cristinalozanobeauty.core.event.application.usecase.UpdateEv
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEvent
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.model.CalendarEventDTO
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.toResult
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
+import ivan.pacheco.cristinalozanobeauty.shared.remote.FirebaseAuthentication
 import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -56,10 +63,6 @@ class HomeViewModel @Inject constructor(
     private val clientsLD = MutableLiveData<List<ClientListDTO>>()
     private val recoverableExceptionLD = MutableLiveData<UserRecoverableAuthException>()
 
-    init {
-        loadClients()
-    }
-
     // Getters
     fun isLoadingLD(): LiveData<Boolean> = isLoadingLD
     fun getErrorLD(): LiveData<Int> = errorLD
@@ -70,25 +73,31 @@ class HomeViewModel @Inject constructor(
     // Actions
     fun onGoogleAccountReady(account: GoogleSignInAccount) {
 
-        // Get and store access token
-        getAccessToken(application.applicationContext, account)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableCompletableObserver() {
+        // Firebase Auth for DB rules
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
-                // Load events from select date
-                override fun onComplete() { actionLoadEvents(selectedDate) }
+        FirebaseAuthentication.auth.signInWithCredential(credential)
+            .addOnSuccessListener {
 
-                override fun onError(e: Throwable) {
-                    if (e is UserRecoverableAuthException) {
-                        recoverableExceptionLD.value = e
-                    } else {
-                        errorLD.value = R.string.appointment_history_list_error_list
-                    }
-                }
-            })
+                // Get and store access token for Google Calendar
+                getAccessToken(application.applicationContext, account)
+                    .applySchedulers()
+                    .withLoading(isLoadingLD)
+                    .subscribe(object : DisposableCompletableObserver() {
+
+                        // Load clients and events today
+                        override fun onComplete() { loadData() }
+                        override fun onError(e: Throwable) {
+                            if (e is UserRecoverableAuthException) {
+                                recoverableExceptionLD.value = e
+                            } else {
+                                errorLD.value = R.string.appointment_history_list_error_list
+                            }
+                        }
+                    })
+            }
+            .addOnFailureListener { errorLD.value = R.string.appointment_history_list_error_list }
+
     }
 
     fun actionLoadEvents(date: LocalDate) {
@@ -96,10 +105,8 @@ class HomeViewModel @Inject constructor(
             selectedDate = date
             val (startDate, endDate) = getMonthRange(selectedDate)
             eventRepository.getEventsForDate(startDate, endDate, token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableSingleObserver<List<CalendarEvent>>() {
                     override fun onSuccess(events: List<CalendarEvent>) { eventsLD.value = events }
                     override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_list }
@@ -110,10 +117,8 @@ class HomeViewModel @Inject constructor(
     fun actionCreateEvent(event: CalendarEventDTO, client: ClientListDTO) {
         idToken?.let { token ->
             createEventUC.execute(event, client, token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_create }
@@ -124,10 +129,8 @@ class HomeViewModel @Inject constructor(
     fun actionUpdateEvent(calendarEventDTO: CalendarEventDTO) {
         idToken?.let { token ->
             updateEventUC.execute(calendarEventDTO, token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_update }
@@ -138,10 +141,8 @@ class HomeViewModel @Inject constructor(
     fun actionDeleteEvent(eventId: String) {
         idToken?.let { token ->
             deleteEventUC.execute(eventId, token)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { actionLoadEvents(selectedDate) }
                     override fun onError(e: Throwable) { errorLD.value = R.string.calendar_event_form_error_delete }
@@ -180,16 +181,31 @@ class HomeViewModel @Inject constructor(
         return startOfMonth.format(formatter) to endOfMonth.format(formatter)
     }
 
-    private fun loadClients() {
-        clientRepository.list()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
-            .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
-                override fun onSuccess(clients: List<ClientListDTO>) { clientsLD.value = clients }
-                override fun onError(error: Throwable) { errorLD.value = R.string.client_list_error_list }
-            })
+    private fun loadData() {
+        idToken?.let { token ->
+            val (startDate, endDate) = getMonthRange(selectedDate)
+
+            Single.zip(
+                clientRepository.list().toResult(),
+                eventRepository.getEventsForDate(startDate, endDate, token).toResult()
+            ) { clients, events ->
+                Pair(clients, events)
+            }
+                .applySchedulers()
+                .doOnSubscribe { isLoadingLD.value = true }
+                .doFinally { isLoadingLD.value = false }
+                .subscribe({ (clientRes, eventRes) ->
+
+                    // Clients
+                    clientRes.onSuccess { clientsLD.value = it }
+                        .onFailure { errorLD.value = R.string.client_list_error_list }
+
+                    // Events
+                    eventRes.onSuccess { eventsLD.value = it }
+                        .onFailure { errorLD.value = R.string.appointment_history_list_error_list }
+
+                }, { errorLD.value = R.string.appointment_history_list_error_list })
+        }
     }
 
 }

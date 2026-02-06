@@ -19,6 +19,8 @@ import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendAp
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendBirthdayReminderUC
 import ivan.pacheco.cristinalozanobeauty.core.message.application.usecase.SendNextAppointmentReminderUC
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDateTime
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.time.LocalDate
 import java.time.ZoneId
@@ -53,8 +55,7 @@ class MessageReminderViewModel@Inject constructor(
 
     fun loadAppointmentsForDate(date: LocalDate) {
         clientRepository.list()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .flatMap { clients ->
                 val singles = clients.map { client ->
                     appointmentRepository.listPending(client.id)
@@ -80,8 +81,7 @@ class MessageReminderViewModel@Inject constructor(
 
     fun loadBirthdaysForDate(date: LocalDate = LocalDate.now()) {
         clientRepository.list()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
                 override fun onSuccess(clients: List<ClientListDTO>) {
                     clientBirthdayListLD.value = clients.filter { client ->
@@ -99,8 +99,7 @@ class MessageReminderViewModel@Inject constructor(
 
     fun actionSendBirthdayReminder(client: ClientListDTO) {
         sendBirthdayReminderUC.execute(client)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .subscribe(object : DisposableCompletableObserver() {
                 override fun onComplete() {} // Do nothing
                 override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_sending_reminder_error }
@@ -109,8 +108,7 @@ class MessageReminderViewModel@Inject constructor(
 
     fun actionSendAppointmentReminder(appoinmentClient: AppointmentClient) {
         sendAppointmentReminderUC.execute(appoinmentClient)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .subscribe(object : DisposableCompletableObserver() {
                 override fun onComplete() {} // Do nothing
                 override fun onError(e: Throwable) { errorLD.value = R.string.message_reminder_sending_reminder_error }
@@ -119,8 +117,7 @@ class MessageReminderViewModel@Inject constructor(
 
     fun actionSendNextAppointmentReminder(client: ClientListDTO) {
         sendNextAppointmentReminderUC.execute(client)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .applySchedulers()
             .subscribe(object : DisposableCompletableObserver() {
                 override fun onComplete() {} // Do nothing
                 override fun onError(e: Throwable) {
@@ -134,10 +131,8 @@ class MessageReminderViewModel@Inject constructor(
 
     private fun loadClients() {
         clientRepository.list()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
                 override fun onSuccess(clients: List<ClientListDTO>) { clientsLD.value = clients }
                 override fun onError(error: Throwable) { errorLD.value = R.string.client_list_error_list }

@@ -15,6 +15,8 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.De
 import ivan.pacheco.cristinalozanobeauty.core.appointment.application.usecase.UpdateAppointmentUC
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.model.Appointment
 import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.AppointmentRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import javax.inject.Inject
 
@@ -55,10 +57,8 @@ class AppointmentHistoryListViewModel @Inject constructor(
     fun actionUpdateAppointment(appointment: Appointment) {
         appointment.event?.let { event ->
             updateAppointmentUC.execute(event)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { loadData() }
                     override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_update }
@@ -69,10 +69,8 @@ class AppointmentHistoryListViewModel @Inject constructor(
     fun actionDeleteAppointment(appointment: Appointment) {
         appointment.event?.id?.let { eventId ->
             deleteAppointmentUC.execute(eventId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() { loadData() }
                     override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_delete }
@@ -89,10 +87,8 @@ class AppointmentHistoryListViewModel @Inject constructor(
         single: Single<List<Appointment>>,
         onSuccess: (List<Appointment>) -> Unit
     ) {
-        single.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+        single.applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<List<Appointment>>() {
                 override fun onSuccess(appointmentList: List<Appointment>) = onSuccess(appointmentList)
                 override fun onError(e: Throwable) { errorLD.value = R.string.appointment_history_list_error_list }

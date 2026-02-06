@@ -12,6 +12,8 @@ import io.reactivex.schedulers.Schedulers
 import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import javax.inject.Inject
 
@@ -47,10 +49,8 @@ class ColorHistoryListViewModel @Inject constructor(
     // Actions
     fun actionDeleteColor(color: Color) {
         repository.delete(color, clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableCompletableObserver(){
                 override fun onComplete() { loadData() }
                 override fun onError(e: Throwable) { errorLD.value = R.string.color_history_list_error_delete }
@@ -59,10 +59,8 @@ class ColorHistoryListViewModel @Inject constructor(
 
     fun loadData() {
         repository.list(clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<List<Color>>(){
                 override fun onSuccess(colorList: List<Color>) { colorsLD.value = colorList }
                 override fun onError(e: Throwable) { errorLD.value = R.string.color_history_list_error_list }

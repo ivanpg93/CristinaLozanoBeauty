@@ -35,7 +35,8 @@ class MessageReminderFragment: Fragment() {
     private val vm: MessageReminderViewModel by viewModels()
     private var clientList: List<ClientListDTO> = listOf()
     private var selectedClient: ClientListDTO? = null
-    private var selectedDate: LocalDate = LocalDate.now().plusDays(1)
+    private var tomorrow: LocalDate = LocalDate.now().plusDays(1)
+    private var selectedDate: LocalDate = tomorrow
     private val formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER_PATTERN, Locale.getDefault())
 
     override fun onCreateView(
@@ -55,7 +56,7 @@ class MessageReminderFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Selected date
-        applySelectedDate(selectedDate)
+        setupDateSelector(tomorrow)
 
         // Appointments
         val appointmentAdapter = AppointmentClientListAdapter({ appointmentClient ->
@@ -89,18 +90,10 @@ class MessageReminderFragment: Fragment() {
         }
 
         // Button previous day
-        binding.btnPreviousDay.setOnClickListener {
-            selectedDate = selectedDate.minusDays(1)
-            applySelectedDate(selectedDate)
-            vm.loadAppointmentsForDate(selectedDate)
-        }
+        binding.btnPreviousDay.setOnClickListener { setupDateSelector(selectedDate.minusDays(1)) }
 
         // Button next day
-        binding.btnNextDay.setOnClickListener {
-            selectedDate = selectedDate.plusDays(1)
-            applySelectedDate(selectedDate)
-            vm.loadAppointmentsForDate(selectedDate)
-        }
+        binding.btnNextDay.setOnClickListener { setupDateSelector(selectedDate.plusDays(1)) }
 
         // Button send message
         binding.btnSendMessage.setOnClickListener { sendMessage(selectedClient) }
@@ -123,7 +116,7 @@ class MessageReminderFragment: Fragment() {
         _binding = null
     }
 
-    private fun applySelectedDate(date: LocalDate) {
+    private fun applySelectedDate() {
         val formatted = selectedDate.format(formatter)
         binding.txtSelectedDate.text = formatted.replaceFirstChar { it.uppercase() }
     }
@@ -140,6 +133,19 @@ class MessageReminderFragment: Fragment() {
 
         // Send message
         vm.actionSendNextAppointmentReminder(client)
+    }
+
+    private fun setupDateSelector(newDate: LocalDate) {
+        selectedDate = newDate
+        applySelectedDate()
+        vm.loadAppointmentsForDate(selectedDate)
+
+        // Manage visibility of previous button
+        if (selectedDate.isAfter(tomorrow)) {
+            binding.btnPreviousDay.visibility = View.VISIBLE
+        } else {
+            binding.btnPreviousDay.visibility = View.INVISIBLE
+        }
     }
 
     private fun setupClientSelector(

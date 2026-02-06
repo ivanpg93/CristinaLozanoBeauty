@@ -13,6 +13,8 @@ import ivan.pacheco.cristinalozanobeauty.core.color.application.usecase.CreateCo
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
@@ -53,10 +55,8 @@ class ColorsHistoryFormViewModel @Inject constructor(
 
         // Create client action
         uc.execute(brand, reference, date, clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableCompletableObserver() {
                 override fun onComplete() { navigationLD.value = Destination.Back }
                 override fun onError(e: Throwable) { errorLD.value = R.string.color_history_form_error_create }

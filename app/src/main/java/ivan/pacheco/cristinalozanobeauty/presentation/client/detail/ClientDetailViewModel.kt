@@ -16,6 +16,8 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientDoc
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
@@ -98,10 +100,8 @@ class ClientDetailViewModel @Inject constructor(
             enabled,
             minorConsentPath
         )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableSingleObserver<Client>() {
                 override fun onSuccess(client: Client) {
                     clientLD.value = client
@@ -116,10 +116,8 @@ class ClientDetailViewModel @Inject constructor(
             val updatedClient = client.copy(minorUrlDocument = "")
             documentRepository.deleteMinorConsent(clientId)
                 .andThen(repository.update(updatedClient).ignoreElement())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { isLoadingLD.value = true }
-                .doFinally { isLoadingLD.value = false }
+                .applySchedulers()
+                .withLoading(isLoadingLD)
                 .subscribe(object : DisposableCompletableObserver() {
                     override fun onComplete() {
                         documentPathLD.value = ""
@@ -132,10 +130,8 @@ class ClientDetailViewModel @Inject constructor(
 
     fun actionLoadMinorConsentDocument() {
         documentRepository.getMinorConsentUrl(clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<String>() {
                 override fun onSuccess(url: String) { documentPathLD.value = url }
                 override fun onError(e: Throwable) { documentPathLD.value = "" }
@@ -144,10 +140,8 @@ class ClientDetailViewModel @Inject constructor(
 
     private fun loadData() {
         repository.find(clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableSingleObserver<Client>() {
                 override fun onSuccess(client: Client) { clientLD.value = client }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_find }

@@ -15,6 +15,8 @@ import ivan.pacheco.cristinalozanobeauty.core.color.domain.model.Color
 import ivan.pacheco.cristinalozanobeauty.core.color.domain.repository.ColorsHistoryRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
@@ -70,10 +72,8 @@ class ColorsHistoryDetailViewModel @Inject constructor(
             date,
             clientId
         )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableCompletableObserver() {
                 override fun onComplete() { navigationLD.value = Destination.Back }
                 override fun onError(e: Throwable) { errorLD.value = R.string.color_history_form_error_create }
@@ -82,10 +82,8 @@ class ColorsHistoryDetailViewModel @Inject constructor(
 
     private fun loadData() {
         repository.find(colorId, clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableSingleObserver<Color>() {
                 override fun onSuccess(color: Color) { colorLD.value = color }
                 override fun onError(e: Throwable) { errorLD.value = R.string.color_history_detail_error_find }

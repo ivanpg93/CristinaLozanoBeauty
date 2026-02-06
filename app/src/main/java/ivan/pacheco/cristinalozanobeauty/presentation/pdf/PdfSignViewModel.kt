@@ -15,6 +15,8 @@ import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientDoc
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import javax.inject.Inject
 
@@ -57,8 +59,7 @@ class PdfSignViewModel @Inject constructor(
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<Client>() {
                 override fun onSuccess(client: Client) { navigationLD.value = Destination.Back }
                 override fun onError(e: Throwable) { errorLD.value = R.string.pdf_sign_error_save_document }
@@ -67,10 +68,8 @@ class PdfSignViewModel @Inject constructor(
 
     private fun loadClient() {
         clientRepository.find(clientId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableSingleObserver<Client>() {
                 override fun onSuccess(client: Client) { clientLD.value = client }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_detail_error_find }

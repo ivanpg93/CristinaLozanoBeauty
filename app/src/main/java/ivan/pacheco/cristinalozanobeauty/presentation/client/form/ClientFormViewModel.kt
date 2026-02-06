@@ -13,6 +13,8 @@ import ivan.pacheco.cristinalozanobeauty.core.client.application.usecase.CreateC
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Navigation
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.Date
 import javax.inject.Inject
@@ -71,10 +73,8 @@ class ClientFormViewModel @Inject constructor(
             others,
             frequency
         )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object: DisposableCompletableObserver() {
                 override fun onComplete() { navigationLD.value = Destination.Back }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_form_error_create }

@@ -15,6 +15,8 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.ClientListDTO
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.repository.ClientRepository
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.normalizeForSearch
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.applySchedulers
+import ivan.pacheco.cristinalozanobeauty.presentation.utils.RxUtils.withLoading
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.SingleLiveEvent
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -57,10 +59,8 @@ class ClientListViewModel @Inject constructor(
 
     fun loadData() {
         repository.list()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableSingleObserver<List<ClientListDTO>>() {
                 override fun onSuccess(clientList: List<ClientListDTO>) {
                     allClients = clientList
@@ -76,10 +76,8 @@ class ClientListViewModel @Inject constructor(
 
     fun actionDeleteClient(client: ClientListDTO) {
         repository.delete(client)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoadingLD.value = true }
-            .doFinally { isLoadingLD.value = false }
+            .applySchedulers()
+            .withLoading(isLoadingLD)
             .subscribe(object : DisposableCompletableObserver(){
                 override fun onComplete() { loadData() }
                 override fun onError(e: Throwable) { errorLD.value = R.string.client_list_error_delete }
