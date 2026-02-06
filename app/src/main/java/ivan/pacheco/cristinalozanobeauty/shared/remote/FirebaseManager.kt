@@ -14,7 +14,7 @@ object FirebaseManager {
         // Enable Crashlytics and Analytics only in production
         val isProduction = !BuildConfig.DEBUG
         FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = isProduction
-        FirebaseAnalytics.getInstance(appContext).setAnalyticsCollectionEnabled(true)
+        FirebaseAnalytics.getInstance(appContext).setAnalyticsCollectionEnabled(isProduction)
     }
 
 }
