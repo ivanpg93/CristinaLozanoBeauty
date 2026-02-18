@@ -66,9 +66,12 @@ class MessageReminderViewModel@Inject constructor(
                             appointments.map { appointment -> AppointmentClient(appointment, client) }
                         }
                 }
+
+                // Return only appointments will attend
                 Single.zip(singles) { results ->
                     results.flatMap { it as List<AppointmentClient> }
                         .filter { it.appointment.event?.startDateTime?.toLocalDateTime() == date }
+                        .filter { it.appointment.event?.assisted == true }
                         .sortedBy { it.appointment.event?.startDateTime }
                 }
             }

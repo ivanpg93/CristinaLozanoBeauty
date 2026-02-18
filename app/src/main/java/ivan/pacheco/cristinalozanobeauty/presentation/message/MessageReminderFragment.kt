@@ -59,15 +59,15 @@ class MessageReminderFragment: Fragment() {
         setupDateSelector(tomorrow)
 
         // Appointments
-        val appointmentAdapter = AppointmentClientListAdapter({ appointmentClient ->
+        val appointmentAdapter = AppointmentClientListAdapter { appointmentClient ->
             vm.actionSendAppointmentReminder(appointmentClient)
-        })
+        }
         binding.rvAppointments.adapter = appointmentAdapter
 
         // Clients
-        val birthdayAdapter = ClientBirthdayListAdapter({ clientBirthday ->
+        val birthdayAdapter = ClientBirthdayListAdapter { clientBirthday ->
             vm.actionSendBirthdayReminder(clientBirthday)
-        })
+        }
         binding.rvBirthdays.adapter = birthdayAdapter
 
         // Clients
