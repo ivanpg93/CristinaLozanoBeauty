@@ -21,38 +21,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--Start time-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_event_start_time"
-        style="@style/Form"
-        android:hint="@string/dialog_calendar_hint_start_time_event"
-        app:boxStrokeColor="@color/gold"
-        app:hintTextColor="@color/gold">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_event_start_time_text"
-            style="@style/FormText"
-            android:focusable="false"
-            android:inputType="none" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!--End time-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_event_end_time"
-        style="@style/Form"
-        android:hint="@string/dialog_calendar_hint_end_time_event"
-        app:boxStrokeColor="@color/gold"
-        app:hintTextColor="@color/gold">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_event_end_time_text"
-            style="@style/FormText"
-            android:focusable="false"
-            android:inputType="none" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <!--Clients-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_selected_client"
@@ -79,6 +47,38 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_selected_service_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--Start time-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_start_time"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_hint_start_time_event"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_start_time_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--End time-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_event_end_time"
+        style="@style/Form"
+        android:hint="@string/dialog_calendar_hint_end_time_event"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_event_end_time_text"
             style="@style/FormText"
             android:focusable="false"
             android:inputType="none" />

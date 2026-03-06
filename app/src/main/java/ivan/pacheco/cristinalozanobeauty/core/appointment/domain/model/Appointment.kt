@@ -7,19 +7,19 @@ data class Appointment(
     val event: CalendarEvent? = null,
 ) {
 
-    enum class Service {
-        ARREGLO_DE_UÑA,
-        ESMALTE_NORMAL,
-        MANICURA_COMBINADA,
-        NIVELACION,
-        PEDICURA_COMPLETA,
-        PEDICURA_JELLY,
-        PEDICURA_SEMI,
-        PRIMERA_PUESTA,
-        RELLENO_ACRILICO,
-        RELLENO_ACRYGEL,
-        RETIRADA_DE_MATERIAL,
-        SEMIPERMANENTE
+    enum class Service(val duration: Double) {
+        ARREGLO_DE_UÑA(0.25),
+        ESMALTE_NORMAL(1.0),
+        MANICURA_COMBINADA(1.0),
+        NIVELACION(1.5),
+        PEDICURA_COMPLETA(1.75),
+        PEDICURA_JELLY(1.5),
+        PEDICURA_SEMI(2.0),
+        PRIMERA_PUESTA(1.5),
+        RELLENO_ACRILICO(1.5),
+        RELLENO_ACRYGEL(1.0),
+        RETIRADA_DE_MATERIAL(1.25),
+        SEMIPERMANENTE(1.0)
     }
 
     fun toMap() = mapOf(

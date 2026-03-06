@@ -496,10 +496,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_new_event, null)
 
         val dateInput = dialogView.findViewById<EditText>(R.id.et_event_date_text)
-        val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
-        val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         val clientInput = dialogView.findViewById<EditText>(R.id.et_selected_client_text)
         val serviceInput = dialogView.findViewById<EditText>(R.id.et_selected_service_text)
+        val startTimeInput = dialogView.findViewById<EditText>(R.id.et_event_start_time_text)
+        val endTimeInput = dialogView.findViewById<EditText>(R.id.et_event_end_time_text)
         var selectedService: Appointment.Service? = null
         var oldClient: ClientListDTO? = null
 
@@ -526,7 +526,10 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
         // Input start time
         startTimeInput.setOnClickListener {
-            showTimePicker { hour, minute -> startTimeInput.setText(String.format("%02d:%02d", hour, minute)) }
+            showTimePicker { hour, minute ->
+                startTimeInput.setText(String.format("%02d:%02d", hour, minute))
+                autoFillEndTime(hour, minute, selectedService, endTimeInput)
+            }
         }
 
         // Input end time
@@ -548,7 +551,16 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             R.string.dialog_calendar_event_select_service,
             Appointment.Service.entries.toTypedArray(),
             { selectedService }
-        ) { selectedService = it }
+        ) { service ->
+            selectedService = service
+
+            // Auto-fill end time if start time is already set
+            val startText = startTimeInput.text.toString()
+            if (startText.isNotBlank()) {
+                val parts = startText.split(":")
+                autoFillEndTime(parts[0].toInt(), parts[1].toInt(), selectedService, endTimeInput)
+            }
+        }
 
         if (event != null) {
             dateInput.setText(event.date.toFormattedString())
@@ -865,6 +877,18 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         timePicker.addOnPositiveButtonClickListener { onTimeSelected(timePicker.hour, timePicker.minute) }
 
         timePicker.show(childFragmentManager, "")
+    }
+
+    private fun autoFillEndTime(
+        startHour: Int,
+        startMinute: Int,
+        service: Appointment.Service?,
+        endTimeInput: EditText
+    ) {
+        service ?: return
+        val durationMinutes = (service.duration * 60).toInt()
+        val endTime = LocalTime.of(startHour, startMinute).plusMinutes(durationMinutes.toLong())
+        endTimeInput.setText(String.format("%02d:%02d", endTime.hour, endTime.minute))
     }
 
     private fun navigate(destination: Destination) {
