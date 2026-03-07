@@ -21,7 +21,6 @@ import ivan.pacheco.cristinalozanobeauty.R
 import ivan.pacheco.cristinalozanobeauty.core.client.domain.model.Client
 import ivan.pacheco.cristinalozanobeauty.databinding.FragmentClientDetailBinding
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils
-import ivan.pacheco.cristinalozanobeauty.presentation.utils.DateUtils.toLocalDate
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.Destination
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.DialogUtils
 import ivan.pacheco.cristinalozanobeauty.presentation.utils.FormUtils.getTrimmedText
@@ -111,7 +110,6 @@ class ClientDetailFragment: Fragment() {
             // Set selected date
             datePicker.addOnPositiveButtonClickListener { selectedDate ->
                 binding.etBirthdayText.setText(DateUtils.formatDate(selectedDate))
-                binding.layoutMinorConsent.visibility = if (checkIsAdult()) View.GONE else View.VISIBLE
             }
 
             datePicker.show(childFragmentManager, "")
@@ -352,9 +350,9 @@ class ClientDetailFragment: Fragment() {
     }
 
     private fun checkIsAdult(): Boolean {
-        val dateStr = binding.etBirthdayText.getTrimmedText()
-        if (dateStr.isBlank()) return true
-        return runCatching { DateUtils.isAdult(dateStr.toLocalDate()) }.getOrElse { true }
+        val birthday = originalClient?.birthday ?: return true
+        val localDate = birthday.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+        return DateUtils.isAdult(localDate)
     }
 
     private fun List<Enum<*>>.formatSelection(): String {

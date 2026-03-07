@@ -80,6 +80,25 @@
     <string name="pdf_sign_mandatory_signature">La firma es obligatoria</string>
     <string name="pdf_sign_error_save_document">No se ha podido guardar el documento</string>
     <string name="pdf_sign_error_delete_document">No se ha podido borrar el documento</string>
+    <string name="pdf_sign_minor_section_title">Datos del menor</string>
+    <string name="pdf_sign_minor_name">Nombre</string>
+    <string name="pdf_sign_minor_birthday">Fecha de nacimiento</string>
+    <string name="pdf_sign_minor_phone">Teléfono</string>
+    <string name="pdf_sign_minor_email">Email</string>
+    <string name="pdf_sign_minor_town">Localidad</string>
+    <string name="pdf_sign_authorization_text">Por la presente, en calidad de tutor legal, autorizo expresamente la realización de tratamientos de manicura y/o pedicura al menor indicado.\nDeclaro haber sido debidamente informado/a sobre las técnicas, productos a utilizar y posibles contraindicaciones del servicio, asumiendo la responsabilidad y eximiendo al centro de cualquier reacción adversa derivada del mismo.</string>
+    <string name="pdf_sign_tutor_dialog_title">Datos del tutor legal</string>
+    <string name="pdf_sign_tutor_fullname">Nombre y apellidos</string>
+    <string name="pdf_sign_tutor_nif">DNI</string>
+    <string name="pdf_sign_tutor_relation">Relación con el menor</string>
+    <string name="pdf_sign_tutor_mandatory_fields">Todos los campos son obligatorios</string>
+    <string name="pdf_sign_tutor_error_nif">El DNI introducido no es válido</string>
+    <string name="pdf_sign_tutor_select_relation">Selecciona la relación con el menor</string>
+    <string-array name="tutor_relations">
+        <item>Padre</item>
+        <item>Madre</item>
+        <item>Tutor legal</item>
+    </string-array>
 
     <!--Signature pad-->
     <string name="signature_pad_title">La firma es obligatoria</string>

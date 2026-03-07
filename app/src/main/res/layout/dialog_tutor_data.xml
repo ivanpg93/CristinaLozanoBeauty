@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!--Full name-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_tutor_name"
+        style="@style/Form"
+        android:hint="@string/pdf_sign_tutor_fullname"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_tutor_name_text"
+            style="@style/FormText" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--NIF-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_tutor_dni"
+        style="@style/Form"
+        android:hint="@string/pdf_sign_tutor_nif"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_tutor_dni_text"
+            style="@style/FormText"
+            android:maxLength="9"
+            android:inputType="textCapCharacters|textNoSuggestions" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--Tutor relation-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/et_tutor_relation"
+        style="@style/Form"
+        android:hint="@string/pdf_sign_tutor_relation"
+        app:boxStrokeColor="@color/gold"
+        app:hintTextColor="@color/gold">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_tutor_relation_text"
+            style="@style/FormText"
+            android:focusable="false"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

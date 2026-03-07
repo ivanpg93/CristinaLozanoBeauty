@@ -16,6 +16,27 @@ object FormUtils {
         return getTrimmedText().matches(phoneRegex)
     }
 
+    fun EditText.isCorrectNifOrNie(): Boolean {
+        var dni = getTrimmedText().uppercase()
+        val dniRegex = Regex("^[XYZ]?\\d{5,8}[A-Z]$")
+
+        if (!dni.matches(dniRegex)) return false
+
+        val letter = dni.last()
+        dni = dni.dropLast(1)
+        
+        // Replace NIE starting letter with numbers
+        dni = dni.replaceFirst("X", "0")
+        dni = dni.replaceFirst("Y", "1")
+        dni = dni.replaceFirst("Z", "2")
+
+        val number = dni.toIntOrNull() ?: return false
+        val validLetters = "TRWAGMYFPDXBNJZSQVHLCKE"
+        val expectedLetter = validLetters[number % 23]
+
+        return letter == expectedLetter
+    }
+
     /**
      * Ignore accents in comparison strings
      */
