@@ -12,14 +12,14 @@ data class Appointment(
         ESMALTE_NORMAL(1.0),
         MANICURA_COMBINADA(1.0),
         NIVELACION(1.5),
-        PEDICURA_COMPLETA(1.75),
-        PEDICURA_JELLY(1.5),
-        PEDICURA_SEMI(2.0),
-        PRIMERA_PUESTA(1.5),
+        PEDICURA_COMPLETA(1.5),
+        PEDICURA_JELLY(1.75),
+        PEDICURA_SEMI(1.25),
+        PRIMERA_PUESTA(2.0),
         RELLENO_ACRILICO(1.5),
-        RELLENO_ACRYGEL(1.0),
-        RETIRADA_DE_MATERIAL(1.25),
-        SEMIPERMANENTE(1.0)
+        RELLENO_ACRYGEL(1.5),
+        RETIRADA_DE_MATERIAL(1.0),
+        SEMIPERMANENTE(1.25)
     }
 
     fun toMap() = mapOf(
