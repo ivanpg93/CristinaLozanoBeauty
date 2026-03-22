@@ -8,6 +8,7 @@ import ivan.pacheco.cristinalozanobeauty.core.appointment.domain.repository.Appo
 import ivan.pacheco.cristinalozanobeauty.core.event.domain.repository.EventRepository
 import ivan.pacheco.cristinalozanobeauty.shared.remote.SecureTokenDataStore
 import kotlinx.coroutines.runBlocking
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class DeleteAppointmentUC @Inject constructor(
@@ -20,8 +21,20 @@ class DeleteAppointmentUC @Inject constructor(
         return Single.fromCallable {
             runBlocking { SecureTokenDataStore.readToken(context) }
         }.flatMapCompletable { token ->
-            eventRepository.deleteEvent(eventId, token).andThen(repository.delete(eventId))
+            eventRepository.deleteEvent(eventId, token)
+                .onErrorResumeNext { error ->
+                    if (isEventNotFoundError(error)) {
+                        Completable.complete()
+                    } else {
+                        Completable.error(error)
+                    }
+                }
+                .andThen(repository.delete(eventId))
         }
+    }
+
+    private fun isEventNotFoundError(error: Throwable): Boolean {
+        return error is HttpException && error.code() == 410
     }
 
 }
